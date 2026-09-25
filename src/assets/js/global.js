@@ -99,6 +99,17 @@ $(document).on("click", "#menuToggle", function () {
   $("#sidePanelOverlay").addClass("show");
 });
 
+// Sidebar menu
+$(document).on("click", ".menu-item", function () {
+  $(".menu-item").removeClass("active");
+  $(this).addClass("active");
+});
+
+$(document).on("click", "#menuLogoutBtn", function () {
+  $("#logoutModal").show();
+  closeSidePanels();
+});
+
 $(document).on("click", ".close-panel", function () {
   closeSidePanels();
 });

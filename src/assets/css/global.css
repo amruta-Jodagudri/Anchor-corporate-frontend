@@ -1055,6 +1055,11 @@ input[type="number"] {
     font-size: 12px;
   }
 
+  #menuPanel .header-action-btn {
+    color: #e3530f;
+    font-size: 12px;
+  }
+
   .mobile-header-right {
     gap: 4px !important;
   }
