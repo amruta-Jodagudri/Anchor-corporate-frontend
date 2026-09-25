@@ -1,0 +1,1166 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="../assets/css/plugins.css" />
+    <link rel="stylesheet" href="../assets/css/global.css" />
+    <link rel="stylesheet" href="../assets/css/material-icons.css" />
+    <link rel="stylesheet" href="../assets/css/material-symbols.css" />
+    <link rel="stylesheet" href="./dashboard.css" />
+  </head>
+
+  <body class="dashboard-page">
+    <div id="dashboardContent">
+      <!-- Header -->
+      <header class="bg-white mobile-gradient-header">
+        <div
+          class="d-flex justify-content-between align-items-center max-content-area py-3 gap-3"
+        >
+          <div class="header-left">
+            <span id="menuToggle" class="material-symbols-outlined">menu</span>
+            <div class="mobile-header-left">
+              <img
+                src="../assets/image/dashboard/ICICI-logo.svg"
+                alt="logo"
+                class="header-logo"
+              />
+            </div>
+          </div>
+
+          <div
+            class="mobile-header-right d-flex d-md-none align-items-center gap-3"
+          >
+            <div class="get-touch-wrapper">
+              <button class="getInTouchBtn header-action-btn">
+                <i data-lucide="circle-help"></i>
+                <span>Get in touch</span>
+              </button>
+
+              <div class="getTouchDropdown get-touch-dropdown">
+                <div class="drop-card">
+                  <small class="rm-title">Relationship manager</small>
+
+                  <h6>Harish Sharma</h6>
+
+                  <hr />
+
+                  <div class="dropdown-row">
+                    <i data-lucide="phone"></i>
+
+                    <span>+91 7432345677</span>
+                    <div class="copy-contact">
+                      <span class="material-icons copy-icon">content_copy</span>
+                    </div>
+                  </div>
+
+                  <div class="dropdown-row last-part-dropdown-row">
+                    <i data-lucide="mail"></i>
+
+                    <span>harishsharma@gmail.com</span>
+                    <div class="copy-contact">
+                      <span class="material-icons copy-icon">content_copy</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="dropdown-contact">
+                  <i data-lucide="mail"></i>
+
+                  <div>
+                    <small>Email us @</small>
+
+                    <p>scf@icicibank.in</p>
+                  </div>
+                </div>
+
+                <div class="dropdown-contact">
+                  <span class="material-symbols-outlined support-agent"
+                    >support_agent</span
+                  >
+
+                  <div>
+                    <small>Give a missed call on</small>
+
+                    <p>1800 309 8595</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <img
+              src="../assets/image/dashboard/accessibility_white.svg"
+              alt="accessibility"
+              width="25"
+              id="openAccessibilityModalMobile"
+            />
+
+            <!-- <img
+            src="../assets/image/dashboard/need-help.svg"
+            alt="help"
+            width="30"
+            id="openHelpPanelMobile"
+          /> -->
+
+            <i data-lucide="bell" id="openNotificationPanelMobile"></i>
+
+            <button id="openLogoutModal" class="header-icon-btn">
+              <img src="../assets/image/dashboard/logout.svg" alt="" />
+            </button>
+          </div>
+
+          <div class="d-none d-md-flex align-items-center header-actions">
+            <div class="get-touch-wrapper">
+              <button class="getInTouchBtn header-action-btn">
+                <i data-lucide="circle-help"></i>
+                <span>Get in touch</span>
+              </button>
+
+              <div class="getTouchDropdown get-touch-dropdown">
+                <div class="drop-card">
+                  <small class="rm-title">Relationship manager</small>
+
+                  <h6>Harish Sharma</h6>
+
+                  <hr />
+
+                  <div class="dropdown-row">
+                    <i data-lucide="phone"></i>
+
+                    <span>+91 7432345677</span>
+                    <div class="copy-contact">
+                      <span class="material-icons copy-icon">content_copy</span>
+                    </div>
+                  </div>
+
+                  <div class="dropdown-row last-part-dropdown-row">
+                    <i data-lucide="mail"></i>
+
+                    <span>harishsharma@gmail.com</span>
+                    <div class="copy-contact">
+                      <span class="material-icons copy-icon">content_copy</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="dropdown-contact">
+                  <i data-lucide="mail"></i>
+
+                  <div>
+                    <small>Email us @</small>
+
+                    <p>scf@icicibank.in</p>
+                  </div>
+                </div>
+
+                <div class="dropdown-contact">
+                  <span class="material-symbols-outlined support-agent"
+                    >support_agent</span
+                  >
+
+                  <div>
+                    <small>Give a missed call on</small>
+
+                    <p>1800 309 8595</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button id="openAccessibilityModal" class="header-icon-btn">
+              <img src="../assets/image/dashboard/accessibility.svg" alt="" />
+            </button>
+
+            <button
+              id="openNotificationPanel"
+              class="header-icon-btn notification-btn"
+            >
+              <i data-lucide="bell"></i>
+
+              <span class="notification-badge">5</span>
+            </button>
+
+            <button id="openLogoutModal" class="header-icon-btn">
+              <img src="../assets/image/dashboard/logout.svg" alt="" />
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Empty state -->
+      <div
+        class="empty-state-container max-content-area"
+        id="emptyContainer"
+        style="display: none"
+      >
+        <div class="locked-overlay">
+          <div class="icon">
+            <i data-lucide="file" class="File-icon"></i>
+          </div>
+          <span class="locked-text">No data found</span>
+          <div class="empty-sub">
+            Please reload or contact your relationship manager.
+          </div>
+        </div>
+      </div>
+
+      <div class="max-content-area">
+        <main class="dashboard-wrapper">
+          <!-- Mobile Profile Screen -->
+          <div
+            id="mobileProfileSection"
+            class="mobile-profile-section d-md-none"
+          >
+            <p class="dashboard-title">
+              Last login:
+              <span class="dashboard-top-span">19 Mar '26 at 8:00 AM</span>
+            </p>
+            <div class="profile-card mb-3 mt-1 profile-card-margin">
+              <div class="d-flex align-items-center gap-3">
+                <div>
+                  <h6 class="mb-1 text-muted your-title">
+                    Your company details
+                  </h6>
+                  <p class="mb-0 fw-bold your-labal">
+                    SunDesh Solar Systems & Services
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="profile-card profile-card-margin">
+              <div class="d-flex align-items-center gap-3 mb-2 profile-part">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="km-card">KM</div>
+
+                  <div>
+                    <h6 class="mb-1 fw-bold" id="mobileProfileName">
+                      Keshav Mishra
+                    </h6>
+                  </div>
+                </div>
+
+                <button id="mobileEditProfileBtn" class="view-details-btn">
+                  Edit Profile
+                  <i data-lucide="pencil" class="pencil"></i>
+                </button>
+              </div>
+
+              <div class="profile-row">
+                <span class="profile-label">Date of birth</span>
+                <span id="mobileProfileDob" class="profile-value"
+                  >26 Apr ‘01</span
+                >
+              </div>
+
+              <div class="profile-row">
+                <span class="profile-label">Email ID</span>
+                <span id="mobileProfileEmail" class="profile-value"
+                  >keshav.mishra@gmail.com</span
+                >
+              </div>
+
+              <div class="profile-row">
+                <span class="profile-label">Mobile number</span>
+                <span id="mobileProfileMobile" class="profile-value"
+                  >+91 7656440011</span
+                >
+              </div>
+
+              <div class="profile-row profile-row-bottom">
+                <span class="profile-label">Address</span>
+                <span id="mobileProfileAddress" class="profile-value">
+                  178CP, Bandra Kurla Complex, Mumbai, Maharashtra, 400025.
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Profile edit modal -->
+          <div id="profileEditModal" class="custom-modal-overlay">
+            <div class="custom-modal profile-modal">
+              <button class="modal-close-btn" data-close-modal>
+                <span class="material-icons">close</span>
+              </button>
+
+              <h2 class="modal-title">Profile details</h2>
+
+              <div class="row g-3 modal-pad">
+                <div class="col-md-6 profile-card-margin">
+                  <label class="form-label">Name</label>
+                  <input
+                    class="form-control"
+                    id="editName"
+                    value="Keshav Mishra"
+                  />
+                </div>
+
+                <div class="col-md-6 second-item profile-card-margin">
+                  <label class="form-label"
+                    >Date of birth as per aadhaar
+                    <i
+                      data-lucide="info"
+                      class="info-icon date-icon"
+                      data-tooltip="Date of birth"
+                    ></i>
+                  </label>
+                  <div class="position-relative calender-input">
+                    <input
+                      type="text"
+                      class="form-control pe-5"
+                      id="editDob"
+                      value="26/04/2001"
+                    />
+                    <i
+                      data-lucide="calendar"
+                      class="bi bi-calendar3 position-absolute top-50 end-0 translate-middle-y me-3 copy-icon"
+                    ></i>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label">Email ID</label>
+                  <input
+                    class="form-control"
+                    id="editEmail"
+                    value="keshav.mishra@gmail.com"
+                  />
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label">Mobile number</label>
+                  <div class="d-flex gap-3">
+                    <input
+                      class="form-control edit-mobile-pre"
+                      value="+91"
+                      disabled
+                    />
+                    <input
+                      class="form-control"
+                      id="editMobile"
+                      value="9362736457"
+                      maxlength="10"
+                    />
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label">Address</label>
+                  <input
+                    id="editAddress"
+                    class="form-control"
+                    value="178CP, Bandra Kurla Complex, Road 21 "
+                  />
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label">Pin code</label>
+                  <input class="form-control" value="400051" />
+                </div>
+
+                <div class="mobile-profile">
+                  <div class="col-md-6">
+                    <label class="form-label">City</label>
+                    <span class="form-control form-input-value">Mumbai</span>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label">State</label>
+                    <span class="form-control form-input-value"
+                      >Maharashtra</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="modal-footer-right">
+                <button class="outline-orange-btn" data-close-modal>
+                  Cancel
+                </button>
+
+                <button class="orange-btn" id="updateProfileBtn">Update</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="Dashboard-page-section">
+            <div class="page-top">
+              <div class="page-top-left">
+                <h1 class="page-title">Supply chain finance</h1>
+                <div class="page-left-subtitle">
+                  Program name:
+                  <span class="page-left-span">Kartikey Corporations</span>
+                </div>
+              </div>
+
+              <div class="page-top-right">
+                <div class="last-login">
+                  Last login: <span>4 Jun '26</span> at <span>8:00 AM</span>
+                </div>
+
+                <div class="add-dealer-wrapper">
+                  <button class="orange-btn" id="addDealerBtn">
+                    Add dealer
+                    <i data-lucide="chevron-down"></i>
+                  </button>
+                  <div class="add-dealer-menu" id="addDealerMenu">
+                    <div class="menu-item">Add single dealer</div>
+                    <div class="menu-item">Bulk upload dealers</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <section>
+              <div class="card-header">
+                <h2>Sanction across active dealers</h2>
+                <a class="view-details" href=""
+                  >View details <i data-lucide="chevron-right"></i
+                ></a>
+              </div>
+              <div class="card">
+                <div class="stat-row">
+                  <div class="stat-item" id="mobile-not">
+                    <span class="stat-label">Program sanction limit</span>
+                    <div class="stat-value">
+                      ₹18,00,00,000<span class="zero-count">.00</span>
+                    </div>
+                  </div>
+                  <div class="stat-item">
+                    <span class="stat-label"
+                      ><i data-lucide="users" class="stat-icon"></i>Active
+                      dealers</span
+                    >
+                    <span class="stat-value"
+                      >83 <span class="stat-suffix">dealers</span></span
+                    >
+                  </div>
+                  <div class="stat-item">
+                    <span class="stat-label">Limit utilized by</span>
+                    <span class="stat-value"
+                      >100 <span class="stat-suffix">dealers</span></span
+                    >
+                  </div>
+                  <div class="stat-item">
+                    <span class="stat-label">Limit not utilized by</span>
+                    <span class="stat-value"
+                      >25 <span class="stat-suffix">dealers</span></span
+                    >
+                  </div>
+                </div>
+
+                <div class="stat-row" id="desktop-not">
+                  <div class="stat-item">
+                    <span class="stat-label">Program sanction limit</span>
+                    <div class="stat-value">
+                      ₹18,00,00,000<span class="zero-count">.00</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="sanction-body">
+                  <div class="sanction-toggles">
+                    <button
+                      class="toggle-box active"
+                      id="utilizedBox"
+                      data-view="utilized"
+                    >
+                      <span class="toggle-label">Program utilized limit</span>
+                      <div class="toggle-value">
+                        ₹12,80,00,000<span class="zero-count">.00</span>
+                      </div>
+                      <i data-lucide="chevron-right"></i>
+                    </button>
+                    <button
+                      class="toggle-box"
+                      id="availableBox"
+                      data-view="available"
+                    >
+                      <span class="toggle-label">Program available limit</span>
+                      <div class="toggle-value">
+                        ₹5,20,00,000<span class="zero-count">.00</span>
+                      </div>
+                      <i data-lucide="chevron-right"></i>
+                    </button>
+                  </div>
+
+                  <div class="sanction-donut-side">
+                    <div class="donut-wrap small">
+                      <div class="donut-chart" id="sanctionDonut"></div>
+
+                      <div class="donut-center">
+                        <span
+                          class="donut-center-label"
+                          id="sanctionCenterLabel"
+                          >Program utilized limit</span
+                        >
+                        <div
+                          class="donut-center-value small"
+                          id="sanctionCenterValue"
+                        >
+                          ₹12,80,00,000<span class="zero-count">.00</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="legend-list" id="sanctionLegend"></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <div class="two-col-row">
+              <section class="saction-part">
+                <div class="card-header">
+                  <h2>New dealer leads</h2>
+                  <a class="view-details" href="#"
+                    >View details <i data-lucide="chevron-right"></i
+                  ></a>
+                </div>
+                <div class="card">
+                  <div class="card-toolbar">
+                    <div class="date-select" id="dateSelect">
+                      <span>Today (5 Jun '26)</span>
+                      <i data-lucide="chevron-down"></i>
+                    </div>
+                  </div>
+
+                  <div class="leads-body">
+                    <div class="donut-wrap">
+                      <div class="donut-chart" id="leadsDonut"></div>
+
+                      <div class="donut-center">
+                        <span class="donut-center-label">New dealer leads</span>
+                        <span class="donut-center-value">65</span>
+                      </div>
+                    </div>
+
+                    <div class="legend-grid" id="leadsLegend"></div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="renew-part">
+                <div class="card-header">
+                  <h2>Renewal summary</h2>
+                  <a class="view-details" href="#"
+                    >View details <i data-lucide="chevron-right"></i
+                  ></a>
+                </div>
+
+                <div class="card">
+                  <div class="renewal-body">
+                    <div class="donut-wrap">
+                      <div class="donut-chart" id="renewalDonut"></div>
+                      <div class="donut-center">
+                        <span class="donut-center-label">Renewal summary</span>
+                        <span class="donut-center-value"
+                          >83
+                          <span class="donut-center-suffix">dealers</span></span
+                        >
+                      </div>
+                    </div>
+
+                    <div class="legend-list" id="renewalLegend"></div>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+        </main>
+      </div>
+
+      <div id="toast"></div>
+
+      <!-- Footer -->
+      <div id="dashboardFooter">
+        <div class="max-content-area">
+          <div class="footer-left" id="footerBalanceSection">
+            <div>
+              <div class="footer-label">View account balance</div>
+
+              <div class="footer-link">
+                Redirect to CIB
+                <i data-lucide="arrow-up-right"></i>
+              </div>
+            </div>
+
+            <div id="footerStatementSection">
+              <div class="footer-label">Account statement</div>
+
+              <div class="footer-link">
+                Download statement
+                <i data-lucide="download" class="chevron-icon"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="footer-right">
+            <img
+              src="../assets/image/dashboard/digital-lite-orange.svg"
+              class="digital-image"
+            />
+
+            <div class="footer-right-text">
+              <span>(Supply chain finance portal)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile Bottom Navigation -->
+      <div id="mobileBottomNav" class="mobile-bottom-nav d-md-none">
+        <div class="mobile-nav-item active" data-tab="dashboard">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </div>
+
+        <div id="footer-profile" class="mobile-nav-item" data-tab="profile">
+          <i data-lucide="user"></i>
+          <span>Profile</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="sidePanelOverlay"></div>
+    <!-- Notification side panel -->
+    <div id="notificationPanel" class="side-panel" style="display: none">
+      <div class="panel-header">
+        <h4 class="norify">
+          <i data-lucide="bell" id="close-mobile"></i>
+          <i
+            data-lucide="chevron-left"
+            class="close-panel"
+            id="close-desktop"
+          ></i>
+          Notifications
+        </h4>
+
+        <button class="close-panel" id="close-mobile">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+
+      <div class="panel-header panel-bottom">
+        <h4 class="date-panel">20 Jun ‘25 (Today)</h4>
+
+        <button>
+          <p class="mark-all">
+            <i data-lucide="check-check"></i>Mark all as read
+          </p>
+        </button>
+      </div>
+
+      <div class="panel-body">
+        <div class="notification-item">
+          <div class="round-ball"></div>
+          <div>
+            <i data-lucide="file" class="notify-icon"></i>
+          </div>
+          <div>
+            <h6>Sanction letter is sent to your email ID.</h6>
+            <p>
+              Thankyou for completing your sanction application, Your sanction
+              letter is sent to the registered email ID.
+            </p>
+            <span>10:35 AM</span>
+          </div>
+        </div>
+
+        <div class="notification-item">
+          <div class="notification-point"></div>
+          <div>
+            <i data-lucide="clock" class="notify-icon"></i>
+          </div>
+          <div>
+            <h6>Offer expiring soon.</h6>
+            <p>
+              Your loan offer expires in 3 days, don’t miss out. Apply now to
+              secure your limit before it expires.
+            </p>
+            <span>10:35 AM</span>
+          </div>
+        </div>
+
+        <div class="notification-item">
+          <div class="notification-point"></div>
+          <div>
+            <i data-lucide="clock" class="notify-icon"></i>
+          </div>
+          <div>
+            <h6>Your KYC is pending.</h6>
+            <p>
+              ICICI Bank relationship manager will contact you to complete your
+              KYC.
+            </p>
+            <span>10:35 AM</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Menu side panel -->
+    <div id="menuPanel" class="menu-side-panel" style="display: none">
+      <div class="panel-header">
+        <h4 class="norify">
+          <i
+            data-lucide="chevron-left"
+            class="close-panel"
+            id="menu-close"
+            style="display: none"
+          ></i>
+          <button class="getInTouchBtnMenu header-action-btn">
+            <i data-lucide="circle-help"></i>
+            <span>Get in touch</span>
+          </button>
+
+          <div class="getTouchDropdownMenu get-touch-dropdown-menu">
+            <div class="drop-card">
+              <small class="rm-title">Relationship manager</small>
+
+              <h6>Harish Sharma</h6>
+
+              <hr />
+
+              <div class="dropdown-row">
+                <i data-lucide="phone"></i>
+
+                <span>+91 7432345677</span>
+                <div class="copy-contact">
+                  <span class="material-icons copy-icon">content_copy</span>
+                </div>
+              </div>
+
+              <div class="dropdown-row last-part-dropdown-row">
+                <i data-lucide="mail"></i>
+
+                <span>harishsharma@gmail.com</span>
+                <div class="copy-contact">
+                  <span class="material-icons copy-icon">content_copy</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="dropdown-contact">
+              <i data-lucide="mail"></i>
+
+              <div>
+                <small>Email us @</small>
+
+                <p>scf@icicibank.in</p>
+              </div>
+            </div>
+
+            <div class="dropdown-contact">
+              <span class="material-symbols-outlined support-agent"
+                >support_agent</span
+              >
+
+              <div>
+                <small>Give a missed call on</small>
+
+                <p>1800 309 8595</p>
+              </div>
+            </div>
+          </div>
+        </h4>
+
+        <button class="close-panel" id="close-btn-menu">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+
+      <div class="panel-body menu-list">
+        <!-- Analytics Dashboard -->
+        <div class="menu-item active">
+          <div class="menu-icon-box">
+            <i data-lucide="monitor"></i>
+          </div>
+          <div class="menu-text">
+            <span class="menu-title">Analytics dashboard</span>
+            <span class="menu-subtitle"
+              >View dealer insights & key metrics</span
+            >
+          </div>
+        </div>
+
+        <!-- New Dealer Leads -->
+        <div class="menu-item">
+          <div class="menu-icon-box">
+            <i data-lucide="contact"></i>
+          </div>
+          <div class="menu-text">
+            <span class="menu-title">New dealer leads</span>
+            <span class="menu-subtitle"
+              >Track newly added dealers & their progress</span
+            >
+          </div>
+        </div>
+
+        <!-- Transaction Dashboard -->
+        <div class="menu-item">
+          <div class="menu-icon-box">
+            <i data-lucide="arrow-left-right"></i>
+          </div>
+          <div class="menu-text">
+            <span class="menu-title">Transaction dashboard</span>
+            <span class="menu-subtitle"
+              >View dealer transactions, limit utilization, and overdue
+              details</span
+            >
+          </div>
+        </div>
+
+        <!-- Renewal Details -->
+        <div class="menu-item">
+          <div class="menu-icon-box">
+            <i data-lucide="book-open"></i>
+          </div>
+          <div class="menu-text">
+            <span class="menu-title">Renewal details</span>
+            <span class="menu-subtitle"
+              >Track active dealer renewals, enhancement offers, and offer
+              expiries</span
+            >
+          </div>
+        </div>
+      </div>
+      
+      <div class="panel-footer">
+        <div class="logout-btn" id="menuLogoutBtn">
+          <i data-lucide="log-out"></i>
+          <span>Logout</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Accessibility panel -->
+    <div id="accessibilityOverlay"></div>
+    <div id="accessibilityPanel">
+      <div class="accessibility-content">
+        <button
+          class="modal-close-btn"
+          id="accessibilityClose"
+          data-close-modal
+        >
+          <i data-lucide="x"></i>
+        </button>
+        <h5>Accessibility Settings</h5>
+
+        <div class="setting-row">
+          <img
+            src="../assets/image/dashboard/size.svg"
+            alt=""
+            class="text-size"
+          />
+          <span>Text Size</span>
+
+          <div class="setting-controls">
+            <button class="decrease-font">−</button>
+            <button class="not-active first" data-state="0">A</button>
+            <button class="active second" data-state="1">A</button>
+            <button class="not-active third" data-state="2">A</button>
+            <button class="increase-font">+</button>
+          </div>
+        </div>
+
+        <div class="setting-row">
+          <img
+            src="../assets/image/dashboard/high-contrast.svg"
+            alt=""
+            class="high-contrast-part"
+          />
+          <span>High contrast mode</span>
+
+          <div class="form-check form-switch">
+            <input
+              id="highContrastToggle"
+              class="form-check-input"
+              type="checkbox"
+            />
+          </div>
+        </div>
+
+        <div class="accessibility-footer">
+          <button class="outline-orange-btn" id="resetAccessibility">
+            Reset
+          </button>
+
+          <button class="orange-btn" id="applyAccessibility">Apply</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logout modal -->
+    <div id="logoutModal" class="custom-modal-overlay">
+      <div class="custom-modal relationship-modal logout-modal">
+        <button class="modal-close-btn" data-close-modal>
+          <i data-lucide="x"></i>
+        </button>
+        <div class="d-flex gap-3">
+          <img
+            src="../assets/image/auth/logout.svg"
+            alt="verification-done"
+            class="verification-done"
+          />
+          <div class="d-flex flex-column gap-1">
+            <h5 class="modal-title">Are you sure you want to cancel?</h5>
+            <p class="verification-subtitle">
+              Clicking on logout will take you to home screen.
+            </p>
+          </div>
+        </div>
+
+        <div class="modal-footer-right">
+          <button class="outline-orange-btn" data-close-modal>Close</button>
+          <button id="proceedBtn" class="orange-btn" data-close-modal>
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Desktop logout success screen -->
+    <div id="logoutSuccessScreen" style="display: none">
+      <div class="logout">
+        <div class="max-content-area">
+          <div class="logout-header">
+            <img
+              src="../assets/image/dashboard/ICICI-logo.svg"
+              alt="logo"
+              class="header-logo"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="logout-success-content max-content-area">
+        <div class="alert-icon-container">
+          <div class="alert-icon-outer"></div>
+          <div class="alert-icon-middle"></div>
+          <div class="alert-icon-custom">
+            <span class="material-icons">check</span>
+          </div>
+        </div>
+
+        <h2>You have been logged out successfully</h2>
+
+        <p>
+          Thank you for using the ICICI Bank SCF Portal. Your progress has been
+          saved, log back in to continue.
+        </p>
+      </div>
+    </div>
+
+    <!-- Mobile logout success screen -->
+    <div
+      id="mobileLogoutSuccessScreen"
+      style="display: none"
+      class="custom-modal-overlay"
+    >
+      <div class="custom-modal relationship-modal logout-modal">
+        <button class="modal-close-btn" data-close-modal>
+          <span class="material-icons">close</span>
+        </button>
+        <div class="d-flex gap-3">
+          <div class="alert-icon-container">
+            <div class="alert-icon-outer"></div>
+            <div class="alert-icon-middle"></div>
+            <div class="alert-icon-custom">
+              <span class="material-icons">check</span>
+            </div>
+          </div>
+          <div class="d-flex flex-column gap-1">
+            <h5 class="modal-title">You have been logged out successfully</h5>
+            <p class="verification-subtitle">
+              Thank you for using the ICICI Bank SCF Portal. Your progress has
+              been saved, log back in to continue.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast container -->
+    <div id="toastContainer">
+      <div id="downloadToast" class="custom-toast" style="display: none">
+        <div class="toast-icon"></div>
+        <div>
+          <div class="toast-title">Download successful</div>
+          <div class="toast-message">
+            Sanction letter document has been downloaded successfully
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Apply for sanction modal -->
+    <div class="custom-modal-overlay" id="applySanctionModal">
+      <div class="custom-modal sanction-modal">
+        <div class="corner-image">
+          <img
+            src="../assets/image/dashboard/bg-image.svg"
+            alt="document icon"
+          />
+        </div>
+
+        <div class="side-center-image">
+          <img
+            src="../assets/image/dashboard/file.svg"
+            alt="verification badge"
+          />
+        </div>
+
+        <div class="side-mobile-image" style="display: none">
+          <img
+            src="../assets/image/dashboard/side-mobile-file.svg"
+            alt="verification badge"
+          />
+        </div>
+
+        <div class="mobile-fix">
+          <button class="modal-close-btn" id="modalCloseBtn">
+            <span class="material-icons">close</span>
+          </button>
+
+          <h2>Apply for dealer finance</h2>
+
+          <p class="subtitle">Steps you need to follow:</p>
+        </div>
+
+        <div class="sanction-steps">
+          <div class="sanction-step">
+            <span>1</span>
+            <div>
+              <h6>Verify entity details</h6>
+              <p>PAN, GST & URC</p>
+            </div>
+          </div>
+
+          <div class="sanction-step">
+            <span>2</span>
+            <div>
+              <h6>Additional entity details</h6>
+              <p>LEI & banking exposure</p>
+            </div>
+          </div>
+
+          <div class="sanction-step">
+            <span>3</span>
+            <div>
+              <h6>Proprietor details</h6>
+              <p>Personal details of proprietor</p>
+            </div>
+          </div>
+
+          <div class="sanction-step">
+            <span>4</span>
+            <div>
+              <h6>Bank statement & ITR</h6>
+              <p>Account details, bank statement and ITR</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-part-apply">
+          <p class="apply-six-title">Keep these details/documents ready:</p>
+          <div class="grid-section">
+            <span class="grid-section-part">
+              <div class="icon-circle">
+                <span class="material-symbols-outlined"> contact_mail </span>
+              </div>
+              PAN card
+              <span class="personal">(personal)</span>
+            </span>
+            <span class="grid-section-part">
+              <div class="icon-circle">
+                <span class="material-symbols-outlined">cards_stack</span>
+              </div>
+              GSTIN</span
+            >
+            <span class="grid-section-part">
+              <div class="icon-circle">
+                <span class="material-symbols-outlined">docs</span>
+              </div>
+              URC</span
+            >
+            <span class="grid-section-part">
+              <div class="icon-circle">
+                <span class="material-symbols-outlined">description</span>
+              </div>
+              LEI certificate</span
+            >
+            <span class="grid-section-part">
+              <div class="icon-circle">
+                <span class="material-symbols-outlined">contract_edit</span>
+              </div>
+              Bank statement</span
+            >
+            <span class="grid-section-part">
+              <div class="icon-circle">
+                <span class="material-symbols-outlined"
+                  >heap_snapshot_multiple</span
+                >
+              </div>
+              Income tax return</span
+            >
+          </div>
+        </div>
+
+        <div class="modal-footer-right">
+          <button class="outline-orange-btn" id="cancelBtn">Cancel</button>
+          <button class="orange-btn" id="applySanctionProceedBtn">
+            Proceed
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- New lead Table modal -->
+    <div class="custom-modal-overlay" id="leadTableModal">
+      <div class="custom-modal form-modal sanction-modal">
+        <div class="leads-top">
+          <button class="modal-close-btn" id="leadTableCloseIcon">
+            <span class="material-icons">close</span>
+          </button>
+          <h2 id="leadTitle">To be actioned</h2>
+          <div id="leadCount" class="lead-count">18</div>
+        </div>
+
+        <div class="stepScroll">
+          <div class="lead-table-wrapper">
+            <table class="lead-table">
+              <thead id="leadTableHead"></thead>
+              <tbody id="leadTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="active LeadTableHideShowBtn">
+            <span class="show-text">View Details</span>
+            <i data-lucide="eye" class="info-icon icon-show"></i>
+
+            <span class="hide-text">Hide details</span>
+            <i data-lucide="eye-off" class="info-icon icon-hide"></i>
+          </button>
+          <div class="footer-actions">
+            <button class="outline-orange-btn" id="leadTableCloseBtn">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JS -->
+    <script src="../assets/js/plugins.js"></script>
+    <script src="../assets/js/jquery-3.6.0.min.js"></script>
+    <script src="../assets/js/global.js"></script>
+
+    <!-- jQuery -->
+    <script src="./dashboard.js"></script>
+    <script src="../assets/js/d3.min.js"></script>
+  </body>
+</html>

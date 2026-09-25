@@ -1,0 +1,863 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link rel="stylesheet" href="../assets/css/plugins.css" />
+    <link rel="stylesheet" href="../assets/css/global.css" />
+    <link rel="stylesheet" href="./login.css" />
+  </head>
+
+  <body class="login-page">
+    <!-- Header -->
+    <header class="bg-primary-gradient">
+      <div
+        class="d-flex justify-content-between align-items-center max-content-area py-4"
+      >
+        <img src="../assets/image/header/logo.svg" alt="logo" />
+        <div class="d-flex align-items-center gap-4">
+          <img
+            src="../assets/image/header/accessibility.svg"
+            alt="logo"
+            id="openAccessibilityModal"
+            style="cursor: pointer"
+          />
+          <div class="d-flex align-items-center gap-2">
+            <img src="../assets/image/header/icons.svg" alt="logo" />
+            <p class="text-white d-none d-md-block">1800 309 8595</p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Accessibility Modal  -->
+    <div id="accessibilityPanel" style="z-index: 9999">
+      <div class="accessibility-content">
+        <button class="modal-close-btn" data-close-modal>
+          <i data-lucide="x"></i>
+        </button>
+        <h5>Accessibility Settings</h5>
+
+        <div class="setting-row">
+          <img
+            src="../assets/image/dashboard/size.svg"
+            alt=""
+            style="margin-right: -65px"
+          />
+          <span>Text Size</span>
+
+          <div class="setting-controls">
+            <button class="decrease-font">−</button>
+            <button class="not-active" data-state="0" style="font-size: 12px">
+              A
+            </button>
+            <button class="active" data-state="1" style="font-size: 14px">
+              A
+            </button>
+            <button class="not-active" data-state="2" style="font-size: 16px">
+              A
+            </button>
+            <button class="increase-font">+</button>
+          </div>
+        </div>
+
+        <div class="setting-row">
+          <img
+            src="../assets/image/dashboard/line-height.svg"
+            alt=""
+            style="margin-right: -40px"
+          />
+          <span>Line Height</span>
+
+          <div class="setting-controls">
+            <button class="decrease-line">−</button>
+            <button class="not-active" data-state="0" style="font-size: 12px">
+              ☰
+            </button>
+            <button class="active" data-state="1" style="font-size: 14px">
+              ☰
+            </button>
+            <button class="not-active" data-state="2" style="font-size: 16px">
+              ☰
+            </button>
+            <button class="increase-line">+</button>
+          </div>
+        </div>
+
+        <div class="setting-row">
+          <img
+            src="../assets/image/dashboard/letter-spacing.svg"
+            alt=""
+            style="margin-right: -15px"
+          />
+          <span>Letter Spacing</span>
+
+          <div class="setting-controls">
+            <button class="decrease-spacing">−</button>
+            <button class="not-active" data-state="0" style="font-size: 12px">
+              |A|
+            </button>
+            <button class="active" data-state="1" style="font-size: 14px">
+              |A|
+            </button>
+            <button class="not-active" data-state="2" style="font-size: 16px">
+              |A|
+            </button>
+            <button class="increase-spacing">+</button>
+          </div>
+        </div>
+
+        <div class="setting-row" style="padding-top: 16px !important">
+          <img
+            src="../assets/image/dashboard/high-contrast.svg"
+            alt=""
+            style="margin-right: -115px"
+          />
+          <span>High contrast mode</span>
+
+          <div class="form-check form-switch">
+            <input
+              id="highContrastToggle"
+              class="form-check-input"
+              type="checkbox"
+            />
+          </div>
+        </div>
+
+        <div class="accessibility-footer">
+          <button
+            class="outline-orange-btn"
+            id="resetAccessibility"
+            style="
+              font-size: 14px;
+              font-weight: 700;
+              color: #6f6f6f;
+              width: 170px;
+              border: 1px solid #d2d2d2 !important;
+              height: 32px;
+            "
+          >
+            Reset
+          </button>
+
+          <button
+            class="orange-btn"
+            id="applyAccessibility"
+            style="
+              font-size: 14px;
+              font-weight: 700;
+              color: #6f6f6f;
+              background-color: #d2d2d2;
+              min-width: 170px;
+              border: 1px solid #d2d2d2 !important;
+              height: 32px;
+            "
+          >
+            Apply
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- HERO SECTION -->
+    <section class="hero-section">
+      <div class="row g-0">
+        <div class="col-12 col-md-5 left-section">
+          <div class="left-box">
+            <div class="d-flex flex-column gap-2">
+              <p class="left-text">Login to</p>
+              <h2 class="title">DigitalLite (Supply Chain Finance)</h2>
+            </div>
+
+            <div class="form-box">
+              <div class="d-flex flex-column gap-4">
+                <div class="d-flex flex-column">
+                  <label class="label-title">Mobile number</label>
+                  <div
+                    class="d-flex align-items-center gap-1 mt-1 w-100 mobile-input-wrapper"
+                  >
+                    <input
+                      type="tel"
+                      placeholder="10 digit mobile number"
+                      class="otp-input"
+                      id="mobileNumber"
+                      tabindex="1"
+                    />
+                  </div>
+                  <div class="d-flex align-items-center gap-1 mt-1 error-msg">
+                    <i data-lucide="info" class="error-info"></i>
+                    <p class="error-message" id="mobileError"></p>
+                  </div>
+                </div>
+                <div class="d-flex flex-column">
+                  <label class="label-title">CAPTCHA verification</label>
+                  <div class="d-flex align-items-center gap-2 mt-1 w-100">
+                    <input
+                      type="text"
+                      placeholder="Enter CAPTCHA here"
+                      class="otp-input"
+                      id="verification-captcha"
+                      tabindex="2"
+                    />
+                    <div class="d-flex align-items-center gap-2">
+                      <p class="captcha-verification" id="captchaText">
+                        CK97Tu
+                      </p>
+                      <i
+                        data-lucide="rotate-ccw"
+                        class="refresh-icons"
+                        id="refreshCaptcha"
+                        tabindex="3"
+                        role="button"
+                        aria-label="Refresh CAPTCHA"
+                      ></i>
+                    </div>
+                  </div>
+
+                  <div class="d-flex align-items-center gap-1 mt-1 error-msg">
+                    <i data-lucide="info" class="error-info"></i>
+                    <p class="error-message" id="captchaError"></p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="d-flex align-items-start gap-2">
+                <div class="checkbox-focus">
+                  <input
+                    type="checkbox"
+                    class="input-checkbox"
+                    id="consentCheck"
+                    tabindex="4"
+                  />
+                </div>
+                <p class="checkbox-subtitle">
+                  I hereby authorize ICICI Bank and its representatives to
+                  contact via call, SMS, whatsapp, and email ID. This consent
+                  will override any registration for DND (if applicable)
+                </p>
+              </div>
+
+              <button
+                class="otp-btn rounded p-3"
+                id="otpBtn"
+                disabled
+                tabindex="5"
+              >
+                <span class="btn-text">Send OTP</span>
+                <span class="btn-loader d-none"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-7 right-section">
+          <div class="d-flex flex-column gap-2 right-container">
+            <div class="d-flex flex-column gap-1 md:gap-2">
+              <p class="right-title" id="slideTitle">Anchor corporates</p>
+              <p class="right-subtitle" id="slideSubtitle">
+                Enable and manage dealer/vendor financing seamlessly with a
+                fully digital, intelligent platform designed for faster credit
+                flow across your supply chain.
+              </p>
+            </div>
+            <div
+              class="md:mt-4 mt-1 pillis-container"
+              id="pillisContainer"
+            ></div>
+
+            <div class="d-flex align-items-center gap-2 mt-4" id="sliderDots">
+              <div class="pillis active-dot" data-slide="0"></div>
+              <div class="pillis" data-slide="1"></div>
+              <div class="pillis" data-slide="2"></div>
+            </div>
+          </div>
+
+          <img
+            src="../assets/image/auth/laptop-right.png"
+            alt="Bottom-img"
+            class="bottom-img"
+          />
+
+          <img
+            src="../assets/image/auth/right.svg"
+            alt="right-img"
+            class="right-img d-none d-md-block"
+          />
+
+          <img
+            src="../assets/image/auth/hero-footer.svg"
+            alt="footer-img"
+            class="footer-img"
+          />
+        </div>
+      </div>
+
+      <img
+        src="../assets/image/auth/hero-blur.png"
+        alt="footer-img"
+        class="blur-image"
+      />
+
+      <!-- OTP Modal -->
+      <div class="modal fade" id="otpModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content border-0">
+            <div
+              class="modal-header d-flex align-items-start justify-content-between p-0 border-0"
+            >
+              <div class="d-flex flex-column gap-1">
+                <h5 class="modal-title">Enter OTP to verify</h5>
+                <p class="modal-subtitle">
+                  OTP sent to entered mobile number
+                  <strong id="otpMobileNumber"></strong>
+                </p>
+              </div>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+              ></button>
+            </div>
+            <div>
+              <div class="d-flex align-items-center gap-2">
+                <input
+                  type="password"
+                  class="otp-input-verification"
+                  maxlength="1"
+                />
+                <input
+                  type="password"
+                  class="otp-input-verification"
+                  maxlength="1"
+                />
+                <input
+                  type="password"
+                  class="otp-input-verification"
+                  maxlength="1"
+                />
+                <input
+                  type="password"
+                  class="otp-input-verification"
+                  maxlength="1"
+                />
+                <div class="d-flex align-items-center mt-4">
+                  <!-- <button id="toggleOtpVisibility" disabled>
+                    <i data-lucide="eye" id="eyeOpen"></i>
+                    <i
+                      data-lucide="eye-off"
+                      id="eyeClose"
+                      style="display: none"
+                    ></i>
+                  </button> -->
+                  <button id="toggleOtpVisibility" disabled>
+                    <span class="material-icons" id="eyeOpen">visibility</span>
+                    <span
+                      class="material-icons"
+                      id="eyeClose"
+                      style="display: none"
+                    >
+                      visibility_off
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="d-flex align-items-center gap-1 mt-4">
+                <p class="timmer-title" id="otpTimerTitle">Resend OTP after</p>
+                <p class="timmer" id="otpTimer">00:30s</p>
+
+                <div
+                  class="align-items-center gap-1"
+                  style="display: none"
+                  id="resendOtpBtn"
+                >
+                  <p class="resend-title">Didn’t receive an OTP?</p>
+                  <button type="button" class="resend-btn">Resend OTP</button>
+                </div>
+
+                <div
+                  class="d-none align-items-center gap-1"
+                  id="otpResentMessage"
+                >
+                  <i
+                    data-lucide="circle-check"
+                    class="verification-otp-icons"
+                  ></i>
+                  <p class="resend-otp">OTP Re-sent</p>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer border-0">
+              <button
+                type="button"
+                class="cancel-btn js-logout-trigger d-none d-md-block"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                class="verify-btn"
+                id="verifyOtpBtn"
+                disabled
+              >
+                Verify
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Success (1 Anchor) Modal  -->
+      <div
+        class="modal fade"
+        id="successModal"
+        tabindex="-1"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content border-0">
+            <div
+              class="modal-header d-flex align-items-start justify-content-between p-0 border-0"
+            >
+              <div class="d-flex align-items-center gap-2">
+                <img
+                  src="../assets/image/auth/done.svg"
+                  alt="verification-done"
+                  class="verification-done"
+                />
+                <div class="d-flex flex-column gap-1">
+                  <h5 class="modal-title">
+                    Mobile OTP verification successful
+                  </h5>
+                </div>
+              </div>
+              <button
+                type="button"
+                class="btn-close js-cancel-btn"
+                data-bs-dismiss="modal"
+              ></button>
+            </div>
+            <div class="verification-section">
+              <div class="d-flex flex-column gap-1">
+                <p class="verification-title">Anchor corporate program name</p>
+                <p class="verification-desc">
+                  Kartikeya Industries Service Division
+                </p>
+              </div>
+            </div>
+            <div class="modal-footer border-0">
+              <button
+                type="button"
+                class="cancel-btn js-logout-trigger d-none d-md-block"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                class="default-enable success-proceed"
+                data-bs-dismiss="modal"
+                id="proceedBtn"
+              >
+                Proceed
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Success (Multiple anchor) Modal  -->
+      <!-- <div
+        class="modal fade multi-success"
+        id="successModal"
+        tabindex="-1"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content border-0">
+            <div
+              class="modal-header d-flex align-items-start justify-content-between p-0 border-0"
+            >
+              <div class="d-flex align-items-start align-items-md-center gap-2">
+                <img
+                  src="../assets/image/auth/done.svg"
+                  alt="verification-done"
+                  class="verification-done"
+                />
+                <h5 class="modal-title">Mobile OTP verification successful</h5>
+              </div>
+              <button
+                type="button"
+                class="btn-close js-cancel-btn"
+                data-bs-dismiss="modal"
+              ></button>
+            </div>
+            <div class="verification-section">
+              <div class="custom-select-wrapper">
+                <label class="multiple-anchor-title"
+                  >Anchor corporate program name</label
+                >
+
+                <div class="select-box" id="selectBox">
+                  <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Select or search"
+                    autocomplete="off"
+                  />
+                  <i class="bi bi-chevron-down icon" id="arrowIcon"></i>
+                </div>
+
+                <ul class="options" id="optionsList">
+                  <li tabindex="-1" data-original="Kartikeya Corporation">
+                    Kartikeya Corporation
+                  </li>
+                  <li tabindex="-1" data-original="Insight Corporation">
+                    Insight Corporation
+                  </li>
+                  <li tabindex="-1" data-original="Edgetech pvt ltd">
+                    Edgetech pvt ltd
+                  </li>
+                  <li tabindex="-1" data-original="Fintech Corporation">
+                    Fintech Corporation
+                  </li>
+                  <li
+                    tabindex="-1"
+                    data-original="Solar Systems and Services Marketing India Pvt. Ltd"
+                  >
+                    Solar Systems and Services Marketing India Pvt. Ltd
+                  </li>
+                  <li tabindex="-1" data-original="Fintech Corporation">
+                    Fintech Corporation
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="modal-footer border-0">
+              <button
+                type="button"
+                class="cancel-btn js-logout-trigger d-none d-md-block"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                class="default-enable success-proceed"
+                id="proceedBtn"
+              >
+                Proceed
+              </button>
+            </div>
+          </div>
+        </div>
+      </div> -->
+
+      <!-- Loading Modal  -->
+      <div class="modal fade" id="nextModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content border-0 justify-content-center">
+            <div
+              class="d-flex align-items-center justify-content-center flex-column"
+            >
+              <div class="loader"></div>
+              <p class="dashboard-title mt-4">We’re loading your dashboard</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile Not Register Modal  -->
+      <div
+        class="modal fade"
+        id="notRegisterModal"
+        tabindex="-1"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content border-0" style="height: 201px">
+            <div
+              class="modal-header d-flex align-items-start justify-content-between p-0 border-0"
+            >
+              <div class="d-flex align-items-center gap-2">
+                <img
+                  src="../assets/image/auth/logout.svg"
+                  alt="verification-done"
+                  class="verification-done"
+                />
+                <div class="d-flex flex-column gap-1">
+                  <h5 class="modal-title">
+                    Mobile number not registered with corporate
+                  </h5>
+                  <p class="verification-subtitle">
+                    Please enter a registered mobile number to login.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+              ></button>
+            </div>
+
+            <div class="modal-footer border-0">
+              <button
+                type="button"
+                class="cancel-btn"
+                data-bs-dismiss="modal"
+                id="backToOtpBtn"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                class="default-enable"
+                data-bs-dismiss="modal"
+                id="proceedBtn"
+              >
+                Re-enter mobile number
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- OTP Failed 3 Times  -->
+      <div
+        class="modal fade"
+        id="otpFailedModal"
+        tabindex="-1"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content border-0" style="height: 201px">
+            <div
+              class="modal-header d-flex align-items-start justify-content-between p-0 border-0"
+            >
+              <div class="d-flex align-items-center gap-2">
+                <img
+                  src="../assets/image/auth/logout.svg"
+                  alt="verification-done"
+                  class="verification-done"
+                />
+                <div class="d-flex flex-column gap-1">
+                  <h5 class="modal-title">
+                    OTP requests have reached the maximum limit
+                  </h5>
+                  <p class="verification-subtitle">
+                    Request you to please check with ICICI Bank solution manager
+                    or with anchor corporate for the mobile number provided.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+              ></button>
+            </div>
+
+            <div class="modal-footer border-0">
+              <button
+                type="button"
+                class="cancel-btn"
+                data-bs-dismiss="modal"
+                id="backToOtpBtn"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                class="default-enable"
+                data-bs-dismiss="modal"
+                id="proceedBtn"
+              >
+                Try another number
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Logout Modal  -->
+      <div class="modal fade" id="logoutModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content border-0" style="height: 201px">
+            <div
+              class="modal-header d-flex align-items-start justify-content-between p-0 border-0"
+            >
+              <div class="d-flex align-items-start gap-2">
+                <img
+                  src="../assets/image/auth/logout.svg"
+                  alt="verification-done"
+                  class="verification-done"
+                />
+                <div class="d-flex flex-column gap-1">
+                  <h5 class="modal-title">Are you sure you want to cancel?</h5>
+                  <p class="verification-subtitle">
+                    Clicking on logout will take you to home screen.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+              ></button>
+            </div>
+
+            <div class="modal-footer border-0">
+              <button
+                type="button"
+                class="cancel-btn d-none d-md-block"
+                data-bs-dismiss="modal"
+                id="backToOtpBtn"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                class="default-enable"
+                data-bs-dismiss="modal"
+                id="proceedBtn"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script src="../assets/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/jquery-3.6.0.min.js"></script>
+    <script src="../assets/js/plugins.js"></script>
+    <script src="../assets/js/global.js"></script>
+    <script src="./login.js"></script>
+    <script>
+      lucide.createIcons();
+
+      const slides = [
+        {
+          title: "Anchor corporates",
+          subtitle:
+            "Enable and manage dealer/vendor financing seamlessly with a fully digital, intelligent platform designed for faster credit flow across your supply chain.",
+          pills: [
+            {
+              icon: "apartment",
+              type: "material-icons",
+              text: "End-to-end digital financing for channel partners",
+            },
+            {
+              icon: "currency_rupee_circle",
+              type: "material-symbols-outlined",
+              text: "Real-time dashboard to track limits & utilization",
+            },
+            {
+              icon: "order_approve",
+              type: "material-symbols-outlined",
+              text: "Extend financing across Tier 1 & Tier 2 partners",
+            },
+          ],
+        },
+
+        {
+          title: "Anchor finance",
+          subtitle:
+            "Anchor financing provides working capital support to suppliers and vendors associated with large corporates through digital processing.",
+          pills: [
+            {
+              icon: "business",
+              type: "material-icons",
+              text: "Designed for corporate vendors",
+            },
+            {
+              icon: "bolt",
+              type: "material-symbols-outlined",
+              text: "Quick approvals and disbursement",
+            },
+            {
+              icon: "description",
+              type: "material-symbols-outlined",
+              text: "Paperless documentation",
+            },
+          ],
+        },
+
+        {
+          title: "Channel finance",
+          subtitle:
+            "Channel financing helps strengthen the supply chain ecosystem by providing liquidity to distributors and channel partners.",
+          pills: [
+            {
+              icon: "hub",
+              type: "material-icons",
+              text: "Supports channel partners",
+            },
+            {
+              icon: "payments",
+              type: "material-symbols-outlined",
+              text: "Competitive financing solutions",
+            },
+            {
+              icon: "verified",
+              type: "material-symbols-outlined",
+              text: "Completely digital journey",
+            },
+          ],
+        },
+      ];
+
+      let currentSlide = 0;
+
+      function renderSlide(index) {
+        const slide = slides[index];
+
+        $("#slideTitle").text(slide.title);
+        $("#slideSubtitle").text(slide.subtitle);
+
+        let pillsHTML = "";
+
+        slide.pills.forEach((pill) => {
+          pillsHTML += `
+      <div class="d-flex align-items-center right-pillis">
+        <i class="${pill.type}" style="color:white;margin-right:10px">
+          ${pill.icon}
+        </i>
+        <p class="pillis-title">${pill.text}</p>
+      </div>
+    `;
+        });
+
+        $("#pillisContainer").html(pillsHTML);
+
+        $("#sliderDots .pillis").removeClass("active-dot");
+        $("#sliderDots .pillis").eq(index).addClass("active-dot");
+      }
+
+      function nextSlide() {
+        currentSlide++;
+
+        if (currentSlide >= slides.length) {
+          currentSlide = 0;
+        }
+
+        renderSlide(currentSlide);
+      }
+
+      renderSlide(0);
+
+      let sliderInterval = setInterval(nextSlide, 5000);
+
+      $(document).on("click", "#sliderDots .pillis", function () {
+        currentSlide = $(this).data("slide");
+
+        renderSlide(currentSlide);
+
+        clearInterval(sliderInterval);
+        sliderInterval = setInterval(nextSlide, 5000);
+      });
+    </script>
+  </body>
+</html>
