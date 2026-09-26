@@ -2200,10 +2200,6 @@ header {
   font-size: 13px;
   font-weight: 500;
 }
-.menu-item:hover {
-  background: var(--orange-tint);
-  color: var(--orange);
-}
 
 /* ---------------- Cards ---------------- */
 .card {
@@ -3342,7 +3338,7 @@ td {
 
 .menu-side-panel .panel-header {
   justify-content: flex-end;
-  gap: 8px;
+  gap: 24px;
 }
 
 .get-touch-dropdown-menu {
@@ -3378,12 +3374,7 @@ td {
   padding-left: 24px;
 }
 
-.menu-item:hover {
-  background-color: #f9f9f9;
-}
-
 .menu-item.active {
-  background-color: #fff8f5;
   border-left-color: #de6e28;
 }
 
@@ -3485,7 +3476,33 @@ td {
   font-weight: 700;
 }
 
+@media (min-width: 768) {
+  .mobile-bottom-nav,
+  .mobile-profile-section {
+    display: none !important;
+  }
+}
+
 @media (max-width: 767px) {
+  .dashboard-footer {
+    background: #f4f4f4;
+    padding: 12px 0px;
+    padding-bottom: 60px;
+  }
+
+  .footer-right {
+    margin: auto;
+  }
+
+  .footer-right-text {
+    font-size: 10px;
+    font-weight: 500;
+  }
+
+  .dashboard-page {
+    padding-bottom: 40px;
+  }
+
   .logout-common-modal .modal-footer-right {
     display: flex;
     bottom: 16px;
@@ -3527,11 +3544,6 @@ td {
     gap: 0px;
     align-items: flex-start;
     margin-top: 16px;
-  }
-
-  .mobile-bottom-nav,
-  .mobile-profile-section {
-    display: none !important;
   }
 
   .dashboard-page {
@@ -3694,7 +3706,7 @@ td {
   }
 
   .legend-grid {
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     min-width: 0;
     row-gap: 16px;
     column-gap: 16px;
@@ -3747,18 +3759,24 @@ td {
     gap: 16px;
   }
 
-  .sanction-toggles {
-    flex-direction: row;
-    gap: 0px !important;
-    margin-left: -17px;
-  }
-
   .two-col-row .card {
     height: 92%;
   }
 
   .renewal-body {
     flex-direction: column;
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .legend-list {
+    width: 100%;
+    gap: 16px;
+  }
+
+  .stat-icon {
+    width: 12px !important;
+    height: 12px !important;
   }
 
   .toggle-box .toggle-value {
@@ -3796,6 +3814,7 @@ td {
 
   .sanction-legend-list {
     gap: 16px;
+    justify-content: space-between;
   }
 
   .legend-count {
@@ -3828,7 +3847,11 @@ td {
   }
 
   .stat-value {
-    font-size: 14px;
+    font-size: 14px !important;
+  }
+
+  .zero-count {
+    font-size: 12px;
   }
 
   .toggle-box [data-lucide] {
@@ -3837,6 +3860,10 @@ td {
 
   .toggle-box.active [data-lucide] {
     top: 40%;
+  }
+
+  .donut-center-label {
+    max-width: 100px;
   }
 
   .last-login {
@@ -3882,8 +3909,8 @@ td {
   }
 
   .custom-modal {
-    position: absolute;
-    bottom: 0;
+    position: absolute !important;
+    bottom: 0 !important;
   }
 
   .leads-top {
@@ -4038,6 +4065,14 @@ td {
     height: 48px !important;
     margin-top: 0px;
   }
+
+  .donut-wrap {
+    width: 100%;
+  }
+
+  .stat-label .mobile-not {
+    display: none;
+  }
 }
 
 @media (max-width: 426px) {
@@ -4047,26 +4082,9 @@ td {
     row-gap: 16px;
     column-gap: 16px;
   }
-}
 
-@media (max-width: 767.98px) {
-  .dashboard-footer {
-    background: #f4f4f4;
-    padding: 12px 0px;
-    padding-bottom: 60px;
-  }
-
-  .footer-right {
-    margin: auto;
-  }
-
-  .footer-right-text {
-    font-size: 10px;
-    font-weight: 500;
-  }
-
-  .dashboard-page {
-    padding-bottom: 40px;
+  .custom-modal {
+    position: absolute;
   }
 }
 
@@ -4147,11 +4165,61 @@ td {
 @media (max-width: 980px) {
   .two-col-row {
     grid-template-columns: 1fr;
-    margin-bottom: 0px;
   }
 
   .stat-row {
     grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
+    gap: 6px;
+  }
+
+  .sanction-toggles {
+    flex-direction: row;
+    gap: 0px !important;
+    margin-left: -17px;
+  }
+
+  .sanction-donut-side {
+    flex-direction: column;
+    align-items: center;
+    gap: 0px;
+    margin-left: -16px;
+    padding-bottom: 24px;
+    padding-left: 16px;
+    border: 1px solid #f0ab8b;
+  }
+
+  .sanction-body {
+    display: block;
+  }
+
+  .toggle-box.active {
+    border-bottom: #fef9f6;
+    border-radius: 8px 8px 0px 8px;
+    margin-bottom: -10px;
+  }
+
+  .toggle-box.active::before {
+    background: linear-gradient(to bottom, #e3530f, #ffffff);
+    border-radius: 8px 8px 0px 8px;
+  }
+}
+
+@media (max-width: 1024px) and (min-width: 979px) {
+  .two-col-row .donut-wrap {
+    width: 100%;
+  }
+
+  .renewal-body {
+    width: 100%;
+  }
+}
+
+@media (max-width: 1328px) {
+  .renewal-body,
+  .two-col-row .donut-wrap,
+  .legend-list,
+  .leads-body,
+  .legend-grid {
+    width: 100%;
   }
 }
