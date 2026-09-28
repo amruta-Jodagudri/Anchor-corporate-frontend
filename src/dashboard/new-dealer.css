@@ -687,7 +687,7 @@
 
 .new-dealer-table {
     width: 100%;
-    min-width: 1100px;
+    min-width: 1410px;
     border-collapse: collapse;
     table-layout: fixed;
 }
@@ -715,14 +715,22 @@
 .new-dealer-table th:nth-child(7) { width: 12%; }
 .new-dealer-table th:nth-child(8) { width: 9%; }
 
+.new-dealer-table th,
+.new-dealer-table td {
+    padding-left: 16px;
+    padding-right: 16px;
+    font-size: 14px;
+}
+
 @media (min-width: 1200px) {
-    .new-dealer-table th:nth-child(1) { width: 220px; }
-    .new-dealer-table th:nth-child(2) { width: 160px; }
-    .new-dealer-table th:nth-child(3) { width: 105px; }
-    .new-dealer-table th:nth-child(4) { width: 124px; }
-    .new-dealer-table th:nth-child(5) { width: 116px; }
-    .new-dealer-table th:nth-child(6) { width: 110px; }
-    .new-dealer-table th:nth-child(7) { width: 103px; }
+    .new-dealer-table th:nth-child(1) { width: 240px; }
+    .new-dealer-table th:nth-child(2) { width: 230px; }
+    .new-dealer-table th:nth-child(3) { width: 200px; }
+    .new-dealer-table th:nth-child(4) { width: 200px; }
+    .new-dealer-table th:nth-child(5) { width: 170px; }
+    .new-dealer-table th:nth-child(6) { width: 120px; }
+    .new-dealer-table th:nth-child(7) { width: 150px; }
+    .new-dealer-table th:nth-child(8) { width: 130px; }
 }
 
 .new-dealer-table th span {
@@ -741,7 +749,7 @@
     vertical-align: middle;
     border: 0;
     font-family: "Mulish", sans-serif;
-    font-size: 11px;
+    font-size: 14px;
     line-height: 15px;
     color: #3e3e3e;
     box-sizing: border-box;
@@ -769,7 +777,7 @@
 .dealer-firm strong {
     display: block;
     font-family: "Mulish", sans-serif;
-    font-size: 12px;
+    font-size: 14px;
     line-height: 17px;
     font-weight: 500;
     color: #292929;
@@ -780,7 +788,7 @@
     display: block;
     margin-top: 2px;
     font-family: "Mulish", sans-serif;
-    font-size: 9px;
+    font-size: 12px;
     line-height: 13px;
     font-weight: 400;
     color: #777;
@@ -789,7 +797,7 @@
 .dealer-association strong {
     display: block;
     font-family: "Mulish", sans-serif;
-    font-size: 11px;
+    font-size: 14px;
     line-height: 15px;
     font-weight: 400;
 }
@@ -857,6 +865,7 @@
     content: "";
     width: 14px;
     height: 14px;
+    font-size: 12px;
     margin-right: 2px;
     flex: 0 0 14px;
     background-position: center;
@@ -911,7 +920,7 @@
     display: flex;
     width: max-content;
     justify-content: center;
-    font-size: 10px;
+    font-size: 12px;
     line-height: 16px;
 }
 
@@ -1041,15 +1050,15 @@
 
 .dealer-row:not(.txn-row) .dealer-row-actions button:nth-child(1)::before {
     content: "";
-    width: 16px;
-    height: 16px;
+    width: 15px;
+    height: 15px;
     background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='m3 12.8.7-3L10.9 2.6a1.5 1.5 0 0 1 2.1 2.1L5.8 11.9l-2.8.9Z' fill='none' stroke='%23ef570b' stroke-width='1.25' stroke-linejoin='round'/%3E%3Cpath d='m9.8 3.7 2.5 2.5' stroke='%23ef570b' stroke-width='1.25'/%3E%3C/svg%3E") center / 16px 16px no-repeat;
 }
 
 .dealer-row:not(.txn-row) .dealer-row-actions button:nth-child(2)::before {
     content: "";
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
     background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 4.5h10M6 4.5V3h4v1.5M4.2 4.5l.6 9h5.6l.6-9M6.5 7v4M9.5 7v4' fill='none' stroke='%23ef570b' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 16px 16px no-repeat;
 }
 
@@ -1122,7 +1131,7 @@
 .dealer-detail-item > span {
     margin-bottom: 3px;
     font-family: "Mulish", sans-serif;
-    font-size: 11px;
+    font-size: 12px;
     line-height: 16px;
     font-weight: 400;
     color: #777;
@@ -1133,7 +1142,7 @@
     display: flex;
     align-items: center;
     font-family: "Mulish", sans-serif;
-    font-size: 12px;
+    font-size: 14px;
     line-height: 17px;
     font-weight: 400;
     color: #393939;
