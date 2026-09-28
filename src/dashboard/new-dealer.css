@@ -744,6 +744,55 @@
     background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='14' viewBox='0 0 12 14' fill='none'%3E%3Cpath d='M4 2v9M4 2L1.8 4.2M4 2l2.2 2.2M8 12V3M8 12l-2.2-2.2M8 12l2.2-2.2' stroke='%23373737' stroke-width='1.05' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 12px 14px no-repeat;
 }
 
+.new-dealer-table th .dealer-th-inner {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.new-dealer-table th .dealer-th-inner span {
+    margin-left: 0;
+    flex: 0 0 12px;
+    vertical-align: baseline;
+}
+
+.new-dealer-table th .dealer-th-inner > div {
+    line-height: 16px;
+}
+
+.txn-table th .dealer-th-inner,
+.txn-table-view th .dealer-th-inner {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.txn-table th .dealer-th-inner > div,
+.txn-table-view th .dealer-th-inner > div {
+    line-height: 18px;
+}
+
+.txn-table th .dealer-th-inner > span:not(.info-dot),
+.txn-table-view th .dealer-th-inner > span:not(.info-dot) {
+    display: inline-block;
+    width: 12px;
+    height: 14px;
+    flex: 0 0 12px;
+    font-size: 0;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='14' viewBox='0 0 12 14' fill='none'%3E%3Cpath d='M4 2v9M4 2L1.8 4.2M4 2l2.2 2.2M8 12V3M8 12l-2.2-2.2M8 12l2.2-2.2' stroke='%23373737' stroke-width='1.05' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 12px 14px no-repeat;
+}
+
+.txn-table th .dealer-th-inner .info-dot,
+.txn-table-view th .dealer-th-inner .info-dot {
+    margin-left: 0;
+    flex: 0 0 13px;
+}
+
+.txn-table-view .dealer-th-inner > div {
+    white-space: nowrap;
+}
+
+
 .new-dealer-table td {
     height: 52px;
     padding: 8px 12px;
@@ -1765,7 +1814,7 @@
 .txn-table th {
     padding: 14px 16px;
     font-family: "Mulish", sans-serif;
-    font-size: 13px;
+    font-size: 14px;
     line-height: 18px;
     font-weight: 600;
     color: #2f2f2f;
@@ -1933,7 +1982,7 @@
 .txn-table-view td:first-child    { min-width: 210px; }
 
 .txn-table-view th:nth-child(2),
-.txn-table-view td:nth-child(2)   { width: 70px; min-width: 70px; }
+.txn-table-view td:nth-child(2)   { width: auto; min-width: 190px; }
 
 .txn-table-view th:last-child,
 .txn-table-view td:last-child     { width: 60px; min-width: 60px; text-align: center; }
