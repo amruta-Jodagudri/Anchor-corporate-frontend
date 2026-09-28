@@ -222,7 +222,7 @@
         font-family: "Mulish", sans-serif;
         font-size: 12px;
         line-height: 16px;
-        color: #333;
+        color: #e9530f;
         cursor: pointer;
     }
 
@@ -230,14 +230,13 @@
         content: "";
         width: 8px;
         height: 8px;
-        border-right: 1.5px solid #222;
-        border-bottom: 1.5px solid #222;
+        border-right: 1.5px solid #e9530f;
+        border-bottom: 1.5px solid #e9530f;
         transform: translateY(2px) rotate(225deg);
     }
 }
 
 
-/* ---------- Tablet cards: 576 – 991 ---------- */
 @media (min-width: 576px) and (max-width: 991.98px) {
 
     .dealer-leads-table .dealer-row:not(.hidden-by-filter) {
@@ -260,5 +259,30 @@
     .dealer-leads-table .dealer-detail-item:nth-child(even) {
         align-items: flex-start;
         text-align: left;
+    }
+}
+
+@media (max-width: 767.98px) {
+
+    .new-dealer-page .new-dealer-table .dealer-row > td[data-label="Sanction status"] {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        text-align: right;
+    }
+
+    .new-dealer-page .new-dealer-table .dealer-row > td[data-label="Sanction status"] .dealer-status {
+        align-self: flex-end;
+        margin-left: auto;
+    }
+
+    .new-dealer-page .new-dealer-table .dealer-row .dealer-row-actions button.dealer-expand-btn {
+        color: #e9530f;
+    }
+
+    .new-dealer-page .new-dealer-table .dealer-row .dealer-row-actions button.dealer-expand-btn::before,
+    .new-dealer-page .new-dealer-table .dealer-row .dealer-row-actions button.dealer-expand-btn::after {
+        color: #e9530f;
+        border-color: #e9530f;
     }
 }
