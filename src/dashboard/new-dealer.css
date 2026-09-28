@@ -519,7 +519,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 2px;
-    border-radius: 8px;
+    border-radius: 36px;
     background: #f1f1f1;
     box-sizing: border-box;
 }
@@ -535,7 +535,7 @@
     align-items: center;
     justify-content: center;
     border: 0;
-    border-radius: 6px;
+    border-radius: 32px;
     background: transparent;
     color: #777;
     font-size: 0;
@@ -628,11 +628,12 @@
     background: transparent;
     color: #e9530f;
     font-family: "Mulish", sans-serif;
-    font-size: 12px;
+    font-size: 16px;
     line-height: 16px;
     white-space: nowrap;
     cursor: pointer;
     box-sizing: border-box;
+    font-weight: 700;
 }
 
 .dealer-action-icon {
@@ -658,9 +659,9 @@
 
 .dealer-share-btn::before {
     content: "";
-    width: 24px;
-    min-width: 24px;
-    height: 24px;
+    width: 16.6px;
+    min-width: 19px;
+    height: 13.33px;
     background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none'%3E%3Crect x='3.25' y='5.5' width='17.5' height='13' rx='1.5' stroke='%23E9530F' stroke-width='1.45'/%3E%3Cpath d='m4 7 7.15 5.1a1.5 1.5 0 0 0 1.7 0L20 7' stroke='%23E9530F' stroke-width='1.45' stroke-linecap='round'/%3E%3C/svg%3E") center / 24px 24px no-repeat;
 }
 
@@ -934,7 +935,7 @@
 }
 
 .table-status {
-    font-size: 9px;
+    font-size: 11px;
     line-height: 13px;
 }
 
@@ -1314,12 +1315,28 @@
 .new-dealer-page.table-view .dealer-table-view-wrapper  { display: block; }
 .new-dealer-page.table-view .dealer-table-view          { display: block; }
 
+.dealer-table-view thead th,
+.dealer-table-view tbody td {
+    vertical-align: middle;
+}
+
+.dealer-table-view {
+    min-width: 1500px;
+}
+
+.dealer-table-view tbody td {
+    padding: 6px 20px;
+}
+
+.dealer-table-view thead th {
+    padding: 0 20px;
+}
+
 .dealer-table-view thead th {
     height: 42px;
     padding: 0 12px;
-    border-bottom: 1px solid #ddd;
     font-family: "Mulish", sans-serif;
-    font-size: 11px;
+    font-size: 14px;
     line-height: 15px;
     font-weight: 500;
     color: #333;
@@ -1339,7 +1356,7 @@
     height: 52px;
     padding: 6px 12px;
     border-bottom: 1px solid #eee;
-    font-size: 11px;
+    font-size: 14px;
     line-height: 15px;
     color: #3f3f3f;
     white-space: nowrap;
@@ -1347,15 +1364,15 @@
     text-overflow: ellipsis;
 }
 
-.dealer-table-view th:nth-child(1),  .dealer-table-view td:nth-child(1)  { width: 230px; }
-.dealer-table-view th:nth-child(2),  .dealer-table-view td:nth-child(2)  { width: 70px; min-width: 70px; }
-.dealer-table-view th:nth-child(3),  .dealer-table-view td:nth-child(3)  { width: 90px; }
-.dealer-table-view th:nth-child(4),  .dealer-table-view td:nth-child(4)  { width: 120px; }
-.dealer-table-view th:nth-child(5),  .dealer-table-view td:nth-child(5)  { width: 145px; }
-.dealer-table-view th:nth-child(6),  .dealer-table-view td:nth-child(6)  { width: 125px; }
-.dealer-table-view th:nth-child(7),  .dealer-table-view td:nth-child(7)  { width: 145px; }
-.dealer-table-view th:nth-child(8),  .dealer-table-view td:nth-child(8)  { width: 100px; }
-.dealer-table-view th:nth-child(9),  .dealer-table-view td:nth-child(9)  { width: 160px; }
+.dealer-table-view th:nth-child(1),  .dealer-table-view td:nth-child(1)  { width: 250px; }
+.dealer-table-view th:nth-child(2),  .dealer-table-view td:nth-child(2)  { width: 90px; min-width: 90px; }
+.dealer-table-view th:nth-child(3),  .dealer-table-view td:nth-child(3)  { width: 120px; }
+.dealer-table-view th:nth-child(4),  .dealer-table-view td:nth-child(4)  { width: 160px; }
+.dealer-table-view th:nth-child(5),  .dealer-table-view td:nth-child(5)  { width: 200px; }
+.dealer-table-view th:nth-child(6),  .dealer-table-view td:nth-child(6)  { width: 160px; }
+.dealer-table-view th:nth-child(7),  .dealer-table-view td:nth-child(7)  { width: 210px; }
+.dealer-table-view th:nth-child(8),  .dealer-table-view td:nth-child(8)  { width: 150px; }
+.dealer-table-view th:nth-child(9),  .dealer-table-view td:nth-child(9)  { width: 190px; }
 .dealer-table-view th:nth-child(10), .dealer-table-view td:nth-child(10) { width: 80px; }
 
 .dealer-table-view td:nth-child(2),
@@ -1372,6 +1389,7 @@
 
 .table-firm-name {
     min-width: 0;
+    font-size: 14px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -1380,7 +1398,7 @@
 .table-firm-code {
     display: block;
     margin-top: 2px;
-    font-size: 9px;
+    font-size: 12px;
     color: #777;
 }
 
@@ -1413,6 +1431,21 @@
     border-radius: 8px;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
     font-family: "Mulish", sans-serif;
+}
+
+.dealer-filters-modal .dealer-filters-header h2,
+.share-mail-modal .dealer-filters-header h2 {
+    font-size: 24px;
+    line-height: 24px;
+    font-weight: 700;
+}
+
+.hide-details-btn,
+.hide-details-btn span,
+.hide-details-btn .hide-details-label {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 700;
 }
 
 .dealer-filters-header {
@@ -1470,7 +1503,7 @@
 }
 
 .dealer-filter-field label {
-    font-size: 12px;
+    font-size: 14px;
     line-height: 16px;
     font-weight: 500;
     color: #333;
@@ -2046,7 +2079,7 @@
     border-radius: 6px;
     background: #f1f1f1;
     font-family: inherit;
-    font-size: 13px;
+    font-size: 14px;
     color: #333;
     box-sizing: border-box;
     outline: 0;
