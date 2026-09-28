@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="../assets/css/material-icons.css" />
     <link rel="stylesheet" href="../assets/css/material-symbols.css" />
     <link rel="stylesheet" href="./dashboard.css" />
+    <link rel="stylesheet" href="./new-dealer.css" />
+    <link rel="stylesheet" href="new-dealer-responsive.css" />
   </head>
 
   <body class="dashboard-page">
@@ -590,6 +592,1716 @@
             </div>
           </div>
         </main>
+      </div>
+
+  <!-- NEW DEALER LEADS PAGE -->
+
+      <section class="new-dealer-page" id="newDealerPage" style="display: none">
+        <!-- Page Header -->
+        <div class="new-dealer-page-header">
+          <div class="new-dealer-heading">
+            <h1>Supply chain finance</h1>
+
+            <div class="new-dealer-program">
+              Program name:
+              <span>Kartikey Corporations</span>
+            </div>
+          </div>
+
+          <div class="new-dealer-last-login">
+            Last updated:
+            <strong>4 Jun '26</strong>
+            at
+            <strong>8:00 AM</strong>
+          </div>
+        </div>
+
+
+         <!-- TOP TABS -->
+
+        <div class="new-dealer-tabs">
+          <div class="new-dealer-tab-list">
+            <div class="new-dealer-tab active">
+              <span>New dealer leads</span>
+              <span class="new-dealer-count orange">65</span>
+            </div>
+
+            <div class="new-dealer-tab" data-goto="transaction">
+              <span>Transaction dashboard</span>
+              <span class="new-dealer-count grey">90</span>
+            </div>
+
+            <div class="new-dealer-tab">
+              <span>Renewal details</span>
+              <span class="new-dealer-count grey">83</span>
+            </div>
+          </div>
+
+          <div class="new-dealer-tab-spacer"></div>
+
+          <div class="new-dealer-date">
+            Today (5 Jun '26)
+            <span class="new-dealer-chevron">⌄</span>
+          </div>
+
+          <div class="new-dealer-add-wrapper">
+            <button
+              type="button"
+              class="new-dealer-add-btn"
+              id="newDealerAddBtn"
+            >
+              Add dealer
+              <span class="new-dealer-chevron">⌄</span>
+            </button>
+
+            <div class="new-dealer-add-menu" id="newDealerAddMenu">
+              <div class="new-dealer-add-menu-item">Add single dealer</div>
+
+              <div class="new-dealer-add-menu-item">Bulk upload dealers</div>
+            </div>
+          </div>
+        </div>
+
+        
+         <!-- FILTER / TOOLBAR -->
+
+        <div class="new-dealer-toolbar">
+          <div class="new-dealer-filter-left">
+            <button
+              type="button"
+              class="dealer-filter-btn active"
+              data-filter="all"
+            >
+              All
+              <span>65</span>
+            </button>
+
+            <button
+              type="button"
+              class="dealer-filter-btn"
+              data-filter="actioned"
+              id="toBeActionedBtn"
+            >
+              To be actioned
+              <span>18</span>
+            </button>
+
+            <div class="view-more-wrap">
+              <button
+                type="button"
+                class="dealer-filter-btn view-more-btn"
+                id="viewMoreBtn"
+              >
+                View more
+              </button>
+              <div class="view-more-menu" id="viewMoreMenu">
+                <button type="button" data-filter="current-account">
+                  Current account pending (12)
+                </button>
+
+                <button type="button" data-filter="esign">
+                  eSign pending (07)
+                </button>
+
+                <button type="button" data-filter="limit-setup">
+                  Limit setup pending (16)
+                </button>
+
+                <button type="button" data-filter="rejected">
+                  Application rejected (11)
+                </button>
+
+                <button type="button" data-filter="sanctioned">
+                  Sanction approved (35)
+                </button>
+              </div>
+            </div>
+
+            <div class="dealer-toolbar-divider"></div>
+
+            <button
+              type="button"
+              class="dealer-filter-btn"
+              data-filter="drafts"
+            >
+              Drafts
+              <span>14</span>
+            </button>
+          </div>
+
+          <div class="new-dealer-toolbar-right">
+            <button type="button" class="hide-details-btn" id="hideDetailsBtn">
+              Hide details
+
+              <span
+                class="hide-details-eye material-symbols-outlined"
+                aria-hidden="true"
+              >
+                visibility_off
+              </span>
+            </button>
+
+            <div class="view-switch">
+              <button
+                type="button"
+                class="view-switch-btn active"
+                data-view="list"
+                data-tooltip="Switch to new list view"
+              ></button>
+              <button
+                type="button"
+                class="view-switch-btn"
+                data-view="grid"
+                data-tooltip="Switch to old table view"
+              ></button>
+            </div>
+
+            <div class="dealer-search-box">
+              <span class="dealer-search-icon">⌕</span>
+
+              <input
+                type="text"
+                id="dealerSearchInput"
+                placeholder="Search by dealer, PAN, email.."
+              />
+            </div>
+
+            <button
+              type="button"
+              class="dealer-action-icon"
+              title="Delete"
+            ></button>
+
+            <button type="button" class="dealer-share-btn">
+              <span>Share via mail</span>
+            </button>
+
+            <button
+              type="button"
+              class="dealer-filters-btn"
+              id="dealerFiltersBtn"
+            >
+              <span>Filters</span>
+            </button>
+          </div>
+        </div>
+
+
+         <!-- DEALER TABLE -->
+
+        <div class="new-dealer-table-wrapper dealer-leads-wrapper">
+          <table class="new-dealer-table dealer-leads-table">
+            <thead>
+              <tr>
+                <th>
+                  Firm details
+                  <span>↕</span>
+                </th>
+
+                <th>Dealer details</th>
+
+                <th>
+                  Association
+                  <br />
+                  with corporate
+                  <span>↕</span>
+                </th>
+
+                <th>
+                  Sales to dealer
+                  <br />
+                  (last 12M)
+                  <span>↕</span>
+                </th>
+
+                <th>
+                  Loan offer
+                  <span>↕</span>
+                </th>
+
+                <th>Lead type</th>
+
+                <th>Sanction status</th>
+
+                <th></th>
+              </tr>
+            </thead>
+
+            <tbody id="dealerTableBody">
+
+              <tr
+                class="dealer-row"
+                data-status="actioned"
+                data-lead-type="fresh"
+              >
+                <td>
+                  <div class="dealer-firm">
+                    <span
+                      class="material-symbols-outlined dealer-pin"
+                      role="button"
+                      tabindex="0"
+                      aria-label="Pin dealer"
+                    >
+                      push_pin
+                    </span>
+
+                    <div>
+                      <strong> Zenith Steel Traders </strong>
+
+                      <small> Code: T1H2E3M66 </small>
+                    </div>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="dealer-contact">
+                    <span> +91 9836273854 </span>
+
+                    <small> harish@zenith.com </small>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="dealer-association">
+                    <strong>3 years</strong>
+
+                    <small> PAN: CFSG34527F </small>
+                  </div>
+                </td>
+
+                <td>₹3,15,00,000.00</td>
+
+                <td>₹70,00,000.00</td>
+
+                <td>Fresh</td>
+
+                <td>
+                  <span class="dealer-status actioned">
+                    To be actioned
+                    <small>ⓘ</small>
+                  </span>
+                </td>
+
+                <td>
+                  <div class="dealer-row-actions">
+                    <button type="button" title="Edit">✎</button>
+
+                    <button type="button" title="Delete">♧</button>
+
+                    <button type="button" class="dealer-expand-btn">⌄</button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr
+                class="dealer-row"
+                data-status="actioned"
+                data-lead-type="fresh"
+              >
+                <td>
+                  <div class="dealer-firm">
+                    <span
+                      class="material-symbols-outlined dealer-pin"
+                      role="button"
+                      tabindex="0"
+                      aria-label="Pin dealer"
+                    >
+                      push_pin
+                    </span>
+
+                    <div>
+                      <strong> SunDesh Systems Pvt. Ltd </strong>
+
+                      <small> Code: T1H2E3M66 </small>
+                    </div>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="dealer-contact">
+                    <span> +91 9836273854 </span>
+
+                    <small> keshav@sundesh.com </small>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="dealer-association">
+                    <strong>4 years</strong>
+
+                    <small> PAN: CFSG34527F </small>
+                  </div>
+                </td>
+
+                <td>₹4,00,00,000.00</td>
+
+                <td>₹65,00,000.00</td>
+
+                <td>Fresh</td>
+
+                <td>
+                  <span class="dealer-status actioned">
+                    To be actioned
+                    <small>ⓘ</small>
+                  </span>
+                </td>
+
+                <td>
+                  <div class="dealer-row-actions">
+                    <button type="button">✎</button>
+                    <button type="button">♧</button>
+
+                    <button type="button" class="dealer-expand-btn">⌄</button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr
+                class="dealer-row"
+                data-status="sanctioned"
+                data-lead-type="fresh"
+              >
+                <td>
+                  <div class="dealer-firm">
+                    <span
+                      class="material-symbols-outlined dealer-pin"
+                      role="button"
+                      tabindex="0"
+                      aria-label="Pin dealer"
+                    >
+                      push_pin
+                    </span>
+
+                    <div>
+                      <strong> Chauhan Traders </strong>
+
+                      <small> Code: T1H2E3M66 </small>
+                    </div>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="dealer-contact">
+                    <span> +91 9836273854 </span>
+
+                    <small> shivam@chauhan.com </small>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="dealer-association">
+                    <strong>5 years</strong>
+
+                    <small> PAN: CFSG34527F </small>
+                  </div>
+                </td>
+
+                <td>₹3,00,00,000.00</td>
+
+                <td>₹80,00,000.00</td>
+
+                <td>Fresh</td>
+
+                <td>
+                  <span class="dealer-status sanctioned">
+                    Sanctioned
+                    <small>ⓘ</small>
+                  </span>
+                </td>
+
+                <td>
+                  <div class="dealer-row-actions">
+                    <button type="button">✎</button>
+                    <button type="button"></button>
+
+                    <button type="button" class="dealer-expand-btn">⌄</button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr
+                class="dealer-row"
+                data-status="rejected"
+                data-lead-type="old"
+              >
+                <td>
+                  <div class="dealer-firm">
+                    <span
+                      class="material-symbols-outlined dealer-pin"
+                      role="button"
+                      tabindex="0"
+                      aria-label="Pin dealer"
+                    >
+                      push_pin
+                    </span>
+
+                    <div>
+                      <strong> Polychem Global </strong>
+
+                      <small> Code: T1H2E3M66 </small>
+                    </div>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="dealer-contact">
+                    <span> +91 9836273854 </span>
+
+                    <small> aryan@polychemical.com </small>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="dealer-association">
+                    <strong>6 years</strong>
+
+                    <small> PAN: CFSG34527F </small>
+                  </div>
+                </td>
+
+                <td>₹2,95,00,000.00</td>
+
+                <td>₹90,00,000.00</td>
+
+                <td>Old</td>
+
+                <td>
+                  <span class="dealer-status rejected">
+                    Rejected
+                    <small>ⓘ</small>
+                  </span>
+                </td>
+
+                <td>
+                  <div class="dealer-row-actions">
+                    <button type="button">✎</button>
+                    <button type="button"></button>
+
+                    <button type="button" class="dealer-expand-btn">⌄</button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr
+                class="dealer-row"
+                data-status="sanctioned"
+                data-lead-type="fresh"
+              >
+                <td>
+                  <div class="dealer-firm">
+                    <span
+                      class="material-symbols-outlined dealer-pin"
+                      role="button"
+                      tabindex="0"
+                      aria-label="Pin dealer"
+                    >
+                      push_pin
+                    </span>
+
+                    <div>
+                      <strong> TechGlobal </strong>
+
+                      <small> Code: T1H2E3M66 </small>
+                    </div>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="dealer-contact">
+                    <span> +91 9836273854 </span>
+
+                    <small> shivansh@techglobal.com </small>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="dealer-association">
+                    <strong>6 years</strong>
+
+                    <small> PAN: CFSG34527F </small>
+                  </div>
+                </td>
+
+                <td>₹2,95,00,000.00</td>
+
+                <td>₹90,00,000.00</td>
+
+                <td>Fresh</td>
+
+                <td>
+                  <span class="dealer-status sanctioned">
+                    Sanctioned
+                    <small>ⓘ</small>
+                  </span>
+                </td>
+
+                <td>
+                  <div class="dealer-row-actions">
+                    <button type="button">✎</button>
+                    <button type="button"></button>
+
+                    <button type="button" class="dealer-expand-btn">⌄</button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr
+                class="dealer-row"
+                data-status="sanctioned"
+                data-lead-type="fresh"
+              >
+                <td>
+                  <div class="dealer-firm">
+                    <span
+                      class="material-symbols-outlined dealer-pin"
+                      role="button"
+                      tabindex="0"
+                      aria-label="Pin dealer"
+                    >
+                      push_pin
+                    </span>
+
+                    <div>
+                      <strong> Trader Groups </strong>
+
+                      <small> Code: T1H2E3M66 </small>
+                    </div>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="dealer-contact">
+                    <span> +91 9836273854 </span>
+
+                    <small> Nishant@tradergroups.com </small>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="dealer-association">
+                    <strong>6 years</strong>
+
+                    <small> PAN: CFSG34527F </small>
+                  </div>
+                </td>
+
+                <td>₹2,95,00,000.00</td>
+
+                <td>₹90,00,000.00</td>
+
+                <td>Fresh</td>
+
+                <td>
+                  <span class="dealer-status sanctioned">
+                    Sanctioned
+                    <small>ⓘ</small>
+                  </span>
+                </td>
+
+                <td>
+                  <div class="dealer-row-actions">
+                    <button type="button">✎</button>
+                    <button type="button"></button>
+
+                    <button type="button" class="dealer-expand-btn">⌄</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+
+        <div class="dealer-table-view-wrapper">
+          <table class="dealer-table-view">
+            <thead>
+              <tr>
+                <th>Firm details<span>↕</span></th>
+                <th>Action</th>
+                <th>Lead date</th>
+                <th>Sanction status</th>
+                <th>Application status<span>↕</span></th>
+                <th>Mobile number</th>
+                <th>Email ID</th>
+                <th>PAN</th>
+                <th>Sales to dealer (last 12M)<span>↕</span></th>
+                <th>Association</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td>
+                  <div class="table-firm">
+                    <span
+                      class="material-symbols-outlined dealer-pin"
+                      role="button"
+                      tabindex="0"
+                      aria-label="Pin dealer"
+                      >push_pin</span
+                    >
+
+                    <div class="table-firm-name">
+                      Zenith Steel Traders
+                      <small class="table-firm-code"> Code: T1H2E3M66 </small>
+                    </div>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="table-action">
+                    <button type="button" class="table-edit-btn"></button>
+                    <button type="button" class="table-delete-btn"></button>
+                  </div>
+                </td>
+
+                <td>21 Nov '25</td>
+
+                <td>
+                  <span class="table-status actioned">
+                    To be actioned
+                    <small>i</small>
+                  </span>
+                </td>
+
+                <td>Application pending</td>
+
+                <td>+91 9876543210</td>
+
+                <td>harish@zenith.com</td>
+
+                <td>CRHP8D9573</td>
+
+                <td>₹3,15,00,000.00</td>
+
+                <td>3 years</td>
+              </tr>
+
+              <tr>
+                <td>
+                  <div class="table-firm">
+                    <span
+                      class="material-symbols-outlined dealer-pin"
+                      role="button"
+                      tabindex="0"
+                      aria-label="Pin dealer"
+                      >push_pin</span
+                    >
+
+                    <div class="table-firm-name">
+                      SunDesh Systems Pvt. Ltd
+                      <small class="table-firm-code"> Code: T1H2E3M67 </small>
+                    </div>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="table-action">
+                    <button type="button" class="table-edit-btn"></button>
+                    <button type="button" class="table-delete-btn"></button>
+                  </div>
+                </td>
+
+                <td>14 Dec '25</td>
+
+                <td>
+                  <span class="table-status actioned">
+                    To be actioned
+                    <small>i</small>
+                  </span>
+                </td>
+
+                <td>Application pending</td>
+
+                <td>+91 9123456789</td>
+
+                <td>shiv@sundesh.com</td>
+
+                <td>ABHP8D9573</td>
+
+                <td>₹4,25,00,000.00</td>
+
+                <td>5 years</td>
+              </tr>
+
+              <tr>
+                <td>
+                  <div class="table-firm">
+                    <span
+                      class="material-symbols-outlined dealer-pin"
+                      role="button"
+                      tabindex="0"
+                      aria-label="Pin dealer"
+                      >push_pin</span
+                    >
+
+                    <div class="table-firm-name">
+                      Chauhan Traders
+                      <small class="table-firm-code"> Code: T1H2E3M68 </small>
+                    </div>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="table-action">
+                    <button type="button" class="table-edit-btn"></button>
+                    <button type="button" class="table-delete-btn"></button>
+                  </div>
+                </td>
+
+                <td>25 Dec '25</td>
+
+                <td>
+                  <span class="table-status sanctioned">
+                    Sanctioned
+                    <small>i</small>
+                  </span>
+                </td>
+
+                <td>Current account pending</td>
+
+                <td>+91 9988776655</td>
+
+                <td>krishan@chauhan.com</td>
+
+                <td>OHTY8D9573</td>
+
+                <td>₹5,00,00,000.00</td>
+
+                <td>8 years</td>
+              </tr>
+
+              <tr>
+                <td>
+                  <div class="table-firm">
+                    <span
+                      class="material-symbols-outlined dealer-pin"
+                      role="button"
+                      tabindex="0"
+                      aria-label="Pin dealer"
+                      >push_pin</span
+                    >
+
+                    <div class="table-firm-name">
+                      Polychem Global
+                      <small class="table-firm-code"> Code: T1H2E3M69 </small>
+                    </div>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="table-action">
+                    <button type="button" class="table-edit-btn"></button>
+                    <button type="button" class="table-delete-btn"></button>
+                  </div>
+                </td>
+
+                <td>01 Jan '26</td>
+
+                <td>
+                  <span class="table-status rejected">
+                    Rejected
+                    <small>i</small>
+                  </span>
+                </td>
+
+                <td>eSign pending</td>
+
+                <td>+91 9345678901</td>
+
+                <td>sita@polychem.com</td>
+
+                <td>IDGT8D9573</td>
+
+                <td>₹6,00,00,000.00</td>
+
+                <td>6 years</td>
+              </tr>
+
+              <tr>
+                <td>
+                  <div class="table-firm">
+                    <span
+                      class="material-symbols-outlined dealer-pin"
+                      role="button"
+                      tabindex="0"
+                      aria-label="Pin dealer"
+                      >push_pin</span
+                    >
+
+                    <div class="table-firm-name">
+                      Vertex Industrial Solutions
+                      <small class="table-firm-code"> Code: T1H2E3M70 </small>
+                    </div>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="table-action">
+                    <button type="button" class="table-edit-btn"></button>
+                    <button type="button" class="table-delete-btn"></button>
+                  </div>
+                </td>
+
+                <td>13 Jan '26</td>
+
+                <td>
+                  <span class="table-status sanctioned">
+                    Sanctioned
+                    <small>i</small>
+                  </span>
+                </td>
+
+                <td>eSign pending</td>
+
+                <td>+91 8765432109</td>
+
+                <td>ram@vertex.com</td>
+
+                <td>KEYS8D9573</td>
+
+                <td>₹7,19,00,000.00</td>
+
+                <td>4 years</td>
+              </tr>
+
+              <tr>
+                <td>
+                  <div class="table-firm">
+                    <span
+                      class="material-symbols-outlined dealer-pin"
+                      role="button"
+                      tabindex="0"
+                      aria-label="Pin dealer"
+                      >push_pin</span
+                    >
+
+                    <div class="table-firm-name">
+                      TradersTech
+                      <small class="table-firm-code"> Code: T1H2E3M71 </small>
+                    </div>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="table-action">
+                    <button type="button" class="table-edit-btn"></button>
+                    <button type="button" class="table-delete-btn"></button>
+                  </div>
+                </td>
+
+                <td>18 Jan '26</td>
+
+                <td>
+                  <span class="table-status sanctioned">
+                    Sanctioned
+                    <small>i</small>
+                  </span>
+                </td>
+
+                <td>Current account pending</td>
+
+                <td>+91 9654321098</td>
+
+                <td>arjun@traderstech.com</td>
+
+                <td>YAHS8D9573</td>
+
+                <td>₹3,00,00,000.00</td>
+
+                <td>7 years</td>
+              </tr>
+
+              <tr>
+                <td>
+                  <div class="table-firm">
+                    <span
+                      class="material-symbols-outlined dealer-pin"
+                      role="button"
+                      tabindex="0"
+                      aria-label="Pin dealer"
+                      >push_pin</span
+                    >
+
+                    <div class="table-firm-name">
+                      Kartikey Corporations
+                      <small class="table-firm-code"> Code: T1H2E3M72 </small>
+                    </div>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="table-action">
+                    <button type="button" class="table-edit-btn"></button>
+                    <button type="button" class="table-delete-btn"></button>
+                  </div>
+                </td>
+
+                <td>23 Jan '26</td>
+
+                <td>
+                  <span class="table-status rejected">
+                    Rejected
+                    <small>i</small>
+                  </span>
+                </td>
+
+                <td>Limit setup pending</td>
+
+                <td>+91 9234567890</td>
+
+                <td>chirag@kartikey.com</td>
+
+                <td>PERD8D9573</td>
+
+                <td>₹5,09,00,000.00</td>
+
+                <td>8 years</td>
+              </tr>
+
+              <tr>
+                <td>
+                  <div class="table-firm">
+                    <span
+                      class="material-symbols-outlined dealer-pin"
+                      role="button"
+                      tabindex="0"
+                      aria-label="Pin dealer"
+                      >push_pin</span
+                    >
+
+                    <div class="table-firm-name">
+                      Global Traders
+                      <small class="table-firm-code"> Code: T1H2E3M73 </small>
+                    </div>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="table-action">
+                    <button type="button" class="table-edit-btn"></button>
+                    <button type="button" class="table-delete-btn"></button>
+                  </div>
+                </td>
+
+                <td>07 Feb '26</td>
+
+                <td>
+                  <span class="table-status sanctioned">
+                    Sanctioned
+                    <small>i</small>
+                  </span>
+                </td>
+
+                <td>Current account pending</td>
+
+                <td>+91 9456781234</td>
+
+                <td>harshal@globaltraders.com</td>
+
+                <td>MEJA8D9573</td>
+
+                <td>₹3,15,00,000.00</td>
+
+                <td>9 years</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="dealer-filters-overlay" id="dealerFiltersOverlay">
+          <div class="dealer-filters-modal">
+            <div class="dealer-filters-header">
+              <h2>New dealer lead filters</h2>
+              <button
+                type="button"
+                class="dealer-filters-close"
+                id="dealerFiltersClose"
+              >
+                ×
+              </button>
+            </div>
+            <div class="dealer-filters-body">
+              <div class="dealer-filters-row">
+                <div class="dealer-filter-field">
+                  <label>Firm</label>
+                  <div class="dealer-filter-dropdown" id="firmDropdown">
+                    <div class="dealer-filter-search-input">
+                      <input
+                        type="text"
+                        id="firmSearchInput"
+                        placeholder="Search or select firm, code, PAN"
+                      />
+                      <span>⌄</span>
+                    </div>
+                    <div class="dealer-filter-dropdown-panel"></div>
+                  </div>
+                </div>
+                <div class="dealer-filter-field">
+                  <label>Loan offer</label>
+                  <div class="dealer-filter-range">
+                    <div class="dealer-filter-range-input">
+                      <span>₹</span
+                      ><input
+                        type="number"
+                        id="loanOfferFrom"
+                        placeholder="0"
+                      />
+                    </div>
+                    <span class="dealer-filter-range-to">to</span>
+                    <div class="dealer-filter-range-input">
+                      <span>₹</span
+                      ><input type="number" id="loanOfferTo" placeholder="0" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="dealer-filters-row">
+                <div class="dealer-filter-field">
+                  <label>Lead type</label>
+                  <div class="dealer-filter-dropdown" id="leadTypeDropdown">
+                    <button type="button" class="dealer-filter-dropdown-btn">
+                      All <span>⌄</span>
+                    </button>
+                    <div class="dealer-filter-dropdown-panel">
+                      <label
+                        ><input type="checkbox" value="all" checked />
+                        All</label
+                      >
+                      <label
+                        ><input type="checkbox" value="fresh" /> Fresh
+                        lead</label
+                      >
+                      <label
+                        ><input type="checkbox" value="old" /> Old lead</label
+                      >
+                    </div>
+                  </div>
+                </div>
+                <div class="dealer-filter-field">
+                  <label>Uploaded by</label>
+                  <div class="dealer-filter-dropdown" id="uploadedByDropdown">
+                    <button type="button" class="dealer-filter-dropdown-btn">
+                      All <span>⌄</span>
+                    </button>
+                    <div class="dealer-filter-dropdown-panel">
+                      <label
+                        ><input type="checkbox" value="all" checked />
+                        All</label
+                      >
+                      <label
+                        ><input type="checkbox" value="icici" /> ICICI
+                        Bank</label
+                      >
+                      <label
+                        ><input type="checkbox" value="anchor" /> Anchor
+                        corporate</label
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="dealer-filter-field full">
+                <label>Sanction status</label>
+                <div class="dealer-filter-pills" id="sanctionStatusPills">
+                  <button
+                    type="button"
+                    class="dealer-filter-pill active"
+                    data-value="all"
+                  >
+                    All
+                  </button>
+                  <button
+                    type="button"
+                    class="dealer-filter-pill"
+                    data-value="sanctioned"
+                  >
+                    Sanctioned
+                  </button>
+                  <button
+                    type="button"
+                    class="dealer-filter-pill"
+                    data-value="rejected"
+                  >
+                    Rejected
+                  </button>
+                  <button
+                    type="button"
+                    class="dealer-filter-pill"
+                    data-value="actioned"
+                  >
+                    To be actioned
+                  </button>
+                </div>
+              </div>
+              <div class="dealer-filter-field full">
+                <label>Current stage</label>
+                <div class="dealer-filter-pills" id="applicationStatusPills">
+                  <button
+                    type="button"
+                    class="dealer-filter-pill active"
+                    data-value="all"
+                  >
+                    All
+                  </button>
+                  <button
+                    type="button"
+                    class="dealer-filter-pill"
+                    data-value="pending"
+                  >
+                    Application pending
+                  </button>
+                  <button
+                    type="button"
+                    class="dealer-filter-pill"
+                    data-value="current-account"
+                  >
+                    Current account pending
+                  </button>
+                  <button
+                    type="button"
+                    class="dealer-filter-pill"
+                    data-value="esign"
+                  >
+                    eSign pending
+                  </button>
+                  <button
+                    type="button"
+                    class="dealer-filter-pill"
+                    data-value="limit-setup"
+                  >
+                    Limit setup pending
+                  </button>
+                  <button
+                    type="button"
+                    class="dealer-filter-pill"
+                    data-value="rejected"
+                  >
+                    Application rejected
+                  </button>
+                  <button
+                    type="button"
+                    class="dealer-filter-pill"
+                    data-value="sanctioned"
+                  >
+                    Sanction approved
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="dealer-filters-footer">
+              <button
+                type="button"
+                class="dealer-filters-reset"
+                id="dealerFiltersReset"
+              >
+                Reset
+              </button>
+              <button
+                type="button"
+                class="dealer-filters-apply"
+                id="dealerFiltersApply"
+                disabled
+              >
+                Apply
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+     <!-- TRANSACTION DASHBOARD PAGE -->
+      <section
+        class="new-dealer-page txn-dashboard-page"
+        id="transactionDashboardPage"
+        style="display: none"
+      >
+        <div class="new-dealer-page-header">
+          <div class="new-dealer-heading">
+            <h1>Supply chain finance</h1>
+            <div class="new-dealer-program">
+              Program name: <span>Kartikey Corporations</span>
+            </div>
+          </div>
+          <div class="new-dealer-last-login">
+            Last updated: <strong>4 Jun '26</strong> at <strong>8:00 AM</strong>
+          </div>
+        </div>
+
+        <div class="new-dealer-tabs">
+          <div class="new-dealer-tab" data-goto="newdealer">
+            <span>New dealer leads</span>
+            <span class="new-dealer-count grey">65</span>
+          </div>
+          <div class="new-dealer-tab active">
+            <span>Transaction dashboard</span>
+            <span class="new-dealer-count orange">90</span>
+          </div>
+          <div class="new-dealer-tab" data-goto="renewal">
+            <span>Renewal details</span>
+            <span class="new-dealer-count grey">83</span>
+          </div>
+          <div class="new-dealer-tab-spacer"></div>
+          <div class="new-dealer-add-wrapper">
+            <button
+              type="button"
+              class="new-dealer-add-btn"
+              id="txnAddDealerBtn"
+            >
+              Add dealer
+              <span class="new-dealer-chevron">⌄</span>
+            </button>
+            <div class="new-dealer-add-menu" id="txnAddDealerMenu">
+              <div class="new-dealer-add-menu-item">Add single dealer</div>
+              <div class="new-dealer-add-menu-item">Bulk upload dealers</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TOOLBAR -->
+        <div class="new-dealer-toolbar">
+          <div class="new-dealer-filter-left">
+            <button
+              type="button"
+              class="dealer-filter-btn active txn-filter-btn"
+              data-txn-filter="all"
+            >
+              All <span>90</span>
+            </button>
+            <button
+              type="button"
+              class="dealer-filter-btn txn-filter-btn"
+              data-txn-filter="upcoming"
+            >
+              Upcoming <span>70</span>
+            </button>
+            <button
+              type="button"
+              class="dealer-filter-btn txn-filter-btn"
+              data-txn-filter="overdue"
+            >
+              Overdue <span>20</span>
+            </button>
+          </div>
+
+          <div class="new-dealer-toolbar-right">
+            <button
+              type="button"
+              class="hide-details-btn"
+              id="txnHideDetailsBtn"
+            >
+              <span class="hide-details-label">Hide details</span>
+              <span class="hide-details-eye material-symbols-outlined"
+                >visibility_off</span
+              >
+            </button>
+            <div class="view-switch">
+              <button
+                type="button"
+                class="view-switch-btn active"
+                data-view="list"
+                data-tooltip="List view"
+              ></button>
+              <button
+                type="button"
+                class="view-switch-btn"
+                data-view="grid"
+                data-tooltip="Table view"
+              ></button>
+            </div>
+            <div class="dealer-search-box">
+              <span class="dealer-search-icon">⌕</span>
+              <input
+                type="text"
+                id="txnSearchInput"
+                placeholder="Search by dealer, PAN,..."
+              />
+            </div>
+            <button type="button" class="dealer-share-btn">
+              <span>Share via mail</span>
+            </button>
+            <button type="button" class="dealer-filters-btn" id="txnFiltersBtn">
+              <span>Filters</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- LIST VIEW -->
+        <div class="new-dealer-table-wrapper txn-list-wrapper">
+          <table class="new-dealer-table txn-table">
+            <thead>
+              <tr>
+                <th>Firm details <span>↕</span></th>
+                <th>SCF limit account</th>
+                <th>Sanction limit <span>↕</span></th>
+                <th>Utilized limit <span>↕</span></th>
+                <th>Available limit <span>↕</span></th>
+                <th>Open transactions <span>↕</span></th>
+                <th>Overdue amount <span>↕</span></th>
+                <th>
+                  Days to get in overdue
+                  <span
+                    class="info-dot"
+                    data-tooltip="Excluding cure days"
+                  ></span>
+                </th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="txnTableBody">
+            </tbody>
+          </table>
+        </div>
+
+        <div class="dealer-table-view-wrapper txn-grid-wrapper">
+          <table class="dealer-table-view txn-table-view">
+            <thead>
+              <tr>
+                <th>Firm details</th>
+                <th>
+                  Days to get in overdue
+                  <span
+                    class="info-dot"
+                    data-tooltip="Excluding cure days"
+                  ></span>
+                </th>
+                <th>SCF limit account</th>
+                <th>Sanction limit</th>
+                <th>Utilized limit</th>
+                <th>Available limit</th>
+                <th>Open transactions</th>
+                <th>Overdue amount</th>
+                <th>Case type</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="txnTableViewBody">
+            </tbody>
+          </table>
+        </div>
+
+        <!-- TRANSACTION FILTERS MODAL -->
+        <div class="dealer-filters-overlay" id="txnFiltersOverlay">
+          <div class="dealer-filters-modal">
+            <div class="dealer-filters-header">
+              <h2>Transaction dashboard filters</h2>
+              <button
+                type="button"
+                class="dealer-filters-close"
+                id="txnFiltersClose"
+              >
+                ×
+              </button>
+            </div>
+
+            <div class="dealer-filters-body">
+              <div class="dealer-filter-pills" id="txnFilterTabs">
+                <button
+                  type="button"
+                  class="dealer-filter-pill active"
+                  data-tab="all"
+                >
+                  All
+                </button>
+                <button
+                  type="button"
+                  class="dealer-filter-pill"
+                  data-tab="upcoming"
+                >
+                  Upcoming
+                </button>
+                <button
+                  type="button"
+                  class="dealer-filter-pill"
+                  data-tab="overdue"
+                >
+                  Overdue
+                </button>
+              </div>
+
+              <div class="dealer-filters-row">
+                <div class="dealer-filter-field">
+                  <label>Firm</label>
+                  <div class="dealer-filter-dropdown" id="txnFirmDropdown">
+                    <button type="button" class="dealer-filter-dropdown-btn">
+                      Search or select firm, code, PAN <span>⌄</span>
+                    </button>
+                    <div class="dealer-filter-dropdown-panel"></div>
+                  </div>
+                </div>
+                <div class="dealer-filter-field">
+                  <label>Sanction limit</label>
+                  <div class="dealer-filter-range">
+                    <div class="dealer-filter-range-input">
+                      <span>₹</span
+                      ><input
+                        type="number"
+                        id="txnSanctionFrom"
+                        placeholder="0"
+                      />
+                    </div>
+                    <span class="dealer-filter-range-to">to</span>
+                    <div class="dealer-filter-range-input">
+                      <span>₹</span
+                      ><input
+                        type="number"
+                        id="txnSanctionTo"
+                        placeholder="0"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="dealer-filter-field full txn-filter-extra"
+                data-extra-for="upcoming"
+                style="display: none"
+              >
+                <label>Days to get due</label>
+                <div class="dealer-filter-pills" id="txnDaysDuePills">
+                  <button
+                    type="button"
+                    class="dealer-filter-pill active"
+                    data-value="all"
+                  >
+                    All
+                  </button>
+                  <button
+                    type="button"
+                    class="dealer-filter-pill"
+                    data-value="0-15"
+                  >
+                    0-15 days
+                  </button>
+                  <button
+                    type="button"
+                    class="dealer-filter-pill"
+                    data-value="1-month"
+                  >
+                    1 month
+                  </button>
+                  <button
+                    type="button"
+                    class="dealer-filter-pill"
+                    data-value="3-months"
+                  >
+                    3 months
+                  </button>
+                  <button
+                    type="button"
+                    class="dealer-filter-pill"
+                    data-value="custom"
+                  >
+                    Custom date range
+                  </button>
+                </div>
+              </div>
+
+              <div
+                class="dealer-filters-row txn-filter-extra"
+                data-extra-for="overdue"
+                style="display: none"
+              >
+                <div class="dealer-filter-field">
+                  <label>Overdue amount</label>
+                  <div class="dealer-filter-range">
+                    <div class="dealer-filter-range-input">
+                      <span>₹</span
+                      ><input
+                        type="number"
+                        id="txnOverdueFrom"
+                        placeholder="0"
+                      />
+                    </div>
+                    <span class="dealer-filter-range-to">to</span>
+                    <div class="dealer-filter-range-input">
+                      <span>₹</span
+                      ><input type="number" id="txnOverdueTo" placeholder="0" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="dealer-filters-footer">
+              <button
+                type="button"
+                class="dealer-filters-reset"
+                id="txnFiltersReset"
+              >
+                Reset
+              </button>
+              <button
+                type="button"
+                class="dealer-filters-apply"
+                id="txnFiltersApply"
+              >
+                Apply
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="custom-modal-overlay" id="openTranchesModal">
+        <div class="custom-modal open-tranches-modal">
+          <div class="open-tranches-header">
+            <h2>
+              Open tranches
+              <span id="tranchesCount" class="new-dealer-count orange">0</span>
+            </h2>
+            <button class="modal-close-btn" id="openTranchesClose">
+              <span class="material-icons">close</span>
+            </button>
+          </div>
+          <table class="tranches-table">
+            <thead>
+              <tr>
+                <th>Transaction ID</th>
+                <th>Transaction date <span>↕</span></th>
+                <th>Transaction type <span>↕</span></th>
+                <th>Amount <span>↕</span></th>
+                <th>Due date <span>↕</span></th>
+              </tr>
+            </thead>
+            <tbody id="tranchesTableBody"></tbody>
+          </table>
+          <div class="modal-footer-right">
+            <button class="outline-orange-btn" id="openTranchesCloseBtn">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SHARE VIA MAIL MODAL -->
+      <div
+        class="dealer-filters-overlay"
+        id="shareMailOverlay"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="shareMailTitle"
+      >
+        <div class="share-mail-modal">
+          <div class="dealer-filters-header">
+            <h2 id="shareMailTitle">Share via mail</h2>
+            <button
+              type="button"
+              class="dealer-filters-close"
+              id="shareMailClose"
+              aria-label="Close"
+            >
+              ×
+            </button>
+          </div>
+
+          <div class="share-mail-body">
+            <div class="dealer-filter-field">
+              <label for="shareEmailInput">Email ID</label>
+              <div class="share-select" id="shareEmailDropdown">
+                <input
+                  type="email"
+                  id="shareEmailInput"
+                  class="share-input"
+                  autocomplete="off"
+                  inputmode="email"
+                />
+                <button
+                  type="button"
+                  class="share-email-toggle"
+                  id="shareEmailToggle"
+                  aria-label="Saved emails"
+                >
+                  <span class="share-select-chevron" aria-hidden="true"></span>
+                </button>
+                <div
+                  class="share-select-panel"
+                  id="shareEmailPanel"
+                  role="listbox"
+                ></div>
+              </div>
+              <small class="share-error" id="shareEmailError"></small>
+            </div>
+
+            <div class="dealer-filter-field">
+              <label id="shareBucketLabel"
+                >Normal bucketing of transaction</label
+              >
+              <div class="share-select" id="shareBucketDropdown">
+                <button
+                  type="button"
+                  class="share-select-btn is-placeholder"
+                  aria-haspopup="listbox"
+                  aria-expanded="false"
+                  aria-labelledby="shareBucketLabel"
+                >
+                  <span class="share-select-text">Select bucketing</span>
+                  <span class="share-select-chevron" aria-hidden="true"></span>
+                </button>
+                <div
+                  class="share-select-panel"
+                  role="listbox"
+                  aria-labelledby="shareBucketLabel"
+                >
+                  <div
+                    class="share-option"
+                    role="option"
+                    tabindex="0"
+                    data-value="5"
+                  >
+                    5 days
+                  </div>
+                  <div
+                    class="share-option"
+                    role="option"
+                    tabindex="0"
+                    data-value="7"
+                  >
+                    7 days
+                  </div>
+                  <div
+                    class="share-option"
+                    role="option"
+                    tabindex="0"
+                    data-value="15"
+                  >
+                    15 days
+                  </div>
+                  <div
+                    class="share-option"
+                    role="option"
+                    tabindex="0"
+                    data-value="30"
+                  >
+                    30 days
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="share-mail-footer">
+            <button type="button" class="share-cancel-btn" id="shareMailCancel">
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="share-submit-btn"
+              id="shareMailSubmit"
+              disabled
+            >
+              Share
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOAST  -->
+      <div class="app-toast" id="appToast" role="status" aria-live="polite">
+        <span class="app-toast-icon" id="appToastIcon">✓</span>
+        <span class="app-toast-text" id="appToastText"></span>
       </div>
 
       <div id="toast"></div>
@@ -2009,6 +3721,7 @@
 
     <!-- jQuery -->
     <script src="./dashboard.js"></script>
+    <script src="./new-dealer.js"></script>
     <script src="../assets/js/d3.min.js"></script>
   </body>
 </html>
