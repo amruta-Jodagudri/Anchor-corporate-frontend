@@ -793,25 +793,27 @@
           <table class="new-dealer-table dealer-leads-table">
             <thead>
               <tr>
-                <th>
-                  Firm details
+              <th>
+                <div class="dealer-th-inner">
+                  <div>Firm details</div>
                   <span>↕</span>
+                </div>
+              </th>
+
+               <th>Dealer details</th>
+
+                <th>
+                  <div class="dealer-th-inner">
+                    <div>Association<br />with corporate</div>
+                    <span>↕</span>
+                  </div>
                 </th>
 
-                <th>Dealer details</th>
-
                 <th>
-                  Association
-                  <br />
-                  with corporate
-                  <span>↕</span>
-                </th>
-
-                <th>
-                  Sales to dealer
-                  <br />
-                  (last 12M)
-                  <span>↕</span>
+                  <div class="dealer-th-inner">
+                    <div>Sales to dealer<br />(last 12M)</div>
+                    <span>↕</span>
+                  </div>
                 </th>
 
                 <th>
@@ -1216,15 +1218,30 @@
           <table class="dealer-table-view new-dealer-table ">
             <thead>
               <tr>
-                <th>Firm details<span>↕</span></th>
-                <th>Action</th>
-                <th>Lead date</th>
-                <th>Sanction status</th>
-                <th>Application status<span>↕</span></th>
-                <th>Mobile number</th>
-                <th>Email ID</th>
-                <th>PAN</th>
-                <th>Sales to dealer (last 12M)<span>↕</span></th>
+              <th>
+                <div class="dealer-th-inner">
+                  <div>Firm details</div>
+                  <span>↕</span>
+                </div>
+              </th>
+              <th>Action</th>
+              <th>Lead date</th>
+              <th>Sanction status</th>
+              <th>
+                <div class="dealer-th-inner">
+                  <div>Application status</div>
+                  <span>↕</span>
+                </div>
+              </th>
+              <th>Mobile number</th>
+              <th>Email ID</th>
+              <th>PAN</th>
+                <th>
+                  <div class="dealer-th-inner">
+                    <div>Sales to dealer<br />(last 12M)</div>
+                    <span>↕</span>
+                  </div>
+                </th>
                 <th>Association</th>
               </tr>
             </thead>
@@ -1930,25 +1947,24 @@
         <!-- LIST VIEW -->
         <div class="new-dealer-table-wrapper txn-list-wrapper">
           <table class="new-dealer-table txn-table">
-            <thead>
-              <tr>
-                <th>Firm details <span>↕</span></th>
-                <th>SCF limit account</th>
-                <th>Sanction limit <span>↕</span></th>
-                <th>Utilized limit <span>↕</span></th>
-                <th>Available limit <span>↕</span></th>
-                <th>Open transactions <span>↕</span></th>
-                <th>Overdue amount <span>↕</span></th>
-                <th>
-                  Days to get in overdue
-                  <span
-                    class="info-dot"
-                    data-tooltip="Excluding cure days"
-                  ></span>
-                </th>
-                <th></th>
-              </tr>
-            </thead>
+          <thead>
+            <tr>
+              <th><div class="dealer-th-inner"><div>Firm details</div><span>↕</span></div></th>
+              <th>SCF limit account</th>
+              <th><div class="dealer-th-inner"><div>Sanction limit</div><span>↕</span></div></th>
+              <th><div class="dealer-th-inner"><div>Utilized limit</div><span>↕</span></div></th>
+              <th><div class="dealer-th-inner"><div>Available limit</div><span>↕</span></div></th>
+              <th><div class="dealer-th-inner"><div>Open transactions</div><span>↕</span></div></th>
+              <th><div class="dealer-th-inner"><div>Overdue amount</div><span>↕</span></div></th>
+              <th>
+                <div class="dealer-th-inner">
+                  <div>Days to get in overdue</div>
+                  <span class="info-dot" data-tooltip="Excluding cure days"></span>
+                </div>
+              </th>
+              <th></th>
+            </tr>
+          </thead>
             <tbody id="txnTableBody">
             </tbody>
           </table>
@@ -1956,26 +1972,25 @@
 
         <div class="dealer-table-view-wrapper txn-grid-wrapper">
           <table class="dealer-table-view txn-table-view">
-            <thead>
-              <tr>
-                <th>Firm details</th>
-                <th>
-                  Days to get in overdue
-                  <span
-                    class="info-dot"
-                    data-tooltip="Excluding cure days"
-                  ></span>
-                </th>
-                <th>SCF limit account</th>
-                <th>Sanction limit</th>
-                <th>Utilized limit</th>
-                <th>Available limit</th>
-                <th>Open transactions</th>
-                <th>Overdue amount</th>
-                <th>Case type</th>
-                <th></th>
-              </tr>
-            </thead>
+          <thead>
+            <tr>
+              <th><div class="dealer-th-inner"><div>Firm details</div><span>↕</span></div></th>
+              <th>
+                <div class="dealer-th-inner">
+                  <div>Days to get in overdue</div>
+                  <span class="info-dot" data-tooltip="Excluding cure days"></span>
+                </div>
+              </th>
+              <th>SCF limit account</th>
+              <th><div class="dealer-th-inner"><div>Sanction limit</div><span>↕</span></div></th>
+              <th><div class="dealer-th-inner"><div>Utilized limit</div><span>↕</span></div></th>
+              <th><div class="dealer-th-inner"><div>Available limit</div><span>↕</span></div></th>
+              <th><div class="dealer-th-inner"><div>Open transactions</div><span>↕</span></div></th>
+              <th><div class="dealer-th-inner"><div>Overdue amount</div><span>↕</span></div></th>
+              <th>Case type</th>
+              <th></th>
+            </tr>
+          </thead>
             <tbody id="txnTableViewBody">
             </tbody>
           </table>
