@@ -1,6 +1,6 @@
 "use strict";
 
-document.addEventListener("DOMContentLoaded", function () {
+jQuery(function ($) {
 
     const TOAST_DURATION_MS = 2500;
     const PIN_STORAGE_KEY = "dealerPinnedState";
@@ -31,6 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "renewal details": "renewal"
     };
 
+
     function escapeHtml(value) {
         const map = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
         return String(value).replace(/[&<>"']/g, function (ch) { return map[ch]; });
@@ -44,63 +45,64 @@ document.addEventListener("DOMContentLoaded", function () {
         return escapeHtml(amount).replace(/\.(\d{2})$/, '<span class="txn-paise">.$1</span>');
     }
 
-    function wrapPaise(cell) {
-        if (!cell || cell.querySelector(".txn-paise")) return;
-        cell.innerHTML = formatAmountMarkup(cell.textContent.trim());
+    function wrapPaise($cell) {
+        if (!$cell.length || $cell.find(".txn-paise").length) return;
+        $cell.html(formatAmountMarkup($cell.text().trim()));
     }
 
     function initDealerAmounts() {
-        document.querySelectorAll("#dealerTableBody .dealer-row").forEach(function (row) {
-            wrapPaise(row.children[3]);
-            wrapPaise(row.children[4]);
+        $("#dealerTableBody .dealer-row").each(function () {
+            const $cells = $(this).children();
+            wrapPaise($cells.eq(3));
+            wrapPaise($cells.eq(4));
         });
-        document.querySelectorAll("#newDealerPage .dealer-table-view tbody tr").forEach(function (row) {
-            wrapPaise(row.children[8]);
+        $("#newDealerPage .dealer-table-view tbody tr").each(function () {
+            wrapPaise($(this).children().eq(8));
         });
     }
 
-    function setActive(items, activeItem) {
-        items.forEach(function (item) {
-            item.classList.toggle("active", item === activeItem);
+    function setActive($items, $activeItem) {
+        const active = $activeItem && $activeItem.length ? $activeItem[0] : null;
+        $items.each(function () {
+            $(this).toggleClass("active", this === active);
         });
     }
 
     function bindClick(id, handler) {
-        const el = document.getElementById(id);
-        if (el) el.addEventListener("click", handler);
+        $("#" + id).on("click", handler);
     }
 
-    function initDropdownMenu(button, menu) {
-        if (!button || !menu) return;
+    function initDropdownMenu($button, $menu) {
+        if (!$button.length || !$menu.length) return;
 
-        button.addEventListener("click", function (event) {
+        $button.on("click", function (event) {
             event.stopPropagation();
-            menu.classList.toggle("show");
+            $menu.toggleClass("show");
         });
 
-        document.addEventListener("click", function () {
-            menu.classList.remove("show");
+        $(document).on("click", function () {
+            $menu.removeClass("show");
         });
     }
 
     function showAppToast(message, type, subText) {
-        const toast = document.getElementById("appToast");
-        const text = document.getElementById("appToastText");
-        const sub = document.getElementById("appToastSub");
-        if (!toast) return;
+        const $toast = $("#appToast");
+        if (!$toast.length) return;
 
-        toast.classList.toggle("error", type === "error");
-        toast.classList.toggle("warning", type === "warning");
-        toast.classList.toggle("has-sub", Boolean(subText));
-        if (text) text.textContent = message;
-        if (sub) sub.textContent = subText || "";
+        $toast
+            .toggleClass("error", type === "error")
+            .toggleClass("warning", type === "warning")
+            .toggleClass("has-sub", Boolean(subText));
+        $("#appToastText").text(message);
+        $("#appToastSub").text(subText || "");
 
-        toast.classList.add("show");
-        clearTimeout(toast._hideTimer);
-        toast._hideTimer = setTimeout(function () {
-            toast.classList.remove("show");
-        }, TOAST_DURATION_MS);
+        $toast.addClass("show");
+        clearTimeout($toast.data("hideTimer"));
+        $toast.data("hideTimer", setTimeout(function () {
+            $toast.removeClass("show");
+        }, TOAST_DURATION_MS));
     }
+
 
     const dealerCellLabels = {
         2: "Dealer details",
@@ -127,12 +129,12 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     const dealerDetails = {
-        "Zenith Steel Traders":     Object.assign({}, commonDealerDetails, { vintage: "12 years", overdue: "0 (7D +)", recommendation: "₹70,00,000.00" }),
-        "SunDesh Systems Pvt. Ltd": Object.assign({}, commonDealerDetails, { vintage: "14 years", overdue: "1 (7D +)", recommendation: "₹65,00,000.00" }),
-        "Chauhan Traders":          Object.assign({}, commonDealerDetails, { vintage: "15 years", overdue: "0 (7D +)", recommendation: "₹80,00,000.00" }),
-        "Polychem Global":          Object.assign({}, commonDealerDetails, { vintage: "16 years", overdue: "2 (7D +)", recommendation: "₹90,00,000.00" }),
-        "TechGlobal":               Object.assign({}, commonDealerDetails, { vintage: "16 years", overdue: "0 (7D +)", recommendation: "₹90,00,000.00" }),
-        "Trader Groups":            Object.assign({}, commonDealerDetails, { vintage: "16 years", overdue: "0 (7D +)", recommendation: "₹90,00,000.00" })
+        "Zenith Steel Traders":     $.extend({}, commonDealerDetails, { vintage: "12 years", overdue: "0 (7D +)", recommendation: "₹70,00,000.00" }),
+        "SunDesh Systems Pvt. Ltd": $.extend({}, commonDealerDetails, { vintage: "14 years", overdue: "1 (7D +)", recommendation: "₹65,00,000.00" }),
+        "Chauhan Traders":          $.extend({}, commonDealerDetails, { vintage: "15 years", overdue: "0 (7D +)", recommendation: "₹80,00,000.00" }),
+        "Polychem Global":          $.extend({}, commonDealerDetails, { vintage: "16 years", overdue: "2 (7D +)", recommendation: "₹90,00,000.00" }),
+        "TechGlobal":               $.extend({}, commonDealerDetails, { vintage: "16 years", overdue: "0 (7D +)", recommendation: "₹90,00,000.00" }),
+        "Trader Groups":            $.extend({}, commonDealerDetails, { vintage: "16 years", overdue: "0 (7D +)", recommendation: "₹90,00,000.00" })
     };
 
     const progressSteps = [
@@ -221,13 +223,14 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     ];
 
-    const newDealerPage = document.getElementById("newDealerPage");
-    const hideDetailsBtn = document.getElementById("hideDetailsBtn");
-    const searchInput = document.getElementById("dealerSearchInput");
 
-    const menuItems = document.querySelectorAll("#menuPanel .menu-list .menu-item");
+    const $newDealerPage = $("#newDealerPage");
+    const $hideDetailsBtn = $("#hideDetailsBtn");
+    const $searchInput = $("#dealerSearchInput");
 
-    const dealerRows = Array.from(document.querySelectorAll("#newDealerPage .new-dealer-table .dealer-row"));
+    const $menuItems = $("#menuPanel .menu-list .menu-item");
+
+    let $dealerRows = $("#newDealerPage .new-dealer-table .dealer-row");
 
     let detailsHidden = false;
     let activeFilter = "all";
@@ -244,56 +247,55 @@ document.addEventListener("DOMContentLoaded", function () {
         uploadedBy: []
     };
 
-    function getDealerName(row) {
-        const name = row.querySelector(".dealer-firm strong");
-        return name ? name.textContent.trim() : "";
+    function getDealerName($row) {
+        return $row.find(".dealer-firm strong").first().text().trim();
     }
 
-    function getRobustFirmName(container) {
-        if (!container) return "";
-        const clone = container.cloneNode(true);
-        const codeEl = clone.querySelector(".table-firm-code");
-        if (codeEl) codeEl.remove();
-        return clone.textContent.replace(/\s+/g, " ").trim();
+    function getRobustFirmName($container) {
+        if (!$container || !$container.length) return "";
+        const $clone = $container.first().clone();
+        $clone.find(".table-firm-code").first().remove();
+        return $clone.text().replace(/\s+/g, " ").trim();
     }
 
-    function getDealerStage(row) {
-        return dealerStages[getDealerName(row)] || "apply";
+    function getDealerStage($row) {
+        return dealerStages[getDealerName($row)] || "apply";
     }
 
     function findDealerRow(dealerName) {
-        return dealerRows.find(function (row) {
-            return getDealerName(row) === dealerName;
-        });
+        return $dealerRows.filter(function () {
+            return getDealerName($(this)) === dealerName;
+        }).first();
     }
 
     function applyDealerCellLabels() {
-        dealerRows.forEach(function (row) {
-            Object.keys(dealerCellLabels).forEach(function (position) {
-                const cell = row.children[position - 1];
-                if (cell) cell.dataset.label = dealerCellLabels[position];
+        $dealerRows.each(function () {
+            const $cells = $(this).children();
+            $.each(dealerCellLabels, function (position, label) {
+                $cells.eq(position - 1).attr("data-label", label);
             });
         });
     }
 
     function prepareContactIcons() {
-        document.querySelectorAll(".dealer-contact span").forEach(function (element) {
-            const original = element.textContent.trim();
+        $(".dealer-contact span").each(function () {
+            const $el = $(this);
+            const original = $el.text().trim();
             if (!original) return;
 
-            if (original.startsWith("☎")) {
-                element.dataset.icon = "phone";
-                element.dataset.value = original.replace("☎", "").trim();
+            if (original.indexOf("☎") === 0) {
+                $el.attr("data-icon", "phone");
+                $el.attr("data-value", original.replace("☎", "").trim());
             } else {
-                element.dataset.value = original;
+                $el.attr("data-value", original);
             }
         });
 
-        document.querySelectorAll(".dealer-contact small").forEach(function (element) {
-            element.dataset.value = element.textContent.trim().replace("✉", "").trim();
+        $(".dealer-contact small").each(function () {
+            const $el = $(this);
+            $el.attr("data-value", $el.text().trim().replace("✉", "").trim());
         });
     }
-
 
     function maskPhone(value) {
         const v = value.trim();
@@ -349,65 +351,71 @@ document.addEventListener("DOMContentLoaded", function () {
         }).join("-");
     }
 
-    function toggleTextMask(el, isHidden, maskFn) {
+    function toggleTextMask($el, isHidden, maskFn) {
         if (isHidden) {
-            el.dataset.original = el.dataset.original || el.textContent.trim();
-            el.textContent = maskFn(el.dataset.original);
-        } else if (el.dataset.original) {
-            el.textContent = el.dataset.original;
+            let original = $el.attr("data-original");
+            if (!original) {
+                original = $el.text().trim();
+                $el.attr("data-original", original);
+            }
+            $el.text(maskFn(original));
+        } else if ($el.attr("data-original")) {
+            $el.text($el.attr("data-original"));
         }
     }
 
-    function toggleValueMask(el, isHidden, maskFn) {
+    function toggleValueMask($el, isHidden, maskFn) {
         if (isHidden) {
-            el.dataset.original = el.dataset.original || el.dataset.value;
-            el.dataset.value = maskFn(el.dataset.original);
-        } else if (el.dataset.original) {
-            el.dataset.value = el.dataset.original;
+            const original = $el.attr("data-original") || $el.attr("data-value");
+            $el.attr("data-original", original);
+            $el.attr("data-value", maskFn(original));
+        } else if ($el.attr("data-original")) {
+            $el.attr("data-value", $el.attr("data-original"));
         }
     }
 
-    function updateHideButtonUI(btn, isHidden) {
-        if (!btn) return;
+    function updateHideButtonUI($btn, isHidden) {
+        if (!$btn.length) return;
 
         const labelText = isHidden ? "Show details" : "Hide details";
-        const label = btn.querySelector(".hide-details-label");
-        const eye = btn.querySelector(".hide-details-eye");
+        const $label = $btn.find(".hide-details-label").first();
+        const $eye = $btn.find(".hide-details-eye").first();
 
-        if (label) {
-            label.textContent = labelText;
+        if ($label.length) {
+            $label.text(labelText);
         } else {
-            const textNode = Array.from(btn.childNodes).find(function (node) {
-                return node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== "";
-            });
+            const textNode = $btn.contents().filter(function () {
+                return this.nodeType === Node.TEXT_NODE && this.textContent.trim() !== "";
+            })[0];
             if (textNode) textNode.textContent = labelText + " ";
         }
 
-        if (eye) eye.textContent = isHidden ? "visibility" : "visibility_off";
+        if ($eye.length) $eye.text(isHidden ? "visibility" : "visibility_off");
     }
 
     function applyDealerMasking(isHidden) {
-        document.querySelectorAll("#newDealerPage .dealer-contact span[data-value]").forEach(function (el) {
-            toggleValueMask(el, isHidden, maskPhone);
+        $("#newDealerPage .dealer-contact span[data-value]").each(function () {
+            toggleValueMask($(this), isHidden, maskPhone);
         });
 
-        document.querySelectorAll("#newDealerPage .dealer-contact small[data-value]").forEach(function (el) {
-            toggleValueMask(el, isHidden, maskEmail);
+        $("#newDealerPage .dealer-contact small[data-value]").each(function () {
+            toggleValueMask($(this), isHidden, maskEmail);
         });
 
-        document.querySelectorAll("#newDealerPage .dealer-association small").forEach(function (el) {
-            toggleTextMask(el, isHidden, function (v) { return "PAN: " + maskPAN(v); });
+        $("#newDealerPage .dealer-association small").each(function () {
+            toggleTextMask($(this), isHidden, function (v) { return "PAN: " + maskPAN(v); });
         });
 
-        document.querySelectorAll("#newDealerPage .code-value").forEach(function (el) {
-            toggleTextMask(el, isHidden, maskCodeValue);
+        $("#newDealerPage .code-value").each(function () {
+            toggleTextMask($(this), isHidden, maskCodeValue);
         });
 
-        document.querySelectorAll("#newDealerPage .dealer-detail-item").forEach(function (item) {
-            const label = item.querySelector("span");
-            const value = item.querySelector("strong");
-            if (label && value && label.textContent.trim() === "Dealer ID") {
-                toggleTextMask(value, isHidden, maskDealerId);
+        $("#newDealerPage .dealer-detail-item").each(function () {
+            const $item = $(this);
+            const $label = $item.find("span").first();
+            const $value = $item.find("strong").first();
+            if ($label.length && $value.length && $label.text().trim() === "Dealer ID") {
+                toggleTextMask($value, isHidden, maskDealerId);
             }
         });
 
@@ -417,39 +425,40 @@ document.addEventListener("DOMContentLoaded", function () {
             { index: 7, maskFn: maskPAN }
         ];
 
-        document.querySelectorAll("#newDealerPage .dealer-table-view tbody tr").forEach(function (row) {
+        $("#newDealerPage .dealer-table-view tbody tr").each(function () {
+            const $cells = $(this).children();
             gridColumns.forEach(function (column) {
-                const cell = row.children[column.index];
-                if (cell) toggleTextMask(cell, isHidden, column.maskFn);
+                const $cell = $cells.eq(column.index);
+                if ($cell.length) toggleTextMask($cell, isHidden, column.maskFn);
             });
         });
     }
 
     function applyTxnMasking(isHidden) {
-        document.querySelectorAll("#transactionDashboardPage .code-value").forEach(function (el) {
-            toggleTextMask(el, isHidden, maskCodeValue);
+        $("#transactionDashboardPage .code-value").each(function () {
+            toggleTextMask($(this), isHidden, maskCodeValue);
         });
 
-        document.querySelectorAll(".txn-scf-account").forEach(function (el) {
-            toggleTextMask(el, isHidden, maskAccountNumber);
+        $(".txn-scf-account").each(function () {
+            toggleTextMask($(this), isHidden, maskAccountNumber);
         });
     }
 
     function applyRenewalMasking(isHidden) {
-        document.querySelectorAll("#renewalDetailsPage .dealer-contact span[data-value]").forEach(function (el) {
-            toggleValueMask(el, isHidden, maskPhone);
+        $("#renewalDetailsPage .dealer-contact span[data-value]").each(function () {
+            toggleValueMask($(this), isHidden, maskPhone);
         });
 
-        document.querySelectorAll("#renewalDetailsPage .dealer-contact small[data-value]").forEach(function (el) {
-            toggleValueMask(el, isHidden, maskEmail);
+        $("#renewalDetailsPage .dealer-contact small[data-value]").each(function () {
+            toggleValueMask($(this), isHidden, maskEmail);
         });
 
-        document.querySelectorAll("#renewalDetailsPage .pan-value").forEach(function (el) {
-            toggleTextMask(el, isHidden, maskPAN);
+        $("#renewalDetailsPage .pan-value").each(function () {
+            toggleTextMask($(this), isHidden, maskPAN);
         });
 
-        document.querySelectorAll("#renewalDetailsPage .id-value").forEach(function (el) {
-            toggleTextMask(el, isHidden, maskDealerId);
+        $("#renewalDetailsPage .id-value").each(function () {
+            toggleTextMask($(this), isHidden, maskDealerId);
         });
 
         const gridColumns = [
@@ -458,10 +467,11 @@ document.addEventListener("DOMContentLoaded", function () {
             { index: 5, maskFn: maskPAN }
         ];
 
-        document.querySelectorAll("#renewalDetailsPage .renewal-table-view tbody tr").forEach(function (row) {
+        $("#renewalDetailsPage .renewal-table-view tbody tr").each(function () {
+            const $cells = $(this).children();
             gridColumns.forEach(function (column) {
-                const cell = row.children[column.index];
-                if (cell) toggleTextMask(cell, isHidden, column.maskFn);
+                const $cell = $cells.eq(column.index);
+                if ($cell.length) toggleTextMask($cell, isHidden, column.maskFn);
             });
         });
     }
@@ -470,15 +480,15 @@ document.addEventListener("DOMContentLoaded", function () {
         applyDealerMasking(isHidden);
         applyTxnMasking(isHidden);
         applyRenewalMasking(isHidden);
-        updateHideButtonUI(document.getElementById("hideDetailsBtn"), isHidden);
-        updateHideButtonUI(document.getElementById("txnHideDetailsBtn"), isHidden);
-        updateHideButtonUI(document.getElementById("renewalHideDetailsBtn"), isHidden);
+        updateHideButtonUI($("#hideDetailsBtn"), isHidden);
+        updateHideButtonUI($("#txnHideDetailsBtn"), isHidden);
+        updateHideButtonUI($("#renewalHideDetailsBtn"), isHidden);
     }
 
     function setDetailsHidden(isHidden) {
         detailsHidden = isHidden;
-        if (newDealerPage) newDealerPage.classList.toggle("details-hidden", isHidden);
-        if (hideDetailsBtn) hideDetailsBtn.classList.toggle("is-hidden-state", isHidden);
+        $newDealerPage.toggleClass("details-hidden", isHidden);
+        $hideDetailsBtn.toggleClass("is-hidden-state", isHidden);
         applyAllMasking(isHidden);
     }
 
@@ -547,17 +557,16 @@ document.addEventListener("DOMContentLoaded", function () {
         `;
     }
 
-    function createDealerDetailRow(row) {
-        const dealerName = getDealerName(row);
-        const stage = getDealerStage(row);
+    function createDealerDetailRow($row) {
+        const dealerName = getDealerName($row);
+        const stage = getDealerStage($row);
         const details = dealerDetails[dealerName] || dealerDetails["Zenith Steel Traders"];
-        const leadType = row.dataset.leadType === "old" ? "Old" : "Fresh";
+        const leadType = $row.attr("data-lead-type") === "old" ? "Old" : "Fresh";
 
-        const detailRow = document.createElement("tr");
-        detailRow.className = "dealer-details-row";
-        detailRow.dataset.dealerDetailsFor = dealerName;
+        const $detailRow = $("<tr>", { "class": "dealer-details-row" })
+            .attr("data-dealer-details-for", dealerName);
 
-        detailRow.innerHTML = `
+        $detailRow.html(`
             <td colspan="8">
                 <div class="dealer-detail-panel">
 
@@ -584,55 +593,50 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 </div>
             </td>
-        `;
+        `);
 
-        detailRow.querySelector(".dealer-collapse-btn").addEventListener("click", function () {
-            toggleDealerRow(row);
+        $detailRow.find(".dealer-collapse-btn").on("click", function () {
+            toggleDealerRow($row);
         });
 
-        return detailRow;
+        return $detailRow;
     }
 
     function initializeDetailRows() {
-        dealerRows.forEach(function (row) {
-            const nextRow = row.nextElementSibling;
-            if (nextRow && nextRow.classList.contains("dealer-details-row")) return;
+        $dealerRows.each(function () {
+            const $row = $(this);
+            if ($row.next().hasClass("dealer-details-row")) return;
 
-            row.parentNode.insertBefore(createDealerDetailRow(row), row.nextSibling);
+            $row.after(createDealerDetailRow($row));
         });
     }
 
     function closeAllDealerDetails() {
-        dealerRows.forEach(function (row) {
-            row.classList.remove("is-expanded");
-
-            const detailRow = row.nextElementSibling;
-            if (detailRow && detailRow.classList.contains("dealer-details-row")) {
-                detailRow.classList.remove("is-visible");
-            }
+        $dealerRows.each(function () {
+            const $row = $(this);
+            $row.removeClass("is-expanded");
+            $row.next(".dealer-details-row").removeClass("is-visible");
         });
     }
 
-    function toggleDealerRow(row) {
-        const wasExpanded = row.classList.contains("is-expanded");
+    function toggleDealerRow($row) {
+        const wasExpanded = $row.hasClass("is-expanded");
         closeAllDealerDetails();
         if (wasExpanded) return;
 
-        row.classList.add("is-expanded");
-        const detailRow = row.nextElementSibling;
-        if (detailRow && detailRow.classList.contains("dealer-details-row")) {
-            detailRow.classList.add("is-visible");
-        }
+        $row.addClass("is-expanded");
+        $row.next(".dealer-details-row").addClass("is-visible");
     }
 
     function initRowExpansion() {
-        dealerRows.forEach(function (row) {
-            const expandButton = row.querySelector(".dealer-expand-btn");
-            if (!expandButton) return;
+        $dealerRows.each(function () {
+            const $row = $(this);
+            const $expandButton = $row.find(".dealer-expand-btn").first();
+            if (!$expandButton.length) return;
 
-            expandButton.addEventListener("click", function (event) {
+            $expandButton.on("click", function (event) {
                 event.stopPropagation();
-                toggleDealerRow(row);
+                toggleDealerRow($row);
             });
         });
     }
@@ -652,208 +656,202 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function initStatusTooltips() {
-        dealerRows.forEach(function (row) {
-            const infoIcon = row.querySelector(".dealer-status small");
-            if (infoIcon) {
-                infoIcon.setAttribute("data-tooltip", getStatusTooltip(row.dataset.status, getDealerStage(row)));
-            }
+        $dealerRows.each(function () {
+            const $row = $(this);
+            $row.find(".dealer-status small").first()
+                .attr("data-tooltip", getStatusTooltip($row.attr("data-status"), getDealerStage($row)));
         });
 
-        document.querySelectorAll("#newDealerPage .dealer-table-view tbody tr").forEach(function (tRow) {
-            const statusEl = tRow.querySelector(".table-status");
-            const infoIcon = tRow.querySelector(".table-status small");
-            if (!statusEl || !infoIcon) return;
+        $("#newDealerPage .dealer-table-view tbody tr").each(function () {
+            const $tRow = $(this);
+            const $statusEl = $tRow.find(".table-status").first();
+            const $infoIcon = $tRow.find(".table-status small").first();
+            if (!$statusEl.length || !$infoIcon.length) return;
 
             const status = ["actioned", "sanctioned", "rejected"].find(function (name) {
-                return statusEl.classList.contains(name);
+                return $statusEl.hasClass(name);
             }) || "";
 
-            const dealerName = getRobustFirmName(tRow.querySelector(".table-firm-name"));
+            const dealerName = getRobustFirmName($tRow.find(".table-firm-name").first());
             const stage = dealerStages[dealerName] || "apply";
 
-            infoIcon.setAttribute("data-tooltip", getStatusTooltip(status, stage));
+            $infoIcon.attr("data-tooltip", getStatusTooltip(status, stage));
         });
     }
 
-
-    function renderFirmOptions(panel, firms) {
-        if (!panel) return;
-        panel.innerHTML = "";
+    function renderFirmOptions($panel, firms) {
+        if (!$panel.length) return;
+        $panel.empty();
 
         firms.forEach(function (firm) {
-            const label = document.createElement("label");
-            const checkbox = document.createElement("input");
-            const text = document.createElement("span");
-            const meta = document.createElement("small");
-
-            checkbox.type = "checkbox";
-            checkbox.value = firm.name;
-            checkbox.dataset.label = firm.name;
-            text.textContent = firm.name;
-            meta.textContent = firm.meta;
-            text.appendChild(meta);
-            label.append(checkbox, text);
-            panel.appendChild(label);
+            const $checkbox = $("<input>", { type: "checkbox", value: firm.name }).attr("data-label", firm.name);
+            const $meta = $("<small>").text(firm.meta);
+            const $text = $("<span>").text(firm.name).append($meta);
+            $panel.append($("<label>").append($checkbox, $text));
         });
     }
 
-    function getOptionLabel(input) {
-        return input.dataset.label || input.closest("label").textContent.trim();
+    function getOptionLabel($input) {
+        return $input.attr("data-label") || $input.closest("label").text().trim();
     }
 
-    function updateDropdownSummary(dropdown) {
-        const inputs = Array.from(dropdown.querySelectorAll(".dealer-filter-dropdown-panel input[type='checkbox']"));
-        const allBox = inputs.find(function (input) { return input.value === "all"; });
-        const picked = inputs.filter(function (input) { return input.checked && input.value !== "all"; });
-        const summary = allBox && allBox.checked ? "All" : picked.map(getOptionLabel).join(", ");
-        const searchField = dropdown.querySelector(".dealer-filter-search-input input");
-        if (searchField) {
-            searchField.value = summary;
+    function updateDropdownSummary($dropdown) {
+        const $inputs = $dropdown.find(".dealer-filter-dropdown-panel input[type='checkbox']");
+        const $allBox = $inputs.filter(function () { return this.value === "all"; }).first();
+        const picked = $inputs.filter(function () {
+            return this.checked && this.value !== "all";
+        }).map(function () {
+            return getOptionLabel($(this));
+        }).get();
+        const summary = $allBox.length && $allBox.prop("checked") ? "All" : picked.join(", ");
+
+        const $searchField = $dropdown.find(".dealer-filter-search-input input").first();
+        if ($searchField.length) {
+            $searchField.val(summary);
             return;
         }
 
-        const button = dropdown.querySelector(".dealer-filter-dropdown-btn");
-        if (!button) return;
+        const $button = $dropdown.find(".dealer-filter-dropdown-btn").first();
+        if (!$button.length) return;
 
-        const textNode = Array.from(button.childNodes).find(function (node) {
-            return node.nodeType === Node.TEXT_NODE;
-        });
-        if (textNode) textNode.textContent = (summary || dropdown.dataset.defaultText) + " ";
+        const textNode = $button.contents().filter(function () {
+            return this.nodeType === Node.TEXT_NODE;
+        })[0];
+        if (textNode) textNode.textContent = (summary || $dropdown.attr("data-default-text")) + " ";
     }
 
-    function closeFilterDropdown(dropdown) {
-        dropdown.classList.remove("open");
-        dropdown.querySelectorAll(".dealer-filter-dropdown-panel label").forEach(function (label) {
-            label.style.display = "";
-        });
-        updateDropdownSummary(dropdown);
+    function closeFilterDropdown($dropdown) {
+        $dropdown.removeClass("open");
+        $dropdown.find(".dealer-filter-dropdown-panel label").css("display", "");
+        updateDropdownSummary($dropdown);
     }
 
-    function resetFilterDropdown(dropdown) {
-        const inputs = Array.from(dropdown.querySelectorAll(".dealer-filter-dropdown-panel input[type='checkbox']"));
-        const hasAll = inputs.some(function (input) { return input.value === "all"; });
-        inputs.forEach(function (input) { input.checked = hasAll; });
-        updateDropdownSummary(dropdown);
+    function resetFilterDropdown($dropdown) {
+        const $inputs = $dropdown.find(".dealer-filter-dropdown-panel input[type='checkbox']");
+        const hasAll = $inputs.filter(function () { return this.value === "all"; }).length > 0;
+        $inputs.prop("checked", hasAll);
+        updateDropdownSummary($dropdown);
     }
 
     function getActivePillValue(selector) {
-        const active = document.querySelector(selector + " .active");
-        return active ? active.dataset.value : "all";
+        const $active = $(selector + " .active").first();
+        return $active.length ? $active.attr("data-value") : "all";
     }
 
     function getCheckedValues(selector) {
-        return Array.from(document.querySelectorAll(selector + " input[type='checkbox']:checked"))
-            .map(function (input) { return input.value; })
+        return $(selector + " input[type='checkbox']:checked")
+            .map(function () { return this.value; })
+            .get()
             .filter(function (value) { return value !== "all"; });
     }
 
     function initFilterDropdowns() {
-        document.querySelectorAll(".dealer-filter-dropdown").forEach(function (dropdown) {
-            const trigger = dropdown.querySelector(".dealer-filter-dropdown-btn, .dealer-filter-search-input");
-            const panel = dropdown.querySelector(".dealer-filter-dropdown-panel");
-            if (!trigger || !panel) return;
+        $(".dealer-filter-dropdown").each(function () {
+            const $dropdown = $(this);
+            const $trigger = $dropdown.find(".dealer-filter-dropdown-btn, .dealer-filter-search-input").first();
+            const $panel = $dropdown.find(".dealer-filter-dropdown-panel").first();
+            if (!$trigger.length || !$panel.length) return;
 
-            const isSearch = trigger.classList.contains("dealer-filter-search-input");
-            const button = dropdown.querySelector(".dealer-filter-dropdown-btn");
-            if (button) {
-                const textNode = Array.from(button.childNodes).find(function (node) {
-                    return node.nodeType === Node.TEXT_NODE;
-                });
-                dropdown.dataset.defaultText = textNode ? textNode.textContent.trim() : "";
+            const isSearch = $trigger.hasClass("dealer-filter-search-input");
+            const $button = $dropdown.find(".dealer-filter-dropdown-btn").first();
+            if ($button.length) {
+                const textNode = $button.contents().filter(function () {
+                    return this.nodeType === Node.TEXT_NODE;
+                })[0];
+                $dropdown.attr("data-default-text", textNode ? textNode.textContent.trim() : "");
             }
 
-            const allBox = panel.querySelector("input[value='all']");
-            if (allBox && allBox.checked) {
-                panel.querySelectorAll("input[type='checkbox']").forEach(function (input) {
-                    input.checked = true;
-                });
+            const $allBox = $panel.find("input[value='all']").first();
+            if ($allBox.length && $allBox.prop("checked")) {
+                $panel.find("input[type='checkbox']").prop("checked", true);
             }
 
-            trigger.addEventListener("click", function (event) {
+            $trigger.on("click", function (event) {
                 event.stopPropagation();
 
-                document.querySelectorAll(".dealer-filter-dropdown.open").forEach(function (item) {
-                    if (item !== dropdown) closeFilterDropdown(item);
+                $(".dealer-filter-dropdown.open").each(function () {
+                    if (this !== $dropdown[0]) closeFilterDropdown($(this));
                 });
 
-                if (isSearch && !event.target.closest("span")) {
-                    dropdown.classList.add("open");
-                } else if (dropdown.classList.contains("open")) {
-                    closeFilterDropdown(dropdown);
+                if (isSearch && !$(event.target).closest("span").length) {
+                    $dropdown.addClass("open");
+                } else if ($dropdown.hasClass("open")) {
+                    closeFilterDropdown($dropdown);
                 } else {
-                    dropdown.classList.add("open");
+                    $dropdown.addClass("open");
                 }
             });
 
-            panel.addEventListener("click", function (event) {
+            $panel.on("click", function (event) {
                 event.stopPropagation();
             });
 
-            panel.addEventListener("change", function (event) {
+            $panel.on("change", function (event) {
                 const changed = event.target;
                 if (changed.type !== "checkbox") return;
 
-                const inputs = Array.from(panel.querySelectorAll("input[type='checkbox']"));
-                const all = inputs.find(function (input) { return input.value === "all"; });
+                const $inputs = $panel.find("input[type='checkbox']");
+                const $all = $inputs.filter(function () { return this.value === "all"; }).first();
 
-                if (all) {
-                    if (changed === all) {
-                        inputs.forEach(function (input) { input.checked = all.checked; });
+                if ($all.length) {
+                    if (changed === $all[0]) {
+                        $inputs.prop("checked", $all.prop("checked"));
                     } else {
-                        all.checked = inputs
-                            .filter(function (input) { return input !== all; })
-                            .every(function (input) { return input.checked; });
+                        $all.prop("checked", $inputs.not($all).toArray().every(function (input) {
+                            return input.checked;
+                        }));
                     }
                 }
 
-                updateDropdownSummary(dropdown);
+                updateDropdownSummary($dropdown);
             });
 
-            updateDropdownSummary(dropdown);
+            updateDropdownSummary($dropdown);
         });
 
-        document.addEventListener("click", function () {
-            document.querySelectorAll(".dealer-filter-dropdown.open").forEach(closeFilterDropdown);
+        $(document).on("click", function () {
+            $(".dealer-filter-dropdown.open").each(function () {
+                closeFilterDropdown($(this));
+            });
         });
     }
 
-    function initFirmSearch(input, panel) {
-        if (!input || !panel) return;
+    function initFirmSearch($input, $panel) {
+        if (!$input.length || !$panel.length) return;
 
-        input.addEventListener("focus", function () { input.select(); });
-        input.addEventListener("input", function () {
-            const query = input.value.trim().toLowerCase();
-            panel.querySelectorAll("label").forEach(function (label) {
-                label.style.display = !query || label.textContent.toLowerCase().includes(query) ? "" : "none";
+        $input.on("focus", function () { this.select(); });
+        $input.on("input", function () {
+            const query = ($input.val() || "").trim().toLowerCase();
+            $panel.find("label").each(function () {
+                const $label = $(this);
+                $label.css("display", !query || $label.text().toLowerCase().includes(query) ? "" : "none");
             });
         });
     }
 
     function initDealerFirmFilter() {
-        const panel = document.querySelector("#firmDropdown .dealer-filter-dropdown-panel");
+        const $panel = $("#firmDropdown .dealer-filter-dropdown-panel").first();
 
-        renderFirmOptions(panel, dealerRows.map(function (row) {
-            const code = (row.querySelector(".dealer-firm small") || {}).textContent || "";
-            const pan = (row.querySelector(".dealer-association small") || {}).textContent || "";
+        renderFirmOptions($panel, $dealerRows.map(function () {
+            const $row = $(this);
+            const code = $row.find(".dealer-firm small").first().text() || "";
+            const pan = $row.find(".dealer-association small").first().text() || "";
 
             return {
-                name: getDealerName(row),
+                name: getDealerName($row),
                 meta: "Dealer code: " + code.replace(/^Code:\s*/i, "").trim() + "\n" + pan.trim()
             };
-        }));
+        }).get());
 
-        initFirmSearch(document.getElementById("firmSearchInput"), panel);
+        initFirmSearch($("#firmSearchInput"), $panel);
     }
-
-
-    //    NEW DEALER LEADS - FILTERS MODAL
 
     function readModalFilters() {
         return {
             sanction: getActivePillValue("#sanctionStatusPills"),
             application: getActivePillValue("#applicationStatusPills"),
-            loanFrom: parseFloat((document.getElementById("loanOfferFrom") || {}).value) || null,
-            loanTo: parseFloat((document.getElementById("loanOfferTo") || {}).value) || null,
+            loanFrom: parseFloat($("#loanOfferFrom").val()) || null,
+            loanTo: parseFloat($("#loanOfferTo").val()) || null,
             firms: getCheckedValues("#firmDropdown"),
             leadTypes: getCheckedValues("#leadTypeDropdown"),
             uploadedBy: getCheckedValues("#uploadedByDropdown")
@@ -861,79 +859,68 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function initDealerFiltersModal() {
-        const openBtn = document.getElementById("dealerFiltersBtn");
-        const overlay = document.getElementById("dealerFiltersOverlay");
-        const closeBtn = document.getElementById("dealerFiltersClose");
-        const resetBtn = document.getElementById("dealerFiltersReset");
-        const applyBtn = document.getElementById("dealerFiltersApply");
-        if (!overlay) return;
+        const $openBtn = $("#dealerFiltersBtn");
+        const $overlay = $("#dealerFiltersOverlay");
+        const $closeBtn = $("#dealerFiltersClose");
+        const $resetBtn = $("#dealerFiltersReset");
+        const $applyBtn = $("#dealerFiltersApply");
+        if (!$overlay.length) return;
 
         let appliedSnapshot = null;
 
         function syncApplyState() {
-            if (!applyBtn) return;
-            applyBtn.disabled = appliedSnapshot !== null &&
-                JSON.stringify(readModalFilters()) === appliedSnapshot;
+            if (!$applyBtn.length) return;
+            $applyBtn.prop("disabled", appliedSnapshot !== null &&
+                JSON.stringify(readModalFilters()) === appliedSnapshot);
         }
 
         function closeOverlay() {
-            overlay.classList.remove("show");
+            $overlay.removeClass("show");
         }
 
-        ["change", "input", "click"].forEach(function (eventName) {
-            overlay.addEventListener(eventName, syncApplyState);
+        $overlay.on("change input click", syncApplyState);
+
+        $openBtn.on("click", function () {
+            if (appliedSnapshot === null) appliedSnapshot = JSON.stringify(readModalFilters());
+            $overlay.addClass("show");
+            syncApplyState();
         });
 
-        if (openBtn) {
-            openBtn.addEventListener("click", function () {
-                if (appliedSnapshot === null) appliedSnapshot = JSON.stringify(readModalFilters());
-                overlay.classList.add("show");
-                syncApplyState();
-            });
-        }
+        $closeBtn.on("click", closeOverlay);
 
-        if (closeBtn) closeBtn.addEventListener("click", closeOverlay);
-
-        overlay.addEventListener("click", function (event) {
-            if (event.target === overlay) closeOverlay();
+        $overlay.on("click", function (event) {
+            if (event.target === $overlay[0]) closeOverlay();
         });
 
-        overlay.querySelectorAll(".dealer-filter-pills").forEach(function (group) {
-            group.addEventListener("click", function (event) {
-                const pill = event.target.closest(".dealer-filter-pill");
-                if (!pill) return;
-                setActive(Array.from(group.querySelectorAll(".dealer-filter-pill")), pill);
-            });
+        $overlay.find(".dealer-filter-pills").on("click", function (event) {
+            const $pill = $(event.target).closest(".dealer-filter-pill");
+            if (!$pill.length) return;
+            setActive($(this).find(".dealer-filter-pill"), $pill);
         });
 
-        if (resetBtn) {
-            resetBtn.addEventListener("click", function () {
-                overlay.querySelectorAll(".dealer-filter-pills").forEach(function (group) {
-                    group.querySelectorAll(".dealer-filter-pill").forEach(function (pill, index) {
-                        pill.classList.toggle("active", index === 0);
-                    });
+        $resetBtn.on("click", function () {
+            $overlay.find(".dealer-filter-pills").each(function () {
+                $(this).find(".dealer-filter-pill").each(function (index) {
+                    $(this).toggleClass("active", index === 0);
                 });
-
-                ["loanOfferFrom", "loanOfferTo"].forEach(function (id) {
-                    const input = document.getElementById(id);
-                    if (input) input.value = "";
-                });
-
-                overlay.querySelectorAll(".dealer-filter-dropdown").forEach(resetFilterDropdown);
             });
-        }
 
-        if (applyBtn) {
-            applyBtn.addEventListener("click", function () {
-                modalFilters = readModalFilters();
-                appliedSnapshot = JSON.stringify(modalFilters);
+            $("#loanOfferFrom, #loanOfferTo").val("");
 
-                closeAllDealerDetails();
-                applyCurrentView();
-                closeOverlay();
-                showAppToast("Filters applied successfully");
+            $overlay.find(".dealer-filter-dropdown").each(function () {
+                resetFilterDropdown($(this));
             });
-        }
+        });
+
+        $applyBtn.on("click", function () {
+            modalFilters = readModalFilters();
+            appliedSnapshot = JSON.stringify(modalFilters);
+
+            closeAllDealerDetails();
+            applyCurrentView();
+            closeOverlay();
+            showAppToast("Filters applied successfully");
+        });
     }
 
     function matchesModalFilters(dealerName) {
@@ -941,12 +928,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (f.firms.length && !f.firms.includes(dealerName)) return false;
 
-        const listRow = findDealerRow(dealerName);
-        if (!listRow) return true;
+        const $listRow = findDealerRow(dealerName);
+        if (!$listRow.length) return true;
 
-        const stage = getDealerStage(listRow);
-        const status = listRow.dataset.status;
-        const loanValue = parseCurrency(listRow.children[4].textContent);
+        const stage = getDealerStage($listRow);
+        const status = $listRow.attr("data-status");
+        const loanValue = parseCurrency($listRow.children().eq(4).text());
         const uploadedBy = (dealerDetails[dealerName] || {}).uploadedBy || "";
         const uploadedKey = /icici/i.test(uploadedBy) ? "icici" : "anchor";
 
@@ -956,7 +943,7 @@ document.addEventListener("DOMContentLoaded", function () {
             stage === f.application || status === f.application;
         const matchLoan = (f.loanFrom === null || loanValue >= f.loanFrom) &&
                           (f.loanTo === null || loanValue <= f.loanTo);
-        const matchLead = !f.leadTypes.length || f.leadTypes.includes(listRow.dataset.leadType);
+        const matchLead = !f.leadTypes.length || f.leadTypes.includes($listRow.attr("data-lead-type"));
         const matchUploader = !f.uploadedBy.length || f.uploadedBy.includes(uploadedKey);
 
         return matchSanction && matchApplication && matchLoan && matchLead && matchUploader;
@@ -986,169 +973,161 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function matchesFilter(row, filter) {
+    function matchesFilter($row, filter) {
         return matchesFilterValue(
             filter,
-            row.dataset.status || "",
-            row.dataset.leadType || "",
-            getDealerStage(row)
+            $row.attr("data-status") || "",
+            $row.attr("data-lead-type") || "",
+            getDealerStage($row)
         );
     }
 
     function matchesFilterByName(dealerName, filter) {
-        const listRow = findDealerRow(dealerName);
-        if (listRow) return matchesFilter(listRow, filter);
+        const $listRow = findDealerRow(dealerName);
+        if ($listRow.length) return matchesFilter($listRow, filter);
 
         return matchesFilterValue(filter, "", "", dealerStages[dealerName] || "apply");
     }
 
     function applyCurrentView() {
-        const searchValue = searchInput ? searchInput.value.trim().toLowerCase() : "";
+        const searchValue = $searchInput.length ? ($searchInput.val() || "").trim().toLowerCase() : "";
 
         /* List view */
-        dealerRows.forEach(function (row) {
+        $dealerRows.each(function () {
+            const $row = $(this);
             const visible =
-                matchesFilter(row, activeFilter) &&
-                (!searchValue || row.textContent.toLowerCase().includes(searchValue)) &&
-                matchesModalFilters(getDealerName(row));
+                matchesFilter($row, activeFilter) &&
+                (!searchValue || $row.text().toLowerCase().includes(searchValue)) &&
+                matchesModalFilters(getDealerName($row));
 
-            row.classList.toggle("hidden-by-filter", !visible);
-
-            const detailRow = row.nextElementSibling;
-            if (detailRow && detailRow.classList.contains("dealer-details-row")) {
-                detailRow.classList.toggle("hidden-by-filter", !visible);
-            }
+            $row.toggleClass("hidden-by-filter", !visible);
+            $row.next(".dealer-details-row").toggleClass("hidden-by-filter", !visible);
         });
 
         /* Grid view */
-        document.querySelectorAll("#newDealerPage .dealer-table-view tbody tr").forEach(function (tRow) {
-            const dealerName = getRobustFirmName(tRow.querySelector(".table-firm-name"));
+        $("#newDealerPage .dealer-table-view tbody tr").each(function () {
+            const $tRow = $(this);
+            const dealerName = getRobustFirmName($tRow.find(".table-firm-name").first());
 
             const visible =
                 matchesFilterByName(dealerName, activeFilter) &&
-                (!searchValue || tRow.textContent.toLowerCase().includes(searchValue)) &&
+                (!searchValue || $tRow.text().toLowerCase().includes(searchValue)) &&
                 matchesModalFilters(dealerName);
 
-            tRow.classList.toggle("hidden-by-filter", !visible);
+            $tRow.toggleClass("hidden-by-filter", !visible);
         });
 
         syncLeadSelection();
     }
 
     function initDealerFilterButtons() {
-        const viewMoreBtn = document.getElementById("viewMoreBtn");
-        const viewMoreMenu = document.getElementById("viewMoreMenu");
-        const toBeActionedBtn = document.getElementById("toBeActionedBtn");
-        const filterButtons = document.querySelectorAll("#newDealerPage .dealer-filter-btn");
-        const viewMoreFilters = document.querySelectorAll("#newDealerPage .view-more-menu button");
+        const $viewMoreBtn = $("#viewMoreBtn");
+        const $viewMoreMenu = $("#viewMoreMenu");
+        const $toBeActionedBtn = $("#toBeActionedBtn");
+        const $filterButtons = $("#newDealerPage .dealer-filter-btn");
+        const $viewMoreFilters = $("#newDealerPage .view-more-menu button");
 
-        const viewMoreDefaultHTML = viewMoreBtn ? viewMoreBtn.innerHTML : "View more";
-        const toBeActionedOriginalHTML = toBeActionedBtn ? toBeActionedBtn.innerHTML : "";
+        const viewMoreDefaultHTML = $viewMoreBtn.length ? $viewMoreBtn.html() : "View more";
+        const toBeActionedOriginalHTML = $toBeActionedBtn.length ? $toBeActionedBtn.html() : "";
 
-        initDropdownMenu(viewMoreBtn, viewMoreMenu);
+        initDropdownMenu($viewMoreBtn, $viewMoreMenu);
 
         function resetViewMoreButton() {
-            if (!viewMoreBtn) return;
-            viewMoreBtn.innerHTML = viewMoreDefaultHTML;
-            viewMoreBtn.classList.remove("active");
+            if (!$viewMoreBtn.length) return;
+            $viewMoreBtn.html(viewMoreDefaultHTML).removeClass("active");
         }
 
         function restoreToBeActionedButton() {
-            if (!toBeActionedBtn) return;
-            toBeActionedBtn.innerHTML = toBeActionedOriginalHTML;
-            toBeActionedBtn.dataset.filter = "actioned";
+            if (!$toBeActionedBtn.length) return;
+            $toBeActionedBtn.html(toBeActionedOriginalHTML).attr("data-filter", "actioned");
         }
 
-        filterButtons.forEach(function (button) {
-            button.addEventListener("click", function () {
-                const filter = button.dataset.filter;
-                if (!filter) return;
+        $filterButtons.on("click", function () {
+            const $button = $(this);
+            const filter = $button.attr("data-filter");
+            if (!filter) return;
 
-                activeFilter = filter;
+            activeFilter = filter;
 
-                restoreToBeActionedButton();
-                setActive(Array.from(filterButtons), button);
-                resetViewMoreButton();
+            restoreToBeActionedButton();
+            setActive($filterButtons, $button);
+            resetViewMoreButton();
 
-                closeAllDealerDetails();
-                applyCurrentView();
-            });
+            closeAllDealerDetails();
+            applyCurrentView();
         });
 
-        viewMoreFilters.forEach(function (button) {
-            button.addEventListener("click", function () {
-                activeFilter = button.dataset.filter || "all";
+        $viewMoreFilters.on("click", function () {
+            const $button = $(this);
+            activeFilter = $button.attr("data-filter") || "all";
 
-                if (viewMoreMenu) viewMoreMenu.classList.remove("show");
-                const fullText = button.textContent.trim();
-                const match = fullText.match(/^(.*)\((\d+)\)$/);
-                const label = escapeHtml(match ? match[1].trim() : fullText);
-                const count = match ? match[2] : "";
-                const badge = count ? " <span>" + count + "</span>" : "";
+            $viewMoreMenu.removeClass("show");
+            const fullText = $button.text().trim();
+            const match = fullText.match(/^(.*)\((\d+)\)$/);
+            const label = escapeHtml(match ? match[1].trim() : fullText);
+            const count = match ? match[2] : "";
+            const badge = count ? " <span>" + count + "</span>" : "";
 
-                const isCompact = toBeActionedBtn && getComputedStyle(toBeActionedBtn).display === "none";
+            const isCompact = $toBeActionedBtn.length && $toBeActionedBtn.css("display") === "none";
 
-                setActive(Array.from(filterButtons), null);
+            setActive($filterButtons, null);
 
-                if (isCompact && viewMoreBtn) {
-                    viewMoreBtn.innerHTML = label + badge;
-                    viewMoreBtn.classList.add("active");
-                } else {
-                    resetViewMoreButton();
-                    if (toBeActionedBtn) {
-                        toBeActionedBtn.innerHTML = label + badge;
-                        toBeActionedBtn.dataset.filter = activeFilter;
-                        toBeActionedBtn.classList.add("active");
-                    }
+            if (isCompact && $viewMoreBtn.length) {
+                $viewMoreBtn.html(label + badge).addClass("active");
+            } else {
+                resetViewMoreButton();
+                if ($toBeActionedBtn.length) {
+                    $toBeActionedBtn
+                        .html(label + badge)
+                        .attr("data-filter", activeFilter)
+                        .addClass("active");
                 }
+            }
 
-                closeAllDealerDetails();
-                applyCurrentView();
-            });
+            closeAllDealerDetails();
+            applyCurrentView();
         });
     }
 
     function wrapCodeValues() {
-        document.querySelectorAll(".dealer-firm small, .table-firm-code").forEach(function (el) {
-            if (el.querySelector(".code-value")) return;
-            const m = el.textContent.match(/^\s*Code:\s*(.+?)\s*$/i);
+        $(".dealer-firm small, .table-firm-code").each(function () {
+            const $el = $(this);
+            if ($el.find(".code-value").length) return;
+            const m = $el.text().match(/^\s*Code:\s*(.+?)\s*$/i);
             if (!m) return;
-            el.innerHTML = 'Code: <span class="code-value">' + escapeHtml(m[1]) + "</span>";
+            $el.html('Code: <span class="code-value">' + escapeHtml(m[1]) + "</span>");
         });
     }
 
     function initDealerSearch() {
-        if (searchInput) searchInput.addEventListener("input", applyCurrentView);
+        $searchInput.on("input", applyCurrentView);
     }
 
     function initDetailsToggle() {
-        if (hideDetailsBtn) {
-            hideDetailsBtn.addEventListener("click", function () {
-                setDetailsHidden(!detailsHidden);
-            });
-        }
+        $hideDetailsBtn.on("click", function () {
+            setDetailsHidden(!detailsHidden);
+        });
     }
 
     function initDealerViewSwitch() {
-        const buttons = document.querySelectorAll("#newDealerPage .view-switch-btn");
-        const listWrapper = document.querySelector("#newDealerPage .new-dealer-table-wrapper");
-        const gridWrapper = document.querySelector("#newDealerPage .dealer-table-view-wrapper");
+        const $buttons = $("#newDealerPage .view-switch-btn");
+        const $listWrapper = $("#newDealerPage .new-dealer-table-wrapper").first();
+        const $gridWrapper = $("#newDealerPage .dealer-table-view-wrapper").first();
 
         function setView(view) {
             const isGrid = view === "grid";
 
-            if (listWrapper) listWrapper.style.display = isGrid ? "none" : "";
-            if (gridWrapper) gridWrapper.style.display = isGrid ? "block" : "none";
-            if (newDealerPage) newDealerPage.classList.toggle("table-view", isGrid);
+            $listWrapper.css("display", isGrid ? "none" : "");
+            $gridWrapper.css("display", isGrid ? "block" : "none");
+            $newDealerPage.toggleClass("table-view", isGrid);
             syncLeadSelection();
         }
 
-        buttons.forEach(function (button) {
-            button.addEventListener("click", function (event) {
-                event.preventDefault();
-                setActive(Array.from(buttons), button);
-                setView(button.dataset.view || "list");
-            });
+        $buttons.on("click", function (event) {
+            event.preventDefault();
+            const $button = $(this);
+            setActive($buttons, $button);
+            setView($button.attr("data-view") || "list");
         });
 
         setView("list");
@@ -1171,72 +1150,67 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function getPinKey(pin) {
-        const tableRow = pin.closest("tr");
-        if (!tableRow) return "";
-        const tableName = tableRow.querySelector(".table-firm-name");
-        if (tableName) return getRobustFirmName(tableName);
-        const dealerName = tableRow.querySelector(".dealer-firm strong");
-        return dealerName ? dealerName.textContent.trim() : "";
+    function getPinKey($pin) {
+        const $tableRow = $pin.closest("tr");
+        if (!$tableRow.length) return "";
+        const $tableName = $tableRow.find(".table-firm-name").first();
+        if ($tableName.length) return getRobustFirmName($tableName);
+        const $dealerName = $tableRow.find(".dealer-firm strong").first();
+        return $dealerName.length ? $dealerName.text().trim() : "";
     }
 
-    function reorderPinnedFirst(tbody, rowSelector) {
-        if (!tbody) return;
+    function reorderPinnedFirst($tbody, rowSelector) {
+        if (!$tbody.length) return;
 
         const pinnedDealers = getPinnedDealers();
 
-        const groups = Array.from(tbody.querySelectorAll(":scope > " + rowSelector)).map(function (row, index) {
-            if (row.dataset.order === undefined) row.dataset.order = index;
+        const groups = $tbody.children(rowSelector).map(function (index) {
+            const $row = $(this);
+            if ($row.attr("data-order") === undefined) $row.attr("data-order", index);
 
-            const next = row.nextElementSibling;
-            const detail = next && (
-                next.classList.contains("dealer-details-row") ||
-                next.classList.contains("txn-details-row") ||
-                next.classList.contains("renewal-details-row")
-            ) ? next : null;
+            const $next = $row.next();
+            const $detail = $next.is(".dealer-details-row, .txn-details-row, .renewal-details-row") ? $next : null;
 
-            const pin = row.querySelector(".dealer-pin");
+            const $pin = $row.find(".dealer-pin").first();
 
             return {
-                row: row,
-                detail: detail,
-                order: Number(row.dataset.order),
-                pinned: Boolean(pin && pinnedDealers[getPinKey(pin)])
+                row: $row,
+                detail: $detail,
+                order: Number($row.attr("data-order")),
+                pinned: Boolean($pin.length && pinnedDealers[getPinKey($pin)])
             };
-        });
+        }).get();
 
         groups.sort(function (a, b) {
             return (b.pinned - a.pinned) || (a.order - b.order);
         });
 
         groups.forEach(function (group) {
-            tbody.appendChild(group.row);
-            if (group.detail) tbody.appendChild(group.detail);
+            $tbody.append(group.row);
+            if (group.detail) $tbody.append(group.detail);
         });
     }
 
     function applySavedPins() {
         const pinnedDealers = getPinnedDealers();
 
-        document.querySelectorAll(".dealer-pin").forEach(function (pin) {
-            const key = getPinKey(pin);
-            pin.classList.toggle("is-pinned", Boolean(key && pinnedDealers[key]));
+        $(".dealer-pin").each(function () {
+            const $pin = $(this);
+            const key = getPinKey($pin);
+            $pin.toggleClass("is-pinned", Boolean(key && pinnedDealers[key]));
         });
 
         PIN_SORT_TARGETS.forEach(function (target) {
-            reorderPinnedFirst(document.querySelector(target.body), target.row);
+            reorderPinnedFirst($(target.body).first(), target.row);
         });
     }
 
     function initPinning() {
-        document.addEventListener("click", function (event) {
-            const pin = event.target.closest(".dealer-pin");
-            if (!pin) return;
-
+        $(document).on("click", ".dealer-pin", function (event) {
             event.preventDefault();
             event.stopPropagation();
 
-            const key = getPinKey(pin);
+            const key = getPinKey($(this));
             if (!key) return;
 
             const pinnedDealers = getPinnedDealers();
@@ -1256,9 +1230,9 @@ document.addEventListener("DOMContentLoaded", function () {
         return Promise.resolve(payload);
     }
 
-    function bindOption(item, onPick) {
-        item.addEventListener("click", onPick);
-        item.addEventListener("keydown", function (event) {
+    function bindOption($item, onPick) {
+        $item.on("click", onPick);
+        $item.on("keydown", function (event) {
             if (event.key === "Enter" || event.key === " ") {
                 event.preventDefault();
                 onPick();
@@ -1267,86 +1241,87 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function initShareViaMail() {
-        const overlay = document.getElementById("shareMailOverlay");
-        if (!overlay) return;
+        const $overlay = $("#shareMailOverlay");
+        if (!$overlay.length) return;
 
-        const emailInput  = document.getElementById("shareEmailInput");
-        const emailError  = document.getElementById("shareEmailError");
-        const emailWrap   = document.getElementById("shareEmailDropdown");
-        const emailPanel  = document.getElementById("shareEmailPanel");
-        const emailToggle = document.getElementById("shareEmailToggle");
-        const bucketWrap  = document.getElementById("shareBucketDropdown");
-        const bucketBtn   = bucketWrap.querySelector(".share-select-btn");
-        const bucketText  = bucketWrap.querySelector(".share-select-text");
-        const bucketItems = Array.from(bucketWrap.querySelectorAll("[role='option']"));
-        const submitBtn   = document.getElementById("shareMailSubmit");
-        const desktopMq   = window.matchMedia("(min-width: 768px)");
-        const EMAIL_RE    = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+        const $emailInput  = $("#shareEmailInput");
+        const $emailError  = $("#shareEmailError");
+        const $emailWrap   = $("#shareEmailDropdown");
+        const $emailPanel  = $("#shareEmailPanel");
+        const $emailToggle = $("#shareEmailToggle");
+        const $bucketWrap  = $("#shareBucketDropdown");
+        const $bucketBtn   = $bucketWrap.find(".share-select-btn").first();
+        const $bucketText  = $bucketWrap.find(".share-select-text").first();
+        const $bucketItems = $bucketWrap.find("[role='option']");
+        const $submitBtn   = $("#shareMailSubmit");
+        const desktopMq    = window.matchMedia("(min-width: 768px)");
+        const EMAIL_RE     = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
         let scope = "leads";
         let bucket = "";
         let sending = false;
 
-        function setOpen(wrap, isOpen) {
-            wrap.classList.toggle("open", isOpen);
-            const btn = wrap.querySelector(".share-select-btn");
-            if (btn) btn.setAttribute("aria-expanded", String(isOpen));
+        function setOpen($wrap, isOpen) {
+            $wrap.toggleClass("open", isOpen);
+            $wrap.find(".share-select-btn").first().attr("aria-expanded", String(isOpen));
         }
 
         function updateSubmitState() {
-            const emailOk = EMAIL_RE.test(emailInput.value.trim());
-            submitBtn.disabled = sending || !emailOk || !bucket;
+            const emailOk = EMAIL_RE.test(($emailInput.val() || "").trim());
+            $submitBtn.prop("disabled", sending || !emailOk || !bucket);
         }
 
         function setBucket(value) {
             bucket = value;
-            const picked = bucketItems.find(function (item) { return item.dataset.value === value; });
+            const $picked = $bucketItems.filter(function () {
+                return $(this).attr("data-value") === value;
+            }).first();
 
-            bucketText.textContent = picked ? picked.textContent : "Select bucketing";
-            bucketBtn.classList.toggle("is-placeholder", !picked);
-            bucketItems.forEach(function (item) {
-                item.setAttribute("aria-selected", String(item === picked));
+            $bucketText.text($picked.length ? $picked.text() : "Select bucketing");
+            $bucketBtn.toggleClass("is-placeholder", !$picked.length);
+            $bucketItems.each(function () {
+                const isPicked = $picked.length > 0 && this === $picked[0];
+                $(this).attr("aria-selected", String(isPicked));
             });
         }
 
         function pickEmail(email) {
-            emailInput.value = email;
-            emailError.textContent = "";
-            setOpen(emailWrap, false);
+            $emailInput.val(email);
+            $emailError.text("");
+            setOpen($emailWrap, false);
             updateSubmitState();
         }
 
         function pickBucket(value) {
             setBucket(value);
-            setOpen(bucketWrap, false);
+            setOpen($bucketWrap, false);
             updateSubmitState();
-            bucketBtn.focus();
+            $bucketBtn.trigger("focus");
         }
 
         function closeModal() {
-            overlay.classList.remove("show");
-            setOpen(emailWrap, false);
-            setOpen(bucketWrap, false);
+            $overlay.removeClass("show");
+            setOpen($emailWrap, false);
+            setOpen($bucketWrap, false);
         }
 
-        function openModal(trigger) {
-            scope = trigger.closest("#transactionDashboardPage") ? "transaction" : "leads";
+        function openModal($trigger) {
+            scope = $trigger.closest("#transactionDashboardPage").length ? "transaction" : "leads";
 
-            emailInput.value = "";
-            emailInput.placeholder = desktopMq.matches ? "Select email" : "Enter email";
-            emailError.textContent = "";
+            $emailInput.val("").attr("placeholder", desktopMq.matches ? "Select email" : "Enter email");
+            $emailError.text("");
             setBucket("");
-            setOpen(emailWrap, false);
-            setOpen(bucketWrap, false);
+            setOpen($emailWrap, false);
+            setOpen($bucketWrap, false);
             sending = false;
             updateSubmitState();
 
-            overlay.classList.add("show");
-            if (desktopMq.matches) emailInput.focus();
+            $overlay.addClass("show");
+            if (desktopMq.matches) $emailInput.trigger("focus");
         }
 
         async function submit() {
-            if (submitBtn.disabled) return;
+            if ($submitBtn.prop("disabled")) return;
 
             sending = true;
             updateSubmitState();
@@ -1354,7 +1329,7 @@ document.addEventListener("DOMContentLoaded", function () {
             try {
                 await sendShareMail({
                     scope: scope,
-                    email: emailInput.value.trim(),
+                    email: $emailInput.val().trim(),
                     bucketDays: Number(bucket)
                 });
                 closeModal();
@@ -1369,59 +1344,60 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         SHARE_SAVED_EMAILS.forEach(function (email) {
-            const option = document.createElement("div");
-            option.className = "share-option";
-            option.setAttribute("role", "option");
-            option.tabIndex = 0;
-            option.textContent = email;
-            bindOption(option, function () { pickEmail(email); });
-            emailPanel.appendChild(option);
+            const $option = $("<div>", {
+                "class": "share-option",
+                role: "option",
+                tabindex: 0,
+                text: email
+            });
+            bindOption($option, function () { pickEmail(email); });
+            $emailPanel.append($option);
         });
 
-        document.addEventListener("click", function (event) {
-            const trigger = event.target.closest(".dealer-share-btn");
-            if (trigger) openModal(trigger);
+        $(document).on("click", ".dealer-share-btn", function () {
+            openModal($(this));
         });
 
-        emailInput.addEventListener("input", function () {
-            emailError.textContent = "";
+        $emailInput.on("input", function () {
+            $emailError.text("");
             updateSubmitState();
         });
-        emailInput.addEventListener("blur", function () {
-            const value = emailInput.value.trim();
-            emailError.textContent = value && !EMAIL_RE.test(value) ? "Enter a valid email ID" : "";
+        $emailInput.on("blur", function () {
+            const value = ($emailInput.val() || "").trim();
+            $emailError.text(value && !EMAIL_RE.test(value) ? "Enter a valid email ID" : "");
         });
-        emailInput.addEventListener("keydown", function (event) {
+        $emailInput.on("keydown", function (event) {
             if (event.key === "Enter") submit();
         });
-        emailToggle.addEventListener("click", function () {
-            setOpen(bucketWrap, false);
-            setOpen(emailWrap, !emailWrap.classList.contains("open"));
+        $emailToggle.on("click", function () {
+            setOpen($bucketWrap, false);
+            setOpen($emailWrap, !$emailWrap.hasClass("open"));
         });
 
-        bucketBtn.addEventListener("click", function () {
-            setOpen(emailWrap, false);
-            setOpen(bucketWrap, !bucketWrap.classList.contains("open"));
+        $bucketBtn.on("click", function () {
+            setOpen($emailWrap, false);
+            setOpen($bucketWrap, !$bucketWrap.hasClass("open"));
         });
-        bucketItems.forEach(function (item) {
-            bindOption(item, function () { pickBucket(item.dataset.value); });
+        $bucketItems.each(function () {
+            const $item = $(this);
+            bindOption($item, function () { pickBucket($item.attr("data-value")); });
         });
 
-        overlay.addEventListener("click", function (event) {
-            if (event.target === overlay) {
+        $overlay.on("click", function (event) {
+            if (event.target === $overlay[0]) {
                 closeModal();
                 return;
             }
-            if (!event.target.closest("#shareBucketDropdown")) setOpen(bucketWrap, false);
-            if (!event.target.closest("#shareEmailDropdown")) setOpen(emailWrap, false);
+            if (!$(event.target).closest("#shareBucketDropdown").length) setOpen($bucketWrap, false);
+            if (!$(event.target).closest("#shareEmailDropdown").length) setOpen($emailWrap, false);
         });
 
-        document.addEventListener("keydown", function (event) {
-            if (event.key !== "Escape" || !overlay.classList.contains("show")) return;
+        $(document).on("keydown", function (event) {
+            if (event.key !== "Escape" || !$overlay.hasClass("show")) return;
 
-            if (bucketWrap.classList.contains("open") || emailWrap.classList.contains("open")) {
-                setOpen(bucketWrap, false);
-                setOpen(emailWrap, false);
+            if ($bucketWrap.hasClass("open") || $emailWrap.hasClass("open")) {
+                setOpen($bucketWrap, false);
+                setOpen($emailWrap, false);
             } else {
                 closeModal();
             }
@@ -1429,38 +1405,38 @@ document.addEventListener("DOMContentLoaded", function () {
 
         bindClick("shareMailClose", closeModal);
         bindClick("shareMailCancel", closeModal);
-        submitBtn.addEventListener("click", submit);
+        $submitBtn.on("click", submit);
     }
 
+
     function initScrollLock() {
-        const overlays = Array.from(document.querySelectorAll(
-            ".dealer-filters-overlay, #shareMailOverlay, #openTranchesModal"
-        ));
-        if (!overlays.length) return;
+        const $overlays = $(".dealer-filters-overlay, #shareMailOverlay, #openTranchesModal");
+        if (!$overlays.length) return;
 
         let locked = false;
 
         function sync() {
-            const shouldLock = overlays.some(function (overlay) {
-                return overlay.classList.contains("show");
+            const shouldLock = $overlays.toArray().some(function (overlay) {
+                return $(overlay).hasClass("show");
             });
             if (shouldLock === locked) return;
             locked = shouldLock;
 
             if (shouldLock) {
                 const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-                if (scrollbarWidth > 0) document.body.style.paddingRight = scrollbarWidth + "px";
+                if (scrollbarWidth > 0) $("body").css("paddingRight", scrollbarWidth + "px");
             } else {
-                document.body.style.paddingRight = "";
+                $("body").css("paddingRight", "");
             }
 
-            document.documentElement.classList.toggle("nd-scroll-lock", shouldLock);
-            document.body.classList.toggle("nd-scroll-lock", shouldLock);
+            $("html").toggleClass("nd-scroll-lock", shouldLock);
+            $("body").toggleClass("nd-scroll-lock", shouldLock);
         }
 
+        /* MutationObserver has no jQuery equivalent - stays native */
         const observer = new MutationObserver(sync);
-        overlays.forEach(function (overlay) {
-            observer.observe(overlay, { attributes: true, attributeFilter: ["class"] });
+        $overlays.each(function () {
+            observer.observe(this, { attributes: true, attributeFilter: ["class"] });
         });
 
         sync();
@@ -1472,92 +1448,95 @@ document.addEventListener("DOMContentLoaded", function () {
         return Promise.resolve(names);
     }
 
-    function cellText(cell) {
-        return cell ? (cell.dataset.original || cell.textContent).trim() : "";
+    function cellText($cell) {
+        return $cell.length ? ($cell.attr("data-original") || $cell.text()).trim() : "";
     }
 
-    function stripInfoIcon(badge) {
-        if (!badge) return "";
-        const clone = badge.cloneNode(true);
-        const icon = clone.querySelector("small");
-        if (icon) icon.remove();
-        return clone.textContent.trim();
+    function stripInfoIcon($badge) {
+        if (!$badge.length) return "";
+        const $clone = $badge.clone();
+        $clone.find("small").first().remove();
+        return $clone.text().trim();
     }
 
     function getGridRowByName(name) {
-        return Array.from(document.querySelectorAll("#newDealerPage .dealer-table-view tbody tr")).find(function (tRow) {
-            return getRobustFirmName(tRow.querySelector(".table-firm-name")) === name;
-        });
+        return $("#newDealerPage .dealer-table-view tbody tr").filter(function () {
+            return getRobustFirmName($(this).find(".table-firm-name").first()) === name;
+        }).first();
     }
 
-    function getLeadInfoFromList(row) {
-        const codeEl = row.querySelector(".dealer-firm small .code-value");
-        const codeSmall = row.querySelector(".dealer-firm small");
-        const panEl = row.querySelector(".dealer-association small");
-        const phoneEl = row.querySelector(".dealer-contact span[data-value]");
+    function getLeadInfoFromList($row) {
+        const $codeEl = $row.find(".dealer-firm small .code-value").first();
+        const $codeSmall = $row.find(".dealer-firm small").first();
+        const $panEl = $row.find(".dealer-association small").first();
+        const $phoneEl = $row.find(".dealer-contact span[data-value]").first();
+        const $cells = $row.children();
 
         return {
-            firm: getDealerName(row),
-            code: codeEl
-                ? cellText(codeEl)
-                : (codeSmall ? codeSmall.textContent.replace(/^\s*Code:\s*/i, "").trim() : ""),
-            pan: cellText(panEl).replace(/^\s*PAN:\s*/i, ""),
-            mobile: phoneEl ? (phoneEl.dataset.original || phoneEl.dataset.value || "").trim() : "",
-            sales: row.children[3].textContent.trim(),
-            loan: row.children[4].textContent.trim(),
-            status: row.dataset.status || "",
-            statusText: stripInfoIcon(row.querySelector(".dealer-status"))
+            firm: getDealerName($row),
+            code: $codeEl.length
+                ? cellText($codeEl)
+                : ($codeSmall.length ? $codeSmall.text().replace(/^\s*Code:\s*/i, "").trim() : ""),
+            pan: cellText($panEl).replace(/^\s*PAN:\s*/i, ""),
+            mobile: $phoneEl.length ? ($phoneEl.attr("data-original") || $phoneEl.attr("data-value") || "").trim() : "",
+            sales: $cells.eq(3).text().trim(),
+            loan: $cells.eq(4).text().trim(),
+            status: $row.attr("data-status") || "",
+            statusText: stripInfoIcon($row.find(".dealer-status").first())
         };
     }
 
     /* Fallback: lead exists only in the grid view (no list row) */
-    function getLeadInfoFromGrid(tRow) {
-        const cells = tRow.children;
-        const codeEl = tRow.querySelector(".table-firm-code .code-value") || tRow.querySelector(".table-firm-code");
-        const statusEl = tRow.querySelector(".table-status");
+    function getLeadInfoFromGrid($tRow) {
+        const $cells = $tRow.children();
+        let $codeEl = $tRow.find(".table-firm-code .code-value").first();
+        if (!$codeEl.length) $codeEl = $tRow.find(".table-firm-code").first();
+        const $statusEl = $tRow.find(".table-status").first();
         const status = ["actioned", "sanctioned", "rejected"].find(function (name) {
-            return statusEl && statusEl.classList.contains(name);
+            return $statusEl.length && $statusEl.hasClass(name);
         }) || "";
 
         return {
-            firm: getRobustFirmName(tRow.querySelector(".table-firm-name")),
-            code: cellText(codeEl).replace(/^\s*Code:\s*/i, ""),
-            pan: cellText(cells[7]),
-            mobile: cellText(cells[5]),
-            sales: cellText(cells[8]),
+            firm: getRobustFirmName($tRow.find(".table-firm-name").first()),
+            code: cellText($codeEl).replace(/^\s*Code:\s*/i, ""),
+            pan: cellText($cells.eq(7)),
+            mobile: cellText($cells.eq(5)),
+            sales: cellText($cells.eq(8)),
             loan: "-",
             status: status,
-            statusText: stripInfoIcon(statusEl)
+            statusText: stripInfoIcon($statusEl)
         };
     }
 
     function getLeadInfo(name) {
-        const listRow = findDealerRow(name);
-        if (listRow) return getLeadInfoFromList(listRow);
+        const $listRow = findDealerRow(name);
+        if ($listRow.length) return getLeadInfoFromList($listRow);
 
-        const gridRow = getGridRowByName(name);
-        return gridRow ? getLeadInfoFromGrid(gridRow) : null;
+        const $gridRow = getGridRowByName(name);
+        return $gridRow.length ? getLeadInfoFromGrid($gridRow) : null;
     }
 
-    function getLeadNameFromBox(box) {
-        const listRow = box.closest(".dealer-row");
-        if (listRow) return getDealerName(listRow);
+    function getLeadNameFromBox($box) {
+        const $listRow = $box.closest(".dealer-row");
+        if ($listRow.length) return getDealerName($listRow);
 
-        const tRow = box.closest("tr");
-        return tRow ? getRobustFirmName(tRow.querySelector(".table-firm-name")) : "";
+        const $tRow = $box.closest("tr");
+        return $tRow.length ? getRobustFirmName($tRow.find(".table-firm-name").first()) : "";
     }
 
     function getVisibleLeadNames() {
-        const isGrid = newDealerPage && newDealerPage.classList.contains("table-view");
+        const isGrid = $newDealerPage.hasClass("table-view");
 
         if (isGrid) {
-            return Array.from(document.querySelectorAll("#newDealerPage .dealer-table-view tbody tr:not(.hidden-by-filter)"))
-                .map(function (tRow) { return getRobustFirmName(tRow.querySelector(".table-firm-name")); });
+            return $("#newDealerPage .dealer-table-view tbody tr:not(.hidden-by-filter)")
+                .map(function () { return getRobustFirmName($(this).find(".table-firm-name").first()); })
+                .get();
         }
 
-        return dealerRows
-            .filter(function (row) { return !row.classList.contains("hidden-by-filter"); })
-            .map(getDealerName);
+        return $dealerRows
+            .filter(function () { return !$(this).hasClass("hidden-by-filter"); })
+            .map(function () { return getDealerName($(this)); })
+            .get();
     }
 
     function getSelectedLeadNames() {
@@ -1570,51 +1549,45 @@ document.addEventListener("DOMContentLoaded", function () {
         const selected = getSelectedLeadNames();
         const picked = new Set(selected);
 
-        document.querySelectorAll("#newDealerPage .lead-select-row").forEach(function (box) {
-            box.checked = picked.has(getLeadNameFromBox(box));
+        $("#newDealerPage .lead-select-row").each(function () {
+            $(this).prop("checked", picked.has(getLeadNameFromBox($(this))));
         });
 
         const inView = visible.filter(function (name) { return picked.has(name); }).length;
-        document.querySelectorAll("#newDealerPage .lead-select-all").forEach(function (box) {
-            box.checked = visible.length > 0 && inView === visible.length;
-            box.indeterminate = inView > 0 && inView < visible.length;
+        $("#newDealerPage .lead-select-all").each(function () {
+            $(this).prop({
+                checked: visible.length > 0 && inView === visible.length,
+                indeterminate: inView > 0 && inView < visible.length
+            });
         });
 
-        const countEl = document.getElementById("leadBulkCount");
-        const deleteBtn = document.getElementById("leadBulkDelete");
-        if (countEl) countEl.textContent = selected.length;
-        if (deleteBtn) {
-            deleteBtn.textContent = "Delete (" + selected.length + ")";
-            deleteBtn.disabled = selected.length === 0;
-        }
+        $("#leadBulkCount").text(selected.length);
+        $("#leadBulkDelete")
+            .text("Delete (" + selected.length + ")")
+            .prop("disabled", selected.length === 0);
     }
 
     function setLeadSelectMode(on) {
-        if (!newDealerPage) return;
-        newDealerPage.classList.toggle("select-mode", on);
+        if (!$newDealerPage.length) return;
+        $newDealerPage.toggleClass("select-mode", on);
         if (on) closeAllDealerDetails();
         else leadSelection.clear();
         syncLeadSelection();
     }
 
     function removeLead(name) {
-        const row = findDealerRow(name);
-        if (row) {
-            const detailRow = row.nextElementSibling;
-            if (detailRow && detailRow.classList.contains("dealer-details-row")) detailRow.remove();
-
-            const index = dealerRows.indexOf(row);
-            if (index !== -1) dealerRows.splice(index, 1);
-            row.remove();
+        const $row = findDealerRow(name);
+        if ($row.length) {
+            $row.next(".dealer-details-row").remove();
+            $dealerRows = $dealerRows.not($row);
+            $row.remove();
         }
 
-        const gridRow = getGridRowByName(name);
-        if (gridRow) gridRow.remove();
+        getGridRowByName(name).remove();
 
-        document.querySelectorAll("#firmDropdown .dealer-filter-dropdown-panel input[type='checkbox']").forEach(function (input) {
-            if (input.value !== name) return;
-            const label = input.closest("label");
-            if (label) label.remove();
+        $("#firmDropdown .dealer-filter-dropdown-panel input[type='checkbox']").each(function () {
+            if (this.value !== name) return;
+            $(this).closest("label").remove();
         });
 
         const pinned = getPinnedDealers();
@@ -1624,66 +1597,67 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function decrementBadge(el, by) {
-        if (!el || !by) return;
-        const value = parseInt(el.textContent, 10);
-        if (!isNaN(value)) el.textContent = Math.max(value - by, 0);
+    function decrementBadge($el, by) {
+        if (!$el.length || !by) return;
+        const $first = $el.first();
+        const value = parseInt($first.text(), 10);
+        if (!isNaN(value)) $first.text(Math.max(value - by, 0));
     }
 
     /* TODO(backend): if counts come from the API, remove this and set them directly */
     function updateLeadCounts(infos) {
-        const toBeActionedBtn = document.getElementById("toBeActionedBtn");
+        const $toBeActionedBtn = $("#toBeActionedBtn");
         const actioned = infos.filter(function (info) { return info.status === "actioned"; }).length;
 
-        decrementBadge(document.querySelector('#newDealerPage .dealer-filter-btn[data-filter="all"] span'), infos.length);
-        if (toBeActionedBtn && toBeActionedBtn.dataset.filter === "actioned") {
-            decrementBadge(toBeActionedBtn.querySelector("span"), actioned);
+        decrementBadge($('#newDealerPage .dealer-filter-btn[data-filter="all"] span'), infos.length);
+        if ($toBeActionedBtn.length && $toBeActionedBtn.attr("data-filter") === "actioned") {
+            decrementBadge($toBeActionedBtn.find("span"), actioned);
         }
-        document.querySelectorAll('#newDealerPage .new-dealer-tab.active .new-dealer-count, [data-goto="newdealer"] .new-dealer-count')
-            .forEach(function (el) { decrementBadge(el, infos.length); });
+        $('#newDealerPage .new-dealer-tab.active .new-dealer-count, [data-goto="newdealer"] .new-dealer-count')
+            .each(function () { decrementBadge($(this), infos.length); });
     }
 
     function initLeadDeletion() {
-        const overlay = document.getElementById("deleteLeadOverlay");
-        if (!newDealerPage || !overlay) return;
+        const $overlay = $("#deleteLeadOverlay");
+        if (!$newDealerPage.length || !$overlay.length) return;
 
-        const titleEl = document.getElementById("deleteLeadTitle");
-        const panel = document.getElementById("deleteLeadPanel");
-        const confirmBtn = document.getElementById("deleteLeadConfirm");
-        const toolbarBtn = document.getElementById("leadBulkDeleteBtn");
-        const bulkDeleteBtn = document.getElementById("leadBulkDelete");
+        const $titleEl = $("#deleteLeadTitle");
+        const $panel = $("#deleteLeadPanel");
+        const $confirmBtn = $("#deleteLeadConfirm");
+        const $toolbarBtn = $("#leadBulkDeleteBtn");
+        const $bulkDeleteBtn = $("#leadBulkDelete");
 
         let pendingNames = [];
         let pendingIsBulk = false;
 
         function makeCheckbox(cls, label) {
-            const box = document.createElement("input");
-            box.type = "checkbox";
-            box.className = "lead-select " + cls;
-            box.setAttribute("aria-label", label);
-            return box;
+            return $("<input>", {
+                type: "checkbox",
+                "class": "lead-select " + cls,
+                "aria-label": label
+            });
         }
 
-        dealerRows.forEach(function (row) {
-            const del = row.querySelector(".dealer-row-actions button:nth-child(2)");
-            if (del) {
-                del.classList.add("dealer-delete-btn");
-                del.title = "Delete";
+        $dealerRows.each(function () {
+            const $row = $(this);
+            const $del = $row.find(".dealer-row-actions button:nth-child(2)").first();
+            if ($del.length) {
+                $del.addClass("dealer-delete-btn").attr("title", "Delete");
             }
 
-            const firm = row.querySelector(".dealer-firm");
-            if (firm) firm.insertBefore(makeCheckbox("lead-select-row", "Select lead"), firm.firstChild);
+            const $firm = $row.find(".dealer-firm").first();
+            if ($firm.length) $firm.prepend(makeCheckbox("lead-select-row", "Select lead"));
         });
 
-        document.querySelectorAll("#newDealerPage .dealer-table-view tbody .table-firm").forEach(function (firm) {
-            firm.insertBefore(makeCheckbox("lead-select-row", "Select lead"), firm.firstChild);
+        $("#newDealerPage .dealer-table-view tbody .table-firm").each(function () {
+            $(this).prepend(makeCheckbox("lead-select-row", "Select lead"));
         });
 
-        document.querySelectorAll(
+        $(
             "#newDealerPage .dealer-leads-table thead th:first-child .dealer-th-inner, " +
             "#newDealerPage .dealer-table-view thead th:first-child .dealer-th-inner"
-        ).forEach(function (inner) {
-            inner.insertBefore(makeCheckbox("lead-select-all", "Select all leads"), inner.firstChild);
+        ).each(function () {
+            $(this).prepend(makeCheckbox("lead-select-all", "Select all leads"));
         });
 
         function panelRow(label, valueHtml) {
@@ -1725,28 +1699,28 @@ document.addEventListener("DOMContentLoaded", function () {
             pendingNames = infos.map(function (info) { return info.firm; });
             pendingIsBulk = isBulk;
 
-            titleEl.textContent = isBulk
+            $titleEl.text(isBulk
                 ? "Are you sure you want to delete selected lead(s)?"
-                : "Are you sure you want to delete this lead?";
-            panel.innerHTML = isBulk ? renderBulk(infos) : renderSingle(infos[0]);
+                : "Are you sure you want to delete this lead?");
+            $panel.html(isBulk ? renderBulk(infos) : renderSingle(infos[0]));
 
-            const modal = overlay.querySelector(".delete-lead-modal");
-            modal.classList.toggle("is-bulk", isBulk);
-            modal.classList.toggle("is-single", !isBulk);
+            $overlay.find(".delete-lead-modal").first()
+                .toggleClass("is-bulk", isBulk)
+                .toggleClass("is-single", !isBulk);
 
-            overlay.classList.add("show");
+            $overlay.addClass("show");
         }
 
         function closeModal() {
-            overlay.classList.remove("show");
+            $overlay.removeClass("show");
         }
 
         async function confirmDelete() {
-            if (!pendingNames.length || confirmBtn.disabled) return;
+            if (!pendingNames.length || $confirmBtn.prop("disabled")) return;
 
             const names = pendingNames.slice();
             const infos = names.map(getLeadInfo).filter(Boolean);   /* collect BEFORE removing rows */
-            confirmBtn.disabled = true;
+            $confirmBtn.prop("disabled", true);
 
             try {
                 await deleteLeadsRequest(names);
@@ -1768,81 +1742,72 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error("Delete lead failed:", error);
                 showAppToast("Could not delete. Please try again.", "error");
             } finally {
-                confirmBtn.disabled = false;
+                $confirmBtn.prop("disabled", false);
             }
         }
 
-        newDealerPage.addEventListener("click", function (event) {
-            const btn = event.target.closest(".dealer-delete-btn, .table-delete-btn");
-            if (!btn) return;
+        $newDealerPage.on("click", ".dealer-delete-btn, .table-delete-btn", function () {
+            const $btn = $(this);
+            const $listRow = $btn.closest(".dealer-row");
+            const $detailRow = $btn.closest(".dealer-details-row");
+            const $gridRow = $btn.closest("tr");
 
-            const listRow = btn.closest(".dealer-row");
-            const detailRow = btn.closest(".dealer-details-row");
-            const gridRow = btn.closest("tr");
-
-            const name = listRow
-                ? getDealerName(listRow)
-                : detailRow
-                    ? detailRow.dataset.dealerDetailsFor
-                    : getRobustFirmName(gridRow.querySelector(".table-firm-name"));
+            const name = $listRow.length
+                ? getDealerName($listRow)
+                : $detailRow.length
+                    ? $detailRow.attr("data-dealer-details-for")
+                    : getRobustFirmName($gridRow.find(".table-firm-name").first());
 
             if (name) openModal([name], false);
         });
 
-        newDealerPage.addEventListener("change", function (event) {
-            const box = event.target;
+        $newDealerPage.on("change", ".lead-select-all, .lead-select-row", function () {
+            const $box = $(this);
 
-            if (box.classList.contains("lead-select-all")) {
+            if ($box.hasClass("lead-select-all")) {
                 getVisibleLeadNames().forEach(function (name) {
-                    if (box.checked) leadSelection.add(name);
+                    if ($box.prop("checked")) leadSelection.add(name);
                     else leadSelection.delete(name);
                 });
-            } else if (box.classList.contains("lead-select-row")) {
-                const name = getLeadNameFromBox(box);
-                if (box.checked) leadSelection.add(name);
-                else leadSelection.delete(name);
             } else {
-                return;
+                const name = getLeadNameFromBox($box);
+                if ($box.prop("checked")) leadSelection.add(name);
+                else leadSelection.delete(name);
             }
 
             syncLeadSelection();
         });
 
-        if (toolbarBtn) {
-            toolbarBtn.addEventListener("click", function () {
-                setLeadSelectMode(!newDealerPage.classList.contains("select-mode"));
-            });
-        }
+        $toolbarBtn.on("click", function () {
+            setLeadSelectMode(!$newDealerPage.hasClass("select-mode"));
+        });
 
         bindClick("leadBulkCancel", function () {
             setLeadSelectMode(false);
         });
 
-        if (bulkDeleteBtn) {
-            bulkDeleteBtn.addEventListener("click", function () {
-                openModal(getSelectedLeadNames(), true);
-            });
-        }
+        $bulkDeleteBtn.on("click", function () {
+            openModal(getSelectedLeadNames(), true);
+        });
 
         bindClick("deleteLeadClose", closeModal);
         bindClick("deleteLeadCancel", closeModal);
-        confirmBtn.addEventListener("click", confirmDelete);
+        $confirmBtn.on("click", confirmDelete);
 
-        overlay.addEventListener("click", function (event) {
-            if (event.target === overlay) closeModal();
+        $overlay.on("click", function (event) {
+            if (event.target === $overlay[0]) closeModal();
         });
 
-        /* touch: tap on "N selected" toggles the tooltip */
-        panel.addEventListener("click", function (event) {
-            const selected = event.target.closest(".delete-lead-selected");
-            if (selected && !event.target.closest(".delete-lead-tip")) selected.classList.toggle("open");
+        $panel.on("click", function (event) {
+            const $target = $(event.target);
+            const $selected = $target.closest(".delete-lead-selected");
+            if ($selected.length && !$target.closest(".delete-lead-tip").length) $selected.toggleClass("open");
         });
 
-        document.addEventListener("keydown", function (event) {
-            if (event.key === "Escape" && overlay.classList.contains("show")) closeModal();
+        $(document).on("keydown", function (event) {
+            if (event.key === "Escape" && $overlay.hasClass("show")) closeModal();
         });
     }
-
 
     function cleanAmount(value) {
         return String(value || "").replace(/[,\s\u00a0\u202f₹]/g, "");
@@ -1858,43 +1823,41 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function initRangeField(opts) {
-        const from = document.getElementById(opts.fromId);
-        const to = document.getElementById(opts.toId);
-        const msgEl = document.getElementById(opts.errorId);
-        if (!from || !to || !msgEl) {
+        const $from = $("#" + opts.fromId);
+        const $to = $("#" + opts.toId);
+        const $msg = $("#" + opts.errorId);
+        if (!$from.length || !$to.length || !$msg.length) {
             return { hasError: function () { return false; }, reset: function () {} };
         }
 
         let checkOrder = false;
 
-        function isFormatOk(el) {
-            const clean = cleanAmount(el.value);
+        function isFormatOk($el) {
+            const clean = cleanAmount($el.val());
             return clean === "" || AMOUNT_RE.test(clean);
         }
 
         function isOrderBad() {
-            const a = parseAmountInput(from.value);
-            const b = parseAmountInput(to.value);
+            const a = parseAmountInput($from.val());
+            const b = parseAmountInput($to.val());
             return a !== null && b !== null && a > b;
         }
 
-        function decorate(el) {
-            const wrap = document.createElement("div");
-            const view = document.createElement("div");
-            wrap.className = "range-amount-wrap";
-            view.className = "range-amount-view";
-            el.parentNode.insertBefore(wrap, el);
-            wrap.append(el, view);
+        function decorate($el) {
+            const $wrap = $("<div>", { "class": "range-amount-wrap" });
+            const $view = $("<div>", { "class": "range-amount-view" });
+            $el.before($wrap);
+            $wrap.append($el, $view);
 
             return function render() {
-                const number = parseAmountInput(el.value);
-                view.innerHTML = number !== null ? formatAmountMarkup(formatAmount(number)) : "";
-                wrap.classList.toggle("has-value", number !== null);
+                const number = parseAmountInput($el.val());
+                $view.html(number !== null ? formatAmountMarkup(formatAmount(number)) : "");
+                $wrap.toggleClass("has-value", number !== null);
             };
         }
 
-        const renderFrom = decorate(from);
-        const renderTo = decorate(to);
+        const renderFrom = decorate($from);
+        const renderTo = decorate($to);
 
         function renderViews() {
             renderFrom();
@@ -1902,15 +1865,15 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         function paint(errFrom, errTo, message) {
-            from.closest(".dealer-filter-range-input").classList.toggle("is-error", errFrom);
-            to.closest(".dealer-filter-range-input").classList.toggle("is-error", errTo);
-            msgEl.textContent = message;
+            $from.closest(".dealer-filter-range-input").toggleClass("is-error", errFrom);
+            $to.closest(".dealer-filter-range-input").toggleClass("is-error", errTo);
+            $msg.text(message);
             if (opts.onChange) opts.onChange();
         }
 
         function validate() {
-            const badFrom = !isFormatOk(from);
-            const badTo = !isFormatOk(to);
+            const badFrom = !isFormatOk($from);
+            const badTo = !isFormatOk($to);
 
             if (badFrom || badTo) {
                 paint(badFrom, badTo, opts.formatMsg);
@@ -1921,25 +1884,25 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
-        [from, to].forEach(function (el) {
-            const wrap = el.closest(".range-amount-wrap");
+        [$from, $to].forEach(function ($el) {
+            const $wrap = $el.closest(".range-amount-wrap");
 
-            el.addEventListener("input", function () {
+            $el.on("input", function () {
                 checkOrder = false;
                 validate();
                 renderViews();
             });
 
-            el.addEventListener("focus", function () {
-                wrap.classList.add("is-focused");
-                el.value = cleanAmount(el.value);
+            $el.on("focus", function () {
+                $wrap.addClass("is-focused");
+                $el.val(cleanAmount($el.val()));
             });
 
-            el.addEventListener("blur", function () {
-                wrap.classList.remove("is-focused");
+            $el.on("blur", function () {
+                $wrap.removeClass("is-focused");
                 checkOrder = true;
-                const number = parseAmountInput(el.value);
-                if (number !== null) el.value = formatAmount(number);
+                const number = parseAmountInput($el.val());
+                if (number !== null) $el.val(formatAmount(number));
                 validate();
                 renderViews();
             });
@@ -1947,7 +1910,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         return {
             hasError: function () {
-                return !isFormatOk(from) || !isFormatOk(to) || (checkOrder && isOrderBad());
+                return !isFormatOk($from) || !isFormatOk($to) || (checkOrder && isOrderBad());
             },
             reset: function () {
                 checkOrder = false;
@@ -1963,7 +1926,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function initDateRangePicker(opts) {
-        const cal = opts.cal;
+        const $cal = opts.$cal;
         let tmpFrom = null, tmpTo = null, calView = null;
 
         function shortDate(d) {
@@ -2013,7 +1976,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 ? shortDate(tmpFrom) + (tmpTo ? " - " + shortDate(tmpTo) : "")
                 : "Select date range";
 
-            cal.innerHTML =
+            $cal.html(
                 '<div class="renewal-cal-head"><span>' + headText + '</span><i class="renewal-cal-pencil"></i></div>' +
                 '<div class="renewal-cal-body">' +
                     '<div class="renewal-cal-nav"><button type="button" data-nav="-1" aria-label="Previous month"></button>' +
@@ -2021,7 +1984,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     '<div class="renewal-cal-months">' + renderMonth(0) + renderMonth(1) + "</div>" +
                 "</div>" +
                 '<div class="renewal-cal-footer"><button type="button" data-cal="clear">Clear</button>' +
-                '<div><button type="button" data-cal="cancel">Cancel</button><button type="button" data-cal="ok">OK</button></div></div>';
+                '<div><button type="button" data-cal="cancel">Cancel</button><button type="button" data-cal="ok">OK</button></div></div>'
+            );
         }
 
         function open() {
@@ -2031,22 +1995,23 @@ document.addEventListener("DOMContentLoaded", function () {
             const base = tmpFrom || new Date();
             calView = new Date(base.getFullYear(), base.getMonth(), 1);
             render();
-            cal.classList.add("show");
+            $cal.addClass("show");
         }
 
-        cal.addEventListener("click", function (event) {
+        $cal.on("click", function (event) {
             event.stopPropagation();
+            const $target = $(event.target);
 
-            const nav = event.target.closest("[data-nav]");
-            if (nav) {
-                calView = new Date(calView.getFullYear(), calView.getMonth() + Number(nav.dataset.nav), 1);
+            const $nav = $target.closest("[data-nav]");
+            if ($nav.length) {
+                calView = new Date(calView.getFullYear(), calView.getMonth() + Number($nav.attr("data-nav")), 1);
                 render();
                 return;
             }
 
-            const day = event.target.closest(".renewal-cal-day");
-            if (day) {
-                const picked = new Date(Number(day.dataset.ts));
+            const $day = $target.closest(".renewal-cal-day");
+            if ($day.length) {
+                const picked = new Date(Number($day.attr("data-ts")));
                 if (!tmpFrom || tmpTo) { tmpFrom = picked; tmpTo = null; }
                 else if (picked < tmpFrom) { tmpFrom = picked; }
                 else { tmpTo = picked; }
@@ -2054,25 +2019,26 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            const action = event.target.closest("[data-cal]");
-            if (!action) return;
+            const $action = $target.closest("[data-cal]");
+            if (!$action.length) return;
 
-            if (action.dataset.cal === "clear") {
+            const action = $action.attr("data-cal");
+            if (action === "clear") {
                 tmpFrom = tmpTo = null;
                 render();
-            } else if (action.dataset.cal === "cancel") {
-                cal.classList.remove("show");
-            } else if (action.dataset.cal === "ok") {
-                cal.classList.remove("show");
+            } else if (action === "cancel") {
+                $cal.removeClass("show");
+            } else if (action === "ok") {
+                $cal.removeClass("show");
                 opts.onOk(tmpFrom, tmpTo || tmpFrom);
             }
         });
 
-        opts.fromBtn.addEventListener("click", open);
-        opts.toBtn.addEventListener("click", open);
+        opts.$fromBtn.on("click", open);
+        opts.$toBtn.on("click", open);
     }
 
-    //    TRANSACTION DASHBOARD
+    //   TRANSACTION DASHBOARD                                              
 
     const txnState = {
         tab: "all",
@@ -2184,23 +2150,19 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function closeAllTxnDetails() {
-        document.querySelectorAll("#txnTableBody .txn-details-row").forEach(function (row) {
-            row.classList.remove("is-visible");
-        });
-        document.querySelectorAll("#txnTableBody .txn-row").forEach(function (row) {
-            row.classList.remove("is-expanded");
-        });
+        $("#txnTableBody .txn-details-row").removeClass("is-visible");
+        $("#txnTableBody .txn-row").removeClass("is-expanded");
     }
 
-    function txnRowMatches(row) {
+    function txnRowMatches($row) {
         const s = txnState;
 
-        if (s.tab !== "all" && row.dataset.status !== s.tab) return false;
-        if (s.search && !row.textContent.toLowerCase().includes(s.search)) return false;
-        if (s.firms.length && !s.firms.includes(row.dataset.firm)) return false;
+        if (s.tab !== "all" && $row.attr("data-status") !== s.tab) return false;
+        if (s.search && !$row.text().toLowerCase().includes(s.search)) return false;
+        if (s.firms.length && !s.firms.includes($row.attr("data-firm"))) return false;
 
         if (s.tab === "upcoming" && s.daysDue !== "all") {
-            const left = Number(row.dataset.daysLeft);
+            const left = Number($row.attr("data-days-left"));
 
             if (s.daysDue === "custom") {
                 const now = new Date();
@@ -2212,12 +2174,12 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
-        const sanctionValue = parseFloat(row.dataset.sanctionValue) || 0;
+        const sanctionValue = parseFloat($row.attr("data-sanction-value")) || 0;
         if (s.sanctionFrom !== null && sanctionValue < s.sanctionFrom) return false;
         if (s.sanctionTo !== null && sanctionValue > s.sanctionTo) return false;
 
         if (s.tab === "overdue") {
-            const overdueValue = parseFloat(row.dataset.overdueValue) || 0;
+            const overdueValue = parseFloat($row.attr("data-overdue-value")) || 0;
             if (s.overdueFrom !== null && overdueValue < s.overdueFrom) return false;
             if (s.overdueTo !== null && overdueValue > s.overdueTo) return false;
         }
@@ -2228,87 +2190,81 @@ document.addEventListener("DOMContentLoaded", function () {
     function applyTxnFilters() {
         closeAllTxnDetails();
 
-        document.querySelectorAll(".txn-row, .txn-table-view tbody tr").forEach(function (row) {
-            row.classList.toggle("hidden-by-filter", !txnRowMatches(row));
+        $(".txn-row, .txn-table-view tbody tr").each(function () {
+            const $row = $(this);
+            $row.toggleClass("hidden-by-filter", !txnRowMatches($row));
         });
     }
 
-    function bindTxnRowExpansion(listBody) {
-        listBody.querySelectorAll(".dealer-expand-btn").forEach(function (btn) {
-            btn.addEventListener("click", function () {
-                const row = btn.closest(".txn-row");
-                const detailRow = listBody.querySelector(
-                    '.txn-details-row[data-txn-details-for="' + row.dataset.txnIndex + '"]'
-                );
-                const wasVisible = detailRow.classList.contains("is-visible");
+    function bindTxnRowExpansion($listBody) {
+        $listBody.find(".dealer-expand-btn").on("click", function () {
+            const $row = $(this).closest(".txn-row");
+            const $detailRow = $listBody.find(
+                '.txn-details-row[data-txn-details-for="' + $row.attr("data-txn-index") + '"]'
+            );
+            const wasVisible = $detailRow.hasClass("is-visible");
 
-                closeAllTxnDetails();
+            closeAllTxnDetails();
 
-                if (!wasVisible) {
-                    detailRow.classList.add("is-visible");
-                    row.classList.add("is-expanded");
-                }
-            });
+            if (!wasVisible) {
+                $detailRow.addClass("is-visible");
+                $row.addClass("is-expanded");
+            }
         });
     }
 
     function bindTxnRefreshButtons() {
-        document.querySelectorAll(".txn-refresh-btn").forEach(function (btn) {
-            btn.addEventListener("click", function (event) {
-                event.stopPropagation();
-                btn.classList.add("spinning");
-                setTimeout(function () { btn.classList.remove("spinning"); }, 450);
-            });
+        $(".txn-refresh-btn").on("click", function (event) {
+            event.stopPropagation();
+            const $btn = $(this);
+            $btn.addClass("spinning");
+            setTimeout(function () { $btn.removeClass("spinning"); }, 450);
         });
     }
 
     function initInfoTooltips() {
-        const tip = document.createElement("div");
-        tip.className = "app-tooltip";
-        tip.setAttribute("role", "tooltip");
-        document.body.appendChild(tip);
+        const $tip = $("<div>", { "class": "app-tooltip", role: "tooltip" }).appendTo("body");
+        const tipEl = $tip[0];
 
         const canHover = window.matchMedia("(hover: hover)");
         const mobileMq = window.matchMedia("(max-width: 767.98px)");
         let source = null;
 
         function hide() {
-            tip.classList.remove("show");
+            $tip.removeClass("show");
             source = null;
         }
 
         function show(el, text, rect) {
             source = el;
-            tip.textContent = text;
-            tip.classList.remove("below");
-            tip.classList.add("show");
+            $tip.text(text).removeClass("below").addClass("show");
 
             const r = rect || el.getBoundingClientRect();
-            const w = tip.offsetWidth;
-            const h = tip.offsetHeight;
+            const w = tipEl.offsetWidth;
+            const h = tipEl.offsetHeight;
             const centerX = r.left + r.width / 2;
             const left = Math.max(8, Math.min(centerX - w / 2, window.innerWidth - w - 8));
             const below = r.top - h - 12 < 8;
 
-            tip.style.left = left + "px";
-            tip.style.top = (below ? r.bottom + 12 : r.top - h - 12) + "px";
-            tip.style.setProperty("--arrow-x", Math.max(14, Math.min(centerX - left, w - 14)) + "px");
-            tip.classList.toggle("below", below);
+            $tip.css({
+                left: left + "px",
+                top: (below ? r.bottom + 12 : r.top - h - 12) + "px"
+            });
+            tipEl.style.setProperty("--arrow-x", Math.max(14, Math.min(centerX - left, w - 14)) + "px");
+            $tip.toggleClass("below", below);
         }
 
-        document.addEventListener("mouseover", function (event) {
+        $(document).on("mouseover", ".info-dot[data-tooltip]", function () {
             if (!canHover.matches) return;
-            const dot = event.target.closest(".info-dot[data-tooltip]");
-            if (dot) show(dot, dot.dataset.tooltip);
+            show(this, $(this).attr("data-tooltip"));
         });
 
-        document.addEventListener("mouseout", function (event) {
-            if (event.target.closest(".info-dot[data-tooltip]")) hide();
-        });
+        $(document).on("mouseout", ".info-dot[data-tooltip]", hide);
 
-        document.addEventListener("click", function (event) {
-            const dot = canHover.matches ? null : event.target.closest(".info-dot[data-tooltip]");
-            const cell = mobileMq.matches ? event.target.closest(".txn-cell--days") : null;
+        $(document).on("click", function (event) {
+            const $target = $(event.target);
+            const dot = canHover.matches ? null : ($target.closest(".info-dot[data-tooltip]")[0] || null);
+            const cell = mobileMq.matches ? ($target.closest(".txn-cell--days")[0] || null) : null;
             const el = dot || cell;
 
             if (!el) { hide(); return; }
@@ -2318,43 +2274,41 @@ document.addEventListener("DOMContentLoaded", function () {
                 const r = cell.getBoundingClientRect();
                 show(cell, "Excluding cure days", { left: r.right - 13, width: 13, top: r.top, bottom: r.top + 16 });
             } else {
-                show(dot, dot.dataset.tooltip);
+                show(dot, $(dot).attr("data-tooltip"));
             }
         });
 
         window.addEventListener("scroll", hide, true);
-        window.addEventListener("resize", hide);
+        $(window).on("resize", hide);
     }
 
     function bindOpenTranchesModal() {
-        const modal = document.getElementById("openTranchesModal");
-        const countEl = document.getElementById("tranchesCount");
-        const bodyEl = document.getElementById("tranchesTableBody");
-        if (!modal || !countEl || !bodyEl) return;
+        const $modal = $("#openTranchesModal");
+        const $count = $("#tranchesCount");
+        const $body = $("#tranchesTableBody");
+        if (!$modal.length || !$count.length || !$body.length) return;
 
         function closeModal() {
-            modal.classList.remove("show");
+            $modal.removeClass("show");
         }
 
-        document.querySelectorAll("[data-open-tranches]").forEach(function (el) {
-            el.addEventListener("click", function () {
-                const item = transactionData[el.dataset.openTranches];
+        $("[data-open-tranches]").on("click", function () {
+            const item = transactionData[$(this).attr("data-open-tranches")];
 
-                countEl.textContent = item.openTxns;
-                bodyEl.innerHTML = item.tranches.map(function (t) {
-                    return `
-                        <tr>
-                            <td data-label="ID">${escapeHtml(t.id)}</td>
-                            <td data-label="Transaction date">${escapeHtml(t.date)}</td>
-                            <td data-label="Transaction type">${escapeHtml(t.type)}</td>
-                            <td data-label="Amount">${formatAmountMarkup(t.amount)}</td>
-                            <td data-label="Due date">${escapeHtml(t.due)}</td>
-                        </tr>
-                    `;
-                }).join("") || '<tr><td colspan="5" style="text-align:center;color:#999;">No open tranches</td></tr>';
+            $count.text(item.openTxns);
+            $body.html(item.tranches.map(function (t) {
+                return `
+                    <tr>
+                        <td data-label="ID">${escapeHtml(t.id)}</td>
+                        <td data-label="Transaction date">${escapeHtml(t.date)}</td>
+                        <td data-label="Transaction type">${escapeHtml(t.type)}</td>
+                        <td data-label="Amount">${formatAmountMarkup(t.amount)}</td>
+                        <td data-label="Due date">${escapeHtml(t.due)}</td>
+                    </tr>
+                `;
+            }).join("") || '<tr><td colspan="5" style="text-align:center;color:#999;">No open tranches</td></tr>');
 
-                modal.classList.add("show");
-            });
+            $modal.addClass("show");
         });
 
         ["openTranchesClose", "openTranchesCloseBtn"].forEach(function (id) {
@@ -2363,114 +2317,101 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function setTxnFilterTab(tab) {
-        const tabsWrap = document.getElementById("txnFilterTabs");
+        $("#txnFilterTabs .dealer-filter-pill").each(function () {
+            $(this).toggleClass("active", $(this).attr("data-tab") === tab);
+        });
 
-        if (tabsWrap) {
-            tabsWrap.querySelectorAll(".dealer-filter-pill").forEach(function (pill) {
-                pill.classList.toggle("active", pill.dataset.tab === tab);
-            });
-        }
-
-        document.querySelectorAll(".txn-filter-extra").forEach(function (el) {
-            el.style.display = el.dataset.extraFor === tab ? "" : "none";
+        $(".txn-filter-extra").each(function () {
+            $(this).css("display", $(this).attr("data-extra-for") === tab ? "" : "none");
         });
     }
 
-    function initTxnToolbar(txnPage) {
-        const tabButtons = Array.from(document.querySelectorAll(".txn-filter-btn"));
-        const txnSearchInput = document.getElementById("txnSearchInput");
-        const txnHideBtn = document.getElementById("txnHideDetailsBtn");
+    function initTxnToolbar($txnPage) {
+        const $tabButtons = $(".txn-filter-btn");
+        const $txnSearchInput = $("#txnSearchInput");
+        const $txnHideBtn = $("#txnHideDetailsBtn");
 
-        tabButtons.forEach(function (btn) {
-            btn.addEventListener("click", function () {
-                txnState.tab = btn.dataset.txnFilter;
-                setActive(tabButtons, btn);
-                setTxnFilterTab(txnState.tab);
-                applyTxnFilters();
-            });
+        $tabButtons.on("click", function () {
+            const $btn = $(this);
+            txnState.tab = $btn.attr("data-txn-filter");
+            setActive($tabButtons, $btn);
+            setTxnFilterTab(txnState.tab);
+            applyTxnFilters();
         });
 
-        if (txnSearchInput) {
-            txnSearchInput.addEventListener("input", function () {
-                txnState.search = txnSearchInput.value.trim().toLowerCase();
-                applyTxnFilters();
-            });
-        }
+        $txnSearchInput.on("input", function () {
+            txnState.search = ($txnSearchInput.val() || "").trim().toLowerCase();
+            applyTxnFilters();
+        });
 
         function setTxnView(view) {
-            if (txnPage) txnPage.classList.toggle("txn-grid-active", view === "grid");
+            $txnPage.toggleClass("txn-grid-active", view === "grid");
         }
 
-        if (txnPage) {
-            const viewButtons = Array.from(txnPage.querySelectorAll(".view-switch-btn"));
-            viewButtons.forEach(function (btn) {
-                btn.addEventListener("click", function () {
-                    setActive(viewButtons, btn);
-                    setTxnView(btn.dataset.view || "list");
-                });
+        if ($txnPage.length) {
+            const $viewButtons = $txnPage.find(".view-switch-btn");
+            $viewButtons.on("click", function () {
+                const $btn = $(this);
+                setActive($viewButtons, $btn);
+                setTxnView($btn.attr("data-view") || "list");
             });
         }
         setTxnView("list");
 
-        if (txnHideBtn) {
-            txnHideBtn.addEventListener("click", function () {
-                setDetailsHidden(!detailsHidden);
-            });
-        }
+        $txnHideBtn.on("click", function () {
+            setDetailsHidden(!detailsHidden);
+        });
 
-        initDropdownMenu(
-            document.getElementById("txnAddDealerBtn"),
-            document.getElementById("txnAddDealerMenu")
-        );
+        initDropdownMenu($("#txnAddDealerBtn"), $("#txnAddDealerMenu"));
     }
 
     function initTxnFiltersModal() {
-        const openBtn = document.getElementById("txnFiltersBtn");
-        const overlay = document.getElementById("txnFiltersOverlay");
-        const closeBtn = document.getElementById("txnFiltersClose");
-        const resetBtn = document.getElementById("txnFiltersReset");
-        const applyBtn = document.getElementById("txnFiltersApply");
-        const tabsWrap = document.getElementById("txnFilterTabs");
-        const daysPills = Array.from(document.querySelectorAll("#txnDaysDuePills .dealer-filter-pill"));
-        const toolbarTabs = Array.from(document.querySelectorAll(".txn-filter-btn"));
-        const customField = document.getElementById("txnCustomField");
-        const fromBtn = document.getElementById("txnDateFrom");
-        const toBtn = document.getElementById("txnDateTo");
-        const cal = document.getElementById("txnCalendar");
+        const $openBtn = $("#txnFiltersBtn");
+        const $overlay = $("#txnFiltersOverlay");
+        const $closeBtn = $("#txnFiltersClose");
+        const $resetBtn = $("#txnFiltersReset");
+        const $applyBtn = $("#txnFiltersApply");
+        const $tabsWrap = $("#txnFilterTabs");
+        const $daysPills = $("#txnDaysDuePills .dealer-filter-pill");
+        const $toolbarTabs = $(".txn-filter-btn");
+        const $customField = $("#txnCustomField");
+        const $fromBtn = $("#txnDateFrom");
+        const $toBtn = $("#txnDateTo");
+        const $cal = $("#txnCalendar");
 
         let daysDue = "all", dateFrom = null, dateTo = null;
 
         function readNumber(id) {
-            return parseAmountInput((document.getElementById(id) || {}).value);
+            return parseAmountInput($("#" + id).val());
         }
 
         function getActiveTab() {
-            const pill = tabsWrap ? tabsWrap.querySelector(".active") : null;
-            return (pill && pill.dataset.tab) || "all";
+            const $pill = $tabsWrap.find(".active").first();
+            return $pill.attr("data-tab") || "all";
         }
 
         function closeOverlay() {
-            if (cal) cal.classList.remove("show");
-            if (overlay) overlay.classList.remove("show");
+            $cal.removeClass("show");
+            $overlay.removeClass("show");
         }
 
         function syncTxnApply() {
-            if (!applyBtn) return;
+            if (!$applyBtn.length) return;
             const tab = getActiveTab();
             const incomplete = tab === "upcoming" && daysDue === "custom" && (!dateFrom || !dateTo);
-            applyBtn.disabled = incomplete ||
+            $applyBtn.prop("disabled", incomplete ||
                 sanctionField.hasError() ||
-                (tab === "overdue" && overdueField.hasError());
+                (tab === "overdue" && overdueField.hasError()));
         }
 
         function updateDays() {
-            daysPills.forEach(function (pill) {
-                pill.classList.toggle("active", pill.dataset.value === daysDue);
+            $daysPills.each(function () {
+                $(this).toggleClass("active", $(this).attr("data-value") === daysDue);
             });
-            customField.hidden = !(getActiveTab() === "upcoming" && daysDue === "custom");
-            fromBtn.firstElementChild.textContent = dateFrom ? formatDMY(dateFrom) : "Select date";
-            toBtn.firstElementChild.textContent = dateTo ? formatDMY(dateTo) : "Select date";
-            cal.classList.remove("show");
+            $customField.prop("hidden", !(getActiveTab() === "upcoming" && daysDue === "custom"));
+            $fromBtn.children().first().text(dateFrom ? formatDMY(dateFrom) : "Select date");
+            $toBtn.children().first().text(dateTo ? formatDMY(dateTo) : "Select date");
+            $cal.removeClass("show");
             syncTxnApply();
         }
 
@@ -2500,9 +2441,9 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         initDateRangePicker({
-            cal: cal,
-            fromBtn: fromBtn,
-            toBtn: toBtn,
+            $cal: $cal,
+            $fromBtn: $fromBtn,
+            $toBtn: $toBtn,
             getRange: function () { return { from: dateFrom, to: dateTo }; },
             onOk: function (from, to) {
                 dateFrom = from;
@@ -2512,100 +2453,89 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         renderFirmOptions(
-            document.querySelector("#txnFirmDropdown .dealer-filter-dropdown-panel"),
+            $("#txnFirmDropdown .dealer-filter-dropdown-panel").first(),
             transactionData.map(function (item) {
                 return { name: item.firm, meta: "Code: " + item.code };
             })
         );
 
-        if (openBtn && overlay) {
-            openBtn.addEventListener("click", function () {
+        if ($openBtn.length && $overlay.length) {
+            $openBtn.on("click", function () {
                 setTxnFilterTab(txnState.tab);
                 daysDue = txnState.daysDue;
                 dateFrom = txnState.dateFrom;
                 dateTo = txnState.dateTo;
                 updateDays();
-                overlay.classList.add("show");
+                $overlay.addClass("show");
             });
         }
 
-        if (closeBtn) closeBtn.addEventListener("click", closeOverlay);
+        $closeBtn.on("click", closeOverlay);
 
-        if (overlay) {
-            overlay.addEventListener("click", function (event) {
-                if (event.target === overlay) closeOverlay();
-            });
-        }
-
-        if (tabsWrap) {
-            tabsWrap.querySelectorAll(".dealer-filter-pill").forEach(function (pill) {
-                pill.addEventListener("click", function () { pickTab(pill.dataset.tab); });
-            });
-        }
-
-        daysPills.forEach(function (pill) {
-            pill.addEventListener("click", function () {
-                daysDue = pill.dataset.value;
-                if (daysDue !== "custom") dateFrom = dateTo = null;
-                updateDays();
-            });
+        $overlay.on("click", function (event) {
+            if (event.target === $overlay[0]) closeOverlay();
         });
 
-        if (resetBtn) {
-            resetBtn.addEventListener("click", function () {
-                ["txnSanctionFrom", "txnSanctionTo", "txnOverdueFrom", "txnOverdueTo"].forEach(function (id) {
-                    const input = document.getElementById(id);
-                    if (input) input.value = "";
-                });
+        $tabsWrap.find(".dealer-filter-pill").on("click", function () {
+            pickTab($(this).attr("data-tab"));
+        });
 
-                sanctionField.reset();
-                overdueField.reset();
-                overlay.querySelectorAll(".dealer-filter-dropdown").forEach(resetFilterDropdown);
-                pickTab("all");
+        $daysPills.on("click", function () {
+            daysDue = $(this).attr("data-value");
+            if (daysDue !== "custom") dateFrom = dateTo = null;
+            updateDays();
+        });
+
+        $resetBtn.on("click", function () {
+            $("#txnSanctionFrom, #txnSanctionTo, #txnOverdueFrom, #txnOverdueTo").val("");
+
+            sanctionField.reset();
+            overdueField.reset();
+            $overlay.find(".dealer-filter-dropdown").each(function () {
+                resetFilterDropdown($(this));
             });
-        }
+            pickTab("all");
+        });
 
-        if (applyBtn) {
-            applyBtn.addEventListener("click", function () {
-                txnState.tab = getActiveTab();
-                txnState.firms = getCheckedValues("#txnFirmDropdown");
-                txnState.sanctionFrom = readNumber("txnSanctionFrom");
-                txnState.sanctionTo = readNumber("txnSanctionTo");
-                txnState.overdueFrom = readNumber("txnOverdueFrom");
-                txnState.overdueTo = readNumber("txnOverdueTo");
-                txnState.daysDue = daysDue;
-                txnState.dateFrom = dateFrom;
-                txnState.dateTo = dateTo;
+        $applyBtn.on("click", function () {
+            txnState.tab = getActiveTab();
+            txnState.firms = getCheckedValues("#txnFirmDropdown");
+            txnState.sanctionFrom = readNumber("txnSanctionFrom");
+            txnState.sanctionTo = readNumber("txnSanctionTo");
+            txnState.overdueFrom = readNumber("txnOverdueFrom");
+            txnState.overdueTo = readNumber("txnOverdueTo");
+            txnState.daysDue = daysDue;
+            txnState.dateFrom = dateFrom;
+            txnState.dateTo = dateTo;
 
-                toolbarTabs.forEach(function (btn) {
-                    btn.classList.toggle("active", btn.dataset.txnFilter === txnState.tab);
-                });
-
-                applyTxnFilters();
-                closeOverlay();
-                showAppToast("Filters applied successfully");
+            $toolbarTabs.each(function () {
+                $(this).toggleClass("active", $(this).attr("data-txn-filter") === txnState.tab);
             });
-        }
+
+            applyTxnFilters();
+            closeOverlay();
+            showAppToast("Filters applied successfully");
+        });
     }
 
     function initTransactionDashboard() {
-        const listBody = document.getElementById("txnTableBody");
-        const gridBody = document.getElementById("txnTableViewBody");
-        const txnPage = document.getElementById("transactionDashboardPage");
-        if (!listBody || !gridBody) return;
+        const $listBody = $("#txnTableBody");
+        const $gridBody = $("#txnTableViewBody");
+        const $txnPage = $("#transactionDashboardPage");
+        if (!$listBody.length || !$gridBody.length) return;
 
-        listBody.innerHTML = transactionData.map(renderTxnRow).join("");
-        gridBody.innerHTML = transactionData.map(renderTxnGridRow).join("");
+        $listBody.html(transactionData.map(renderTxnRow).join(""));
+        $gridBody.html(transactionData.map(renderTxnGridRow).join(""));
 
-        bindTxnRowExpansion(listBody);
+        bindTxnRowExpansion($listBody);
         bindTxnRefreshButtons();
         bindOpenTranchesModal();
-        initTxnToolbar(txnPage);
+        initTxnToolbar($txnPage);
         initTxnFiltersModal();
     }
 
-    
-    // RENEWAL DETAILS
+
+    //   RENEWAL DETAILS                                                    
 
     const renewalActions = {
         enhance: "Enhance limit",
@@ -2632,7 +2562,7 @@ document.addEventListener("DOMContentLoaded", function () {
     ].map(function (item) {
         const today = new Date();
         const offset = item.state === "expired" ? -item.days : item.days;
-        return Object.assign({}, renewalCommon, item, {
+        return $.extend({}, renewalCommon, item, {
             recommendation: item.sanction,
             expiryDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + offset)
         });
@@ -2735,12 +2665,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function closeAllRenewalDetails() {
-        document.querySelectorAll(".renewal-row.is-expanded").forEach(function (row) {
-            row.classList.remove("is-expanded");
-        });
-        document.querySelectorAll(".renewal-details-row.is-visible").forEach(function (row) {
-            row.classList.remove("is-visible");
-        });
+        $(".renewal-row.is-expanded").removeClass("is-expanded");
+        $(".renewal-details-row.is-visible").removeClass("is-visible");
     }
 
     function renewalItemMatches(item) {
@@ -2772,41 +2698,42 @@ document.addEventListener("DOMContentLoaded", function () {
     function applyRenewalFilters() {
         closeAllRenewalDetails();
 
-        document.querySelectorAll(".renewal-row, .renewal-table-view tbody tr").forEach(function (row) {
-            const item = renewalData[row.dataset.renewalIndex];
+        $(".renewal-row, .renewal-table-view tbody tr").each(function () {
+            const $row = $(this);
+            const item = renewalData[$row.attr("data-renewal-index")];
             const matchFilter = item ? renewalItemMatches(item) : true;
-            const matchSearch = !renewalState.search || row.textContent.toLowerCase().includes(renewalState.search);
-            row.classList.toggle("hidden-by-filter", !(matchFilter && matchSearch));
+            const matchSearch = !renewalState.search || $row.text().toLowerCase().includes(renewalState.search);
+            $row.toggleClass("hidden-by-filter", !(matchFilter && matchSearch));
         });
     }
 
     function initRenewalFiltersModal() {
-        const overlay = document.getElementById("renewalFiltersOverlay");
-        const openBtn = document.getElementById("renewalFiltersBtn");
-        if (!overlay || !openBtn) return;
+        const $overlay = $("#renewalFiltersOverlay");
+        const $openBtn = $("#renewalFiltersBtn");
+        if (!$overlay.length || !$openBtn.length) return;
 
-        const page = document.getElementById("renewalDetailsPage");
-        const applyBtn = document.getElementById("renewalFiltersApply");
-        const resetBtn = document.getElementById("renewalFiltersReset");
-        const tabPills = Array.from(document.querySelectorAll("#renewalFilterTabs .dealer-filter-pill"));
-        const daysField = document.getElementById("renewalDaysField");
-        const daysLabel = document.getElementById("renewalDaysLabel");
-        const daysPills = Array.from(document.querySelectorAll("#renewalDaysPills .dealer-filter-pill"));
-        const customField = document.getElementById("renewalCustomField");
-        const fromBtn = document.getElementById("renewalDateFrom");
-        const toBtn = document.getElementById("renewalDateTo");
-        const cal = document.getElementById("renewalCalendar");
-        const firmPanel = document.querySelector("#renewalFirmDropdown .dealer-filter-dropdown-panel");
+        const $page = $("#renewalDetailsPage");
+        const $applyBtn = $("#renewalFiltersApply");
+        const $resetBtn = $("#renewalFiltersReset");
+        const $tabPills = $("#renewalFilterTabs .dealer-filter-pill");
+        const $daysField = $("#renewalDaysField");
+        const $daysLabel = $("#renewalDaysLabel");
+        const $daysPills = $("#renewalDaysPills .dealer-filter-pill");
+        const $customField = $("#renewalCustomField");
+        const $fromBtn = $("#renewalDateFrom");
+        const $toBtn = $("#renewalDateTo");
+        const $cal = $("#renewalCalendar");
+        const $firmPanel = $("#renewalFirmDropdown .dealer-filter-dropdown-panel").first();
 
         let tab = "all", range = "all", dateFrom = null, dateTo = null;
         let snapshot = null;
 
-        function num(id) { return parseAmountInput(document.getElementById(id).value); }
+        function num(id) { return parseAmountInput($("#" + id).val()); }
 
-        renderFirmOptions(firmPanel, renewalData.map(function (item) {
+        renderFirmOptions($firmPanel, renewalData.map(function (item) {
             return { name: item.firm, meta: "ID: " + item.id + "\nPAN: " + item.pan };
         }));
-        initFirmSearch(document.getElementById("renewalFirmSearchInput"), firmPanel);
+        initFirmSearch($("#renewalFirmSearchInput"), $firmPanel);
 
         function readFilters() {
             return {
@@ -2825,7 +2752,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const incomplete = range === "custom" && (!dateFrom || !dateTo);
             const unchanged = snapshot !== null && JSON.stringify(readFilters()) === snapshot;
             const invalid = sanctionField.hasError();
-            applyBtn.disabled = incomplete || unchanged || invalid;
+            $applyBtn.prop("disabled", incomplete || unchanged || invalid);
         }
 
         const sanctionField = initRangeField({
@@ -2838,14 +2765,18 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         function updateExtra() {
-            tabPills.forEach(function (p) { p.classList.toggle("active", p.dataset.tab === tab); });
-            daysField.style.display = tab === "all" ? "none" : "";
-            daysLabel.textContent = tab === "expired" ? "Expired since" : "Days to expire";
-            daysPills.forEach(function (p) { p.classList.toggle("active", p.dataset.value === range); });
-            customField.style.display = range === "custom" ? "" : "none";
-            fromBtn.firstElementChild.textContent = dateFrom ? formatDMY(dateFrom) : "Select date";
-            toBtn.firstElementChild.textContent = dateTo ? formatDMY(dateTo) : "Select date";
-            cal.classList.remove("show");
+            $tabPills.each(function () {
+                $(this).toggleClass("active", $(this).attr("data-tab") === tab);
+            });
+            $daysField.css("display", tab === "all" ? "none" : "");
+            $daysLabel.text(tab === "expired" ? "Expired since" : "Days to expire");
+            $daysPills.each(function () {
+                $(this).toggleClass("active", $(this).attr("data-value") === range);
+            });
+            $customField.css("display", range === "custom" ? "" : "none");
+            $fromBtn.children().first().text(dateFrom ? formatDMY(dateFrom) : "Select date");
+            $toBtn.children().first().text(dateTo ? formatDMY(dateTo) : "Select date");
+            $cal.removeClass("show");
         }
 
         function setTab(next) {
@@ -2856,9 +2787,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         initDateRangePicker({
-            cal: cal,
-            fromBtn: fromBtn,
-            toBtn: toBtn,
+            $cal: $cal,
+            $fromBtn: $fromBtn,
+            $toBtn: $toBtn,
             getRange: function () { return { from: dateFrom, to: dateTo }; },
             onOk: function (from, to) {
                 dateFrom = from;
@@ -2869,53 +2800,47 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         function closeOverlay() {
-            cal.classList.remove("show");
-            overlay.classList.remove("show");
+            $cal.removeClass("show");
+            $overlay.removeClass("show");
         }
 
-        openBtn.addEventListener("click", function () {
+        $openBtn.on("click", function () {
             tab = renewalState.filter;
             range = renewalState.range;
             dateFrom = renewalState.dateFrom;
             dateTo = renewalState.dateTo;
             updateExtra();
             if (snapshot === null) snapshot = JSON.stringify(readFilters());
-            overlay.classList.add("show");
+            $overlay.addClass("show");
             syncApply();
         });
 
         bindClick("renewalFiltersClose", closeOverlay);
-        overlay.addEventListener("click", function (event) {
-            if (event.target === overlay) closeOverlay();
+        $overlay.on("click", function (event) {
+            if (event.target === $overlay[0]) closeOverlay();
         });
 
-        tabPills.forEach(function (pill) {
-            pill.addEventListener("click", function () { setTab(pill.dataset.tab); });
+        $tabPills.on("click", function () { setTab($(this).attr("data-tab")); });
+
+        $daysPills.on("click", function () {
+            range = $(this).attr("data-value");
+            if (range !== "custom") dateFrom = dateTo = null;
+            updateExtra();
         });
 
-        daysPills.forEach(function (pill) {
-            pill.addEventListener("click", function () {
-                range = pill.dataset.value;
-                if (range !== "custom") dateFrom = dateTo = null;
-                updateExtra();
-            });
-        });
+        $overlay.on("change input click", syncApply);
 
-        ["change", "input", "click"].forEach(function (name) {
-            overlay.addEventListener(name, syncApply);
-        });
-
-        resetBtn.addEventListener("click", function () {
+        $resetBtn.on("click", function () {
             setTab("all");
-            ["renewalSanctionFrom", "renewalSanctionTo"].forEach(function (id) {
-                document.getElementById(id).value = "";
-            });
+            $("#renewalSanctionFrom, #renewalSanctionTo").val("");
             sanctionField.reset();
-            overlay.querySelectorAll(".dealer-filter-dropdown").forEach(resetFilterDropdown);
+            $overlay.find(".dealer-filter-dropdown").each(function () {
+                resetFilterDropdown($(this));
+            });
             syncApply();
         });
 
-        applyBtn.addEventListener("click", function () {
+        $applyBtn.on("click", function () {
             const f = readFilters();
 
             renewalState.filter = f.filter;
@@ -2927,8 +2852,8 @@ document.addEventListener("DOMContentLoaded", function () {
             renewalState.sanctionFrom = f.sanctionFrom;
             renewalState.sanctionTo = f.sanctionTo;
 
-            page.querySelectorAll(".renewal-filter-btn").forEach(function (btn) {
-                btn.classList.toggle("active", btn.dataset.renewalFilter === f.filter);
+            $page.find(".renewal-filter-btn").each(function () {
+                $(this).toggleClass("active", $(this).attr("data-renewal-filter") === f.filter);
             });
 
             snapshot = JSON.stringify(f);
@@ -2939,74 +2864,59 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function initRenewalDashboard() {
-        const page = document.getElementById("renewalDetailsPage");
-        const listBody = document.getElementById("renewalTableBody");
-        const gridBody = document.getElementById("renewalTableViewBody");
-        if (!page || !listBody || !gridBody) return;
+        const $page = $("#renewalDetailsPage");
+        const $listBody = $("#renewalTableBody");
+        const $gridBody = $("#renewalTableViewBody");
+        if (!$page.length || !$listBody.length || !$gridBody.length) return;
 
-        listBody.innerHTML = renewalData.map(renderRenewalRow).join("");
-        gridBody.innerHTML = renewalData.map(renderRenewalGridRow).join("");
+        $listBody.html(renewalData.map(renderRenewalRow).join(""));
+        $gridBody.html(renewalData.map(renderRenewalGridRow).join(""));
 
-        const filterButtons = Array.from(page.querySelectorAll(".renewal-filter-btn"));
-        const viewButtons = Array.from(page.querySelectorAll(".view-switch-btn"));
-        const searchBox = document.getElementById("renewalSearchInput");
-        const hideBtn = document.getElementById("renewalHideDetailsBtn");
+        const $filterButtons = $page.find(".renewal-filter-btn");
+        const $viewButtons = $page.find(".view-switch-btn");
+        const $searchBox = $("#renewalSearchInput");
+        const $hideBtn = $("#renewalHideDetailsBtn");
 
-        filterButtons.forEach(function (btn) {
-            btn.addEventListener("click", function () {
-                renewalState.filter = btn.dataset.renewalFilter;
-                setActive(filterButtons, btn);
-                applyRenewalFilters();
-            });
+        $filterButtons.on("click", function () {
+            const $btn = $(this);
+            renewalState.filter = $btn.attr("data-renewal-filter");
+            setActive($filterButtons, $btn);
+            applyRenewalFilters();
         });
 
-        if (searchBox) {
-            searchBox.addEventListener("input", function () {
-                renewalState.search = searchBox.value.trim().toLowerCase();
-                applyRenewalFilters();
-            });
-        }
-
-        viewButtons.forEach(function (btn) {
-            btn.addEventListener("click", function () {
-                setActive(viewButtons, btn);
-                page.classList.toggle("renewal-grid-active", btn.dataset.view === "grid");
-            });
+        $searchBox.on("input", function () {
+            renewalState.search = ($searchBox.val() || "").trim().toLowerCase();
+            applyRenewalFilters();
         });
 
-        if (hideBtn) {
-            hideBtn.addEventListener("click", function () {
-                setDetailsHidden(!detailsHidden);
-            });
-        }
+        $viewButtons.on("click", function () {
+            const $btn = $(this);
+            setActive($viewButtons, $btn);
+            $page.toggleClass("renewal-grid-active", $btn.attr("data-view") === "grid");
+        });
 
-        initDropdownMenu(
-            document.getElementById("renewalAddDealerBtn"),
-            document.getElementById("renewalAddDealerMenu")
-        );
+        $hideBtn.on("click", function () {
+            setDetailsHidden(!detailsHidden);
+        });
+
+        initDropdownMenu($("#renewalAddDealerBtn"), $("#renewalAddDealerMenu"));
 
         /* expand / collapse (list view) */
-        listBody.addEventListener("click", function (event) {
-            const btn = event.target.closest(".renewal-expand-btn");
-            if (!btn) return;
-
-            const row = btn.closest(".renewal-row");
-            const detailRow = row.nextElementSibling;
-            const wasOpen = row.classList.contains("is-expanded");
+        $listBody.on("click", ".renewal-expand-btn", function () {
+            const $row = $(this).closest(".renewal-row");
+            const $detailRow = $row.next();
+            const wasOpen = $row.hasClass("is-expanded");
 
             closeAllRenewalDetails();
 
             if (!wasOpen) {
-                row.classList.add("is-expanded");
-                if (detailRow) detailRow.classList.add("is-visible");
+                $row.addClass("is-expanded");
+                $detailRow.addClass("is-visible");
             }
         });
 
-        page.addEventListener("click", function (event) {
-            const link = event.target.closest(".renewal-action-link");
-            if (!link) return;
-
-            if (link.classList.contains("update")) {
+        $page.on("click", ".renewal-action-link", function () {
+            if ($(this).hasClass("update")) {
                 showAppToast(
                     "This lead is expired",
                     "warning",
@@ -3019,56 +2929,56 @@ document.addEventListener("DOMContentLoaded", function () {
         initRenewalFiltersModal();
     }
 
-    function centerActiveTab(page) {
-        const activeTab = page.querySelector(".new-dealer-tab.active");
-        const tabList = activeTab && activeTab.closest(".new-dealer-tab-list");
-        if (!tabList) return;
-        tabList.scrollLeft = activeTab.offsetLeft - (tabList.clientWidth - activeTab.offsetWidth) / 2;
+    function centerActiveTab($page) {
+        const $activeTab = $page.find(".new-dealer-tab.active").first();
+        const $tabList = $activeTab.closest(".new-dealer-tab-list");
+        if (!$tabList.length) return;
+        $tabList.scrollLeft($activeTab.prop("offsetLeft") - ($tabList.prop("clientWidth") - $activeTab.prop("offsetWidth")) / 2);
     }
 
     function syncMenuActive(which) {
-        menuItems.forEach(function (item) {
-            const title = item.querySelector(".menu-title");
-            const route = title ? MENU_ROUTES[title.textContent.trim().toLowerCase()] : "";
-            item.classList.toggle("active", route === which);
+        $menuItems.each(function () {
+            const $item = $(this);
+            const $title = $item.find(".menu-title").first();
+            const route = $title.length ? MENU_ROUTES[$title.text().trim().toLowerCase()] : "";
+            $item.toggleClass("active", route === which);
         });
     }
 
     function showPage(which) {
         const pages = {
-            newdealer: document.getElementById("newDealerPage"),
-            transaction: document.getElementById("transactionDashboardPage"),
-            renewal: document.getElementById("renewalDetailsPage"),
-            dashboard: document.querySelector(".Dashboard-page-section")
+            newdealer: $("#newDealerPage"),
+            transaction: $("#transactionDashboardPage"),
+            renewal: $("#renewalDetailsPage"),
+            dashboard: $(".Dashboard-page-section").first()
         };
 
-        Object.keys(pages).forEach(function (key) {
-            if (pages[key]) pages[key].style.display = "none";
+        $.each(pages, function (key, $page) {
+            $page.css("display", "none");
         });
 
-        const target = pages[which];
-        if (!target) return;
+        const $target = pages[which];
+        if (!$target || !$target.length) return;
 
-        target.style.display = which === "dashboard" ? "" : "block";
-        centerActiveTab(target);
+        $target.css("display", which === "dashboard" ? "" : "block");
+        centerActiveTab($target);
         syncMenuActive(which);
     }
 
     function initNavigation() {
-        menuItems.forEach(function (item) {
-            const title = item.querySelector(".menu-title");
-            const route = title ? MENU_ROUTES[title.textContent.trim().toLowerCase()] : "";
+        $menuItems.each(function () {
+            const $item = $(this);
+            const $title = $item.find(".menu-title").first();
+            const route = $title.length ? MENU_ROUTES[$title.text().trim().toLowerCase()] : "";
             if (!route) return;
 
-            item.addEventListener("click", function () {
+            $item.on("click", function () {
                 showPage(route);   /* also syncs the active menu item */
             });
         });
 
-        document.querySelectorAll("[data-goto]").forEach(function (tab) {
-            tab.addEventListener("click", function () {
-                showPage(tab.dataset.goto);
-            });
+        $("[data-goto]").on("click", function () {
+            showPage($(this).attr("data-goto"));
         });
     }
 
@@ -3083,10 +2993,7 @@ document.addEventListener("DOMContentLoaded", function () {
     initScrollLock();
     prepareContactIcons();
 
-    initDropdownMenu(
-        document.getElementById("newDealerAddBtn"),
-        document.getElementById("newDealerAddMenu")
-    );
+    initDropdownMenu($("#newDealerAddBtn"), $("#newDealerAddMenu"));
     initDealerFilterButtons();
     initDealerSearch();
     initRowExpansion();
@@ -3099,7 +3006,6 @@ document.addEventListener("DOMContentLoaded", function () {
     initRenewalDashboard();
     wrapCodeValues();
     initInfoTooltips();
-
 
     initPinning();
     initNavigation();
