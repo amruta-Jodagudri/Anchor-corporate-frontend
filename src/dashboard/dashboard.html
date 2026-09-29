@@ -214,7 +214,8 @@
           <!-- Mobile Profile Screen -->
           <div
             id="mobileProfileSection"
-            class="mobile-profile-section d-md-none"
+            class="mobile-profile-section"
+            style="display: none"
           >
             <p class="dashboard-title">
               Last login:
@@ -626,7 +627,7 @@
       </div>
 
       <!-- Mobile Bottom Navigation -->
-      <div id="mobileBottomNav" class="mobile-bottom-nav d-md-none">
+      <div id="mobileBottomNav" class="mobile-bottom-nav" style="display: none">
         <div class="mobile-nav-item active" data-tab="dashboard">
           <i data-lucide="layout-dashboard"></i>
           <span>Dashboard</span>
@@ -1867,6 +1868,7 @@
         </div>
 
         <div class="stepScroll">
+          <div class="mobile-lead-cards-container" id="mobileLeadCards"></div>
           <div class="lead-table-wrapper">
             <table class="lead-table">
               <thead id="leadTableHead"></thead>

@@ -740,8 +740,28 @@ function renderLeadTableHeader(columns) {
   $("#leadTableHead").html(headerHtml);
 }
 
-function renderLeadTableRows(columns, data) {
+function renderLeadTableRows(columns, data, title) {
   var rowsHtml = "";
+  var cardsHtml = "";
+
+  var cardType = "default";
+  if (title === "To be actioned") {
+    cardType = "actioned";
+  } else if (title === "Sanction approved") {
+    cardType = "sanction";
+  } else if (
+    title === "Application rejected" ||
+    title === "Application Rejected"
+  ) {
+    cardType = "rejected";
+  } else if (
+    title === "Current account pending" ||
+    title === "eSign pending" ||
+    title === "Limit setup pending" ||
+    title === "Limit steup done"
+  ) {
+    cardType = "currentAccount";
+  }
 
   data.forEach(function (row, index) {
     var rowClass = index % 2 !== 0 ? "even-row" : "";
@@ -930,16 +950,370 @@ function renderLeadTableRows(columns, data) {
       </td>
     </tr>
     `;
+
+    var firmNameCard = row.firm.name || "";
+    var displayNameCard =
+      firmNameCard.length > 18
+        ? firmNameCard.substring(0, 18) + "..."
+        : firmNameCard;
+
+    var firmId = row.firm.id || "";
+    var maskedId = maskId(firmId);
+    var displayMaskedId =
+      maskedId.length > 16 ? maskedId.substring(0, 16) + "..." : maskedId;
+    var displayRealId =
+      firmId.length > 16 ? firmId.substring(0, 16) + "..." : firmId;
+
+    var dealerDetailsValueHtml = `
+      <div class="dealer-phone">
+        <span class="material-icons">phone</span><span class="country-code">+91 </span>
+        <span class="masked-phone">${maskMobile(row.dealer.phone)}</span>
+        <span class="real-phone" style="display:none;">${row.dealer.phone}</span>
+      </div>
+      <div class="dealer-email">
+        <span class="material-icons">mail_outline</span>
+        <span class="masked-email">${maskEmail(row.dealer.email)}</span>
+        <span class="real-email" style="display:none;">${row.dealer.email}</span>
+      </div>
+    `;
+
+    var bankSmValueHtml = `
+      <div>${row.bankSM.name}</div>
+      <div class="dealer-phone">
+        <span class="material-icons">phone</span><span class="country-code">+91 </span>
+        <span class="masked-phone">${maskMobile(row.bankSM.phone)}</span>
+        <span class="real-phone" style="display:none;">${row.bankSM.phone}</span>
+      </div>
+    `;
+
+    var leadTypeValueHtml = `
+      <div>${row.leadType.type}</div>
+      <div class="sub-text">Constitution: ${row.leadType.constitution}</div>
+    `;
+
+    var repSectionHtml = `
+      <div class="rep-view-mode">
+        <div class="rep-field">
+          <span class="rep-label">Corporate representative name</span>
+          <span class="rep-value">${hasData && rep.name ? rep.name : "-"}</span>
+        </div>
+        <div class="rep-field">
+          <span class="rep-label">Mobile number</span>
+          <span class="rep-value">${hasData && rep.mobile ? "+91 " + rep.mobile : "-"}</span>
+        </div>
+        <div class="rep-field">
+          <span class="rep-label">Email ID</span>
+          <span class="rep-value">${hasData && rep.email ? rep.email : "-"}</span>
+        </div>
+        <div class="rep-actions">
+          <button class="card-edit-rep-btn">Edit details</button>
+        </div>
+      </div>
+
+      <div class="rep-edit-mode" style="display: none;">
+        <div class="rep-field">
+          <label class="rep-label">Corporate representative name</label>
+          <input type="text" class="card-rep-input" id="repName-${index}" value="${rep.name || ""}" placeholder="Enter name">
+          <span class="error-msg name-error" style="display:none;"><i data-lucide="info" class="error-info-icon"></i> Entered name is in wrong format, please enter a valid name.</span>
+        </div>
+        <div class="rep-field">
+          <label class="rep-label">Mobile number</label>
+          <div class="mobile-input-wrapper">
+            <input type="text" class="card-rep-input" id="repMobile-${index}" value="${rep.mobile || ""}" maxlength="10" placeholder="Enter mobile">
+          </div>
+          <span class="error-msg mobile-error" style="display:none;"><i data-lucide="info" class="error-info-icon"></i> Entered mobile number should be of 10-digits, please enter a valid 10-digit number.</span>
+        </div>
+        <div class="rep-field">
+          <label class="rep-label">Email ID</label>
+          <input type="text" class="card-rep-input" id="repEmail-${index}" value="${rep.email || ""}" placeholder="Enter email">
+          <span class="error-msg email-error" style="display:none;"><i data-lucide="info" class="error-info-icon"></i> Entered email ID is in wrong format, please enter a valid email ID.</span>
+        </div>
+        <div class="rep-actions">
+          <button class="card-reset-rep-btn">Reset</button>
+          <button class="card-save-rep-btn">Save</button>
+        </div>
+      </div>
+    `;
+
+    var cardHtml = "";
+
+    if (cardType === "actioned") {
+      var custStatusText = "";
+      var isCustError = false;
+      if (row.customerStatus.status === "Y") {
+        custStatusText = "Application to be actioned";
+      } else if (row.customerStatus.status === "N") {
+        custStatusText =
+          row.customerStatus.reason === "email"
+            ? "CSR - Email ID incorrect"
+            : "CSR - Mobile number incorrect";
+        isCustError = true;
+      }
+
+      cardHtml = `
+        <div class="lead-card" data-row-index="${index}">
+          <div class="lead-card-header">
+            <div class="lead-card-firm">
+              <div class="firm-name">${displayNameCard}</div>
+              <div class="firm-id">
+                <span class="masked-id">ID: ${displayMaskedId}</span>
+                <span class="real-id" style="display:none;">ID: ${displayRealId}</span>
+              </div>
+            </div>
+            <div class="lead-card-offer">
+              <span class="offer-label">Loan offer</span>
+              <span class="offer-value">${row.loanOffer}</span>
+            </div>
+          </div>
+
+          <div class="lead-card-row two-col-row row-2">
+            <div class="lead-card-col">
+              <span class="lead-card-label">Customer contacted status</span>
+              <span class="lead-card-value ${isCustError ? "error-text" : ""}">
+                ${isCustError ? '<i data-lucide="info" class="customer-status-info"></i>' : ""}
+                ${custStatusText}
+              </span>
+            </div>
+            <div class="lead-card-col right-col view-end-common">
+              <div class="view-more-wrap">
+                <button class="lead-card-toggle" data-target="card-expanded-${index}">
+                  View more <i data-lucide="chevron-down" class="arrow-icon"></i>
+                </button>
+              </div>
+              <div class="dealer-details-wrap dealer-right-common" style="display:none;">
+                <span class="lead-card-label">Dealer details</span>
+                <div class="lead-card-value dealer-value-right-common">
+                  ${dealerDetailsValueHtml}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="lead-card-expanded" id="card-expanded-${index}">
+            <div class="lead-card-row two-col-row">
+              <div class="lead-card-col">
+                <span class="lead-card-label">ICICI Bank SM</span>
+                <div class="lead-card-value">
+                  ${bankSmValueHtml}
+                </div>
+              </div>
+              <div class="lead-card-col dealer-right-common">
+                <span class="lead-card-label">Lead type</span>
+                <div class="lead-card-value">
+                  ${leadTypeValueHtml}
+                </div>
+              </div>
+            </div>
+
+            ${repSectionHtml}
+
+            <div class="lead-card-row date-action-row bottom-action">
+              <button class="lead-card-toggle" data-target="card-expanded-${index}">
+                View less <i data-lucide="chevron-up" class="arrow-icon"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    } else if (cardType === "sanction") {
+      cardHtml = `
+        <div class="lead-card" data-row-index="${index}">
+          <div class="lead-card-header">
+            <div class="lead-card-firm">
+              <div class="firm-name">${displayNameCard}</div>
+              <div class="firm-id">
+                <span class="masked-id">ID: ${displayMaskedId}</span>
+                <span class="real-id" style="display:none;">ID: ${displayRealId}</span>
+              </div>
+            </div>
+            <div class="lead-card-offer">
+              <span class="offer-label">Sanction limit</span>
+              <span class="offer-value">${row.sanctionLimit.amount}</span>
+            </div>
+          </div>
+
+          <div class="lead-card-row two-col-row row-2">
+            <div class="lead-card-col">
+              <span class="lead-card-label">Sanction date</span>
+              <span class="lead-card-value">${row.sanctionLimit.date}</span>
+            </div>
+            <div class="lead-card-col right-col view-end-common">
+              <div class="view-more-wrap">
+                <button class="lead-card-toggle" data-target="card-expanded-${index}">
+                  View more <i data-lucide="chevron-down" class="arrow-icon"></i>
+                </button>
+              </div>
+              <div class="dealer-details-wrap dealer-right-common" style="display:none;">
+                <span class="lead-card-label">Dealer details</span>
+                <div class="lead-card-value dealer-value-right-common">
+                  ${dealerDetailsValueHtml}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="lead-card-expanded" id="card-expanded-${index}">
+            <div class="lead-card-row two-col-row">
+              <div class="lead-card-col">
+                <span class="lead-card-label">Lead type</span>
+                <div class="lead-card-value">
+                  ${leadTypeValueHtml}
+                </div>
+              </div>
+              <div class="lead-card-col dealer-right-common dealer-value-right-common">
+                <span class="lead-card-label">ICICI Bank SM</span>
+                <div class="lead-card-value">
+                  ${bankSmValueHtml}
+                </div>
+              </div>
+            </div>
+
+            ${repSectionHtml}
+
+            <div class="lead-card-row date-action-row bottom-action">
+              <button class="lead-card-toggle" data-target="card-expanded-${index}">
+                View less <i data-lucide="chevron-up" class="arrow-icon"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    } else if (cardType === "rejected") {
+      cardHtml = `
+        <div class="lead-card" data-row-index="${index}">
+          <div class="lead-card-header">
+            <div class="lead-card-firm">
+              <div class="firm-name">${displayNameCard}</div>
+              <div class="firm-id">
+                <span class="masked-id">ID: ${displayMaskedId}</span>
+                <span class="real-id" style="display:none;">ID: ${displayRealId}</span>
+              </div>
+            </div>
+            <div class="lead-card-offer">
+              <span class="offer-label">Loan offer</span>
+              <span class="offer-value">${row.loanOffer}</span>
+            </div>
+          </div>
+
+          <div class="lead-card-row two-col-row row-2">
+            <div class="lead-card-col">
+              <span class="lead-card-label">Dealer details</span>
+              <div class="lead-card-value">
+                ${dealerDetailsValueHtml}
+              </div>
+            </div>
+            <div class="lead-card-col right-col view-end-common">
+              <div class="view-more-wrap">
+                <button class="lead-card-toggle" data-target="card-expanded-${index}">
+                  View more <i data-lucide="chevron-down" class="arrow-icon"></i>
+                </button>
+              </div>
+              <div class="dealer-details-wrap dealer-right-common dealer-value-right-common" style="display:none;">
+                <span class="lead-card-label">Lead type</span>
+                <div class="lead-card-value">
+                  ${leadTypeValueHtml}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="lead-card-expanded" id="card-expanded-${index}">
+            <div class="lead-card-row">
+              <span class="lead-card-label">ICICI Bank SM</span>
+              <div class="lead-card-value">
+                ${bankSmValueHtml}
+              </div>
+            </div>
+
+            ${repSectionHtml}
+
+            <div class="lead-card-row date-action-row bottom-action">
+              <button class="lead-card-toggle" data-target="card-expanded-${index}">
+                View less <i data-lucide="chevron-up" class="arrow-icon"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    } else if (cardType === "currentAccount") {
+      cardHtml = `
+        <div class="lead-card" data-row-index="${index}">
+          <div class="lead-card-header">
+            <div class="lead-card-firm">
+              <div class="firm-name">${displayNameCard}</div>
+              <div class="firm-id">
+                <span class="masked-id">ID: ${displayMaskedId}</span>
+                <span class="real-id" style="display:none;">ID: ${displayRealId}</span>
+              </div>
+            </div>
+            <div class="lead-card-offer">
+              <span class="offer-label">Sanction limit</span>
+              <span class="offer-value">${row.sanctionLimit.amount}</span>
+            </div>
+          </div>
+
+          <div class="lead-card-row two-col-row row-2">
+            <div class="lead-card-col">
+              <span class="lead-card-label">Sanction date</span>
+              <span class="lead-card-value">${row.sanctionLimit.date}</span>
+            </div>
+            <div class="lead-card-col right-col view-end-common">
+              <div class="view-more-wrap ">
+                <button class="lead-card-toggle" data-target="card-expanded-${index}">
+                  View more <i data-lucide="chevron-down" class="arrow-icon"></i>
+                </button>
+              </div>
+              <div class="dealer-details-wrap dealer-right-common" style="display:none;">
+                <span class="lead-card-label">Dealer details</span>
+                <div class="lead-card-value dealer-value-right-common">
+                  ${dealerDetailsValueHtml}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="lead-card-expanded" id="card-expanded-${index}">
+            <div class="lead-card-row two-col-row">
+              <div class="lead-card-col">
+                <span class="lead-card-label">Lead type</span>
+                <div class="lead-card-value">
+                  ${leadTypeValueHtml}
+                </div>
+              </div>
+              <div class="lead-card-col dealer-right-common dealer-value-right-common">
+                <span class="lead-card-label">ICICI Bank SM</span>
+                <div class="lead-card-value">
+                  ${bankSmValueHtml}
+                </div>
+              </div>
+            </div>
+
+            ${repSectionHtml}
+
+            <div class="lead-card-row date-action-row bottom-action">
+              <button class="lead-card-toggle" data-target="card-expanded-${index}">
+                View less <i data-lucide="chevron-up" class="arrow-icon"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    cardsHtml += cardHtml;
   });
 
   $("#leadTableBody").html(rowsHtml);
+  $("#mobileLeadCards").html(cardsHtml);
+
+  applyAllCardsMasking(isCardDetailsShown);
 }
 
 function renderLeadTable(title) {
   var columns = getLeadTableColumns(title);
 
   renderLeadTableHeader(columns);
-  renderLeadTableRows(columns, leadTableData);
+  renderLeadTableRows(columns, leadTableData, title);
 
   lucideIconCommonCode();
 }
@@ -1063,39 +1437,35 @@ $(document).on("click", ".LeadTableHideShowBtn", function (e) {
   if (isShowing) {
     $btn.removeClass("showing");
 
-    // Mask Firm ID
+    // Mask Table
     $("#leadTableBody .masked-id").show();
     $("#leadTableBody .real-id").hide();
-
-    // Mask Mobile
     $("#leadTableBody .masked-phone").show();
     $("#leadTableBody .real-phone").hide();
-
-    // Mask Email
     $("#leadTableBody .masked-email").show();
     $("#leadTableBody .real-email").hide();
+
+    // Mask Cards
+    isCardDetailsShown = false;
+    applyAllCardsMasking(false);
   } else {
     $btn.addClass("showing");
 
-    // Show real Firm ID
+    // Unmask Table
     $("#leadTableBody .masked-id").hide();
     $("#leadTableBody .real-id").show();
-
-    // Show real Mobile
     $("#leadTableBody .masked-phone").hide();
     $("#leadTableBody .real-phone").show();
-
-    // Show real Email
     $("#leadTableBody .masked-email").hide();
     $("#leadTableBody .real-email").show();
+
+    // Unmask Cards
+    isCardDetailsShown = true;
+    applyAllCardsMasking(true);
   }
 
   lucideIconCommonCode();
 });
-
-function lucideIconCommonCode() {
-  if (window.lucide) lucide.createIcons();
-}
 
 $(".custom-modal-overlay, .esign-modal-overlay").on("click", function (e) {
   if (e.target === this) {
@@ -1112,4 +1482,147 @@ function openModal(modal) {
 function closeModal(modal) {
   $(modal).hide();
   $("body").removeClass("modal-open");
+}
+
+// Card for new leads data in mobile
+var isCardDetailsShown = false;
+
+$(document).on("click", ".lead-card-toggle", function (e) {
+  e.stopPropagation();
+  var $btn = $(this);
+  var $card = $btn.closest(".lead-card");
+  var $rightCol = $card.find(".row-2 .right-col");
+  var $viewMoreWrap = $rightCol.find(".view-more-wrap");
+  var $dealerWrap = $rightCol.find(".dealer-details-wrap");
+  var $expandedSection = $card.find(".lead-card-expanded");
+
+  var isExpanding = !$expandedSection.hasClass("show");
+
+  if (isExpanding) {
+    $viewMoreWrap.hide();
+    $dealerWrap.show();
+    $expandedSection.addClass("show");
+  } else {
+    $dealerWrap.hide();
+    $viewMoreWrap.show();
+    $expandedSection.removeClass("show");
+  }
+
+  applyCardMasking($card, isCardDetailsShown);
+  lucideIconCommonCode();
+});
+
+$(document).on("click", ".card-edit-rep-btn", function (e) {
+  e.stopPropagation();
+  var $container = $(this).closest(".lead-card-expanded");
+  $container.find(".rep-view-mode").hide();
+  $container.find(".rep-edit-mode").show();
+});
+
+$(document).on("click", ".card-reset-rep-btn", function (e) {
+  e.stopPropagation();
+  var $container = $(this).closest(".lead-card-expanded");
+  var $editMode = $container.find(".rep-edit-mode");
+  var index = $container.attr("id").replace("card-expanded-", "");
+
+  $editMode.find("#repName-" + index).val("");
+  $editMode.find("#repMobile-" + index).val("");
+  $editMode.find("#repEmail-" + index).val("");
+  $editMode.find(".error-msg").hide();
+  $editMode.find(".card-rep-input").removeClass("input-error");
+});
+
+$(document).on("click", ".card-save-rep-btn", function (e) {
+  e.stopPropagation();
+  var $container = $(this).closest(".lead-card-expanded");
+  var $editMode = $container.find(".rep-edit-mode");
+  var $viewMode = $container.find(".rep-view-mode");
+
+  var index = $container.attr("id").replace("card-expanded-", "");
+
+  var name = $editMode
+    .find("#repName-" + index)
+    .val()
+    .trim();
+  var mobile = $editMode
+    .find("#repMobile-" + index)
+    .val()
+    .trim();
+  var email = $editMode
+    .find("#repEmail-" + index)
+    .val()
+    .trim();
+
+  var isValid = true;
+
+  $editMode.find(".error-msg").hide();
+  $editMode.find(".card-rep-input").removeClass("input-error");
+
+  var nameRegex = /^[a-zA-Z\s]+$/;
+  if (!name || !nameRegex.test(name)) {
+    $editMode.find(".name-error").show();
+    $editMode.find("#repName-" + index).addClass("input-error");
+    isValid = false;
+  }
+
+  var mobileRegex = /^\d{10}$/;
+  if (!mobile || !mobileRegex.test(mobile)) {
+    $editMode.find(".mobile-error").show();
+    $editMode.find("#repMobile-" + index).addClass("input-error");
+    isValid = false;
+  }
+
+  var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!email || !emailRegex.test(email)) {
+    $editMode.find(".email-error").show();
+    $editMode.find("#repEmail-" + index).addClass("input-error");
+    isValid = false;
+  }
+
+  if (!isValid) return;
+
+  $viewMode.find(".rep-value").eq(0).text(name);
+  $viewMode
+    .find(".rep-value")
+    .eq(1)
+    .text("+91 " + mobile);
+  $viewMode.find(".rep-value").eq(2).text(email);
+
+  $editMode.hide();
+  $viewMode.show();
+});
+
+$(document).on("focus", ".card-rep-input", function (e) {
+  e.stopPropagation();
+  $(this).removeClass("input-error");
+  $(this).closest(".rep-field").find(".error-msg").hide();
+});
+
+function applyCardMasking($card, showReal) {
+  if (showReal) {
+    $card.find(".masked-phone").hide();
+    $card.find(".real-phone").show();
+    $card.find(".masked-email").hide();
+    $card.find(".real-email").show();
+    $card.find(".masked-id").hide();
+    $card.find(".real-id").show();
+  } else {
+    $card.find(".masked-phone").show();
+    $card.find(".real-phone").hide();
+    $card.find(".masked-email").show();
+    $card.find(".real-email").hide();
+    $card.find(".masked-id").show();
+    $card.find(".real-id").hide();
+  }
+}
+
+function applyAllCardsMasking(showReal) {
+  $("#mobileLeadCards .lead-card").each(function () {
+    applyCardMasking($(this), showReal);
+  });
+}
+
+// Common functions
+function lucideIconCommonCode() {
+  if (window.lucide) lucide.createIcons();
 }
