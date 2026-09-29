@@ -100,7 +100,7 @@ $(document).on("click", "#menuToggle", function () {
 });
 
 // Sidebar menu
-$(document).on("click", ".menu-item", function () {
+$(document).on("click", ".menu-list .menu-item", function () {
   $(".menu-item").removeClass("active");
   $(this).addClass("active");
 });

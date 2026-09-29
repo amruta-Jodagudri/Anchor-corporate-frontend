@@ -1467,23 +1467,6 @@ $(document).on("click", ".LeadTableHideShowBtn", function (e) {
   lucideIconCommonCode();
 });
 
-$(".custom-modal-overlay, .esign-modal-overlay").on("click", function (e) {
-  if (e.target === this) {
-    e.stopPropagation();
-    return false;
-  }
-});
-
-function openModal(modal) {
-  $(modal).show();
-  $("body").addClass("modal-open");
-}
-
-function closeModal(modal) {
-  $(modal).hide();
-  $("body").removeClass("modal-open");
-}
-
 // Card for new leads data in mobile
 var isCardDetailsShown = false;
 
@@ -1625,4 +1608,21 @@ function applyAllCardsMasking(showReal) {
 // Common functions
 function lucideIconCommonCode() {
   if (window.lucide) lucide.createIcons();
+}
+
+$(".custom-modal-overlay, .esign-modal-overlay").on("click", function (e) {
+  if (e.target === this) {
+    e.stopPropagation();
+    return false;
+  }
+});
+
+function openModal(modal) {
+  $(modal).show();
+  $("body").addClass("modal-open");
+}
+
+function closeModal(modal) {
+  $(modal).hide();
+  $("body").removeClass("modal-open");
 }
