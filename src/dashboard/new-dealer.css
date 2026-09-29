@@ -8,9 +8,9 @@
 
 .new-dealer-page {
   width: 100%;
-  padding: 0 32px calc(var(--app-footer-height, 72px) + 24px);
   background: #fff;
   box-sizing: border-box;
+  padding-bottom: 24px;
 }
 
 .new-dealer-page-header {
