@@ -1,0 +1,268 @@
+@media (min-width: 768px) and (max-width: 1199.98px) {
+  .renewal-dashboard-page .new-dealer-toolbar {
+    height: auto;
+    min-height: 48px;
+    flex-wrap: wrap;
+    row-gap: 4px;
+  }
+
+  .renewal-dashboard-page .new-dealer-toolbar-right {
+    height: auto;
+    flex-wrap: wrap;
+    row-gap: 8px;
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .renewal-dashboard-page .new-dealer-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 0;
+    row-gap: 12px;
+    margin-top: 12px;
+    min-width: 0;
+  }
+
+  .renewal-dashboard-page .new-dealer-add-wrapper {
+    order: 1;
+    flex: 0 0 100%;
+    width: 100%;
+    min-width: 0;
+    height: 40px;
+    margin: 0;
+    justify-content: flex-end;
+    position: relative;
+    z-index: 5;
+  }
+
+  .renewal-dashboard-page .new-dealer-add-btn {
+    width: auto;
+    min-width: 126px;
+    padding: 0 16px;
+    gap: 12px;
+  }
+
+  .renewal-dashboard-page .new-dealer-tab-list {
+    order: 2;
+    flex: 0 0 100%;
+    position: relative;
+  }
+
+  .renewal-dashboard-page .new-dealer-tab-spacer {
+    display: none;
+  }
+  .renewal-dashboard-page .new-dealer-toolbar {
+    margin-top: 12px;
+    gap: 12px;
+  }
+  .renewal-dashboard-page .new-dealer-filter-left {
+    gap: 8px;
+  }
+  .renewal-dashboard-page .new-dealer-toolbar-right {
+    gap: 12px;
+  }
+
+  .renewal-list-wrapper {
+    margin-top: 8px;
+    overflow: visible;
+  }
+
+  .new-dealer-table.renewal-table {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    table-layout: auto;
+  }
+
+  .renewal-table thead {
+    display: none;
+  }
+  .renewal-table tbody {
+    display: block;
+  }
+  .renewal-table .renewal-details-row {
+    display: none !important;
+  }
+
+  .renewal-table .renewal-row:not(.hidden-by-filter) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "firm status"
+      "assoc sanction"
+      "actions actions";
+    column-gap: 12px;
+    row-gap: 14px;
+    margin-bottom: 14px;
+    padding: 14px 12px 8px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.16);
+  }
+
+  .renewal-table .renewal-row.is-expanded:not(.hidden-by-filter) {
+    grid-template-areas:
+      "firm status"
+      "assoc sanction"
+      "dealer sales"
+      "vintage uploaded"
+      "recommend recommend"
+      "actions actions";
+  }
+
+  .renewal-table .renewal-row > td.renewal-cell {
+    height: auto;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font-size: 13px;
+    line-height: 18px;
+  }
+
+  .renewal-table .renewal-row > .renewal-cell--extra {
+    display: none;
+  }
+  .renewal-table .renewal-row.is-expanded > .renewal-cell--extra {
+    display: block;
+  }
+
+  .renewal-cell--firm {
+    grid-area: firm;
+  }
+  .renewal-cell--status {
+    grid-area: status;
+  }
+  .renewal-cell--dealer {
+    grid-area: dealer;
+  }
+  .renewal-cell--assoc {
+    grid-area: assoc;
+  }
+  .renewal-cell--sales {
+    grid-area: sales;
+  }
+  .renewal-cell--sanction {
+    grid-area: sanction;
+  }
+  .renewal-cell--vintage {
+    grid-area: vintage;
+  }
+  .renewal-cell--uploaded {
+    grid-area: uploaded;
+  }
+  .renewal-cell--recommend {
+    grid-area: recommend;
+  }
+  .renewal-cell--actions {
+    grid-area: actions;
+    padding-top: 4px;
+  }
+
+  .renewal-table .renewal-row > .renewal-cell--assoc {
+    display: block;
+  }
+
+  .renewal-cell--status,
+  .renewal-cell--sanction,
+  .renewal-cell--sales,
+  .renewal-cell--uploaded {
+    text-align: right;
+  }
+
+  .renewal-cell--status .renewal-status {
+    align-items: flex-end;
+  }
+
+  .renewal-table .renewal-row > td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 2px;
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 400;
+    color: #777;
+  }
+
+  .renewal-cell--firm .dealer-firm,
+  .renewal-cell--firm .dealer-firm > div {
+    min-width: 0;
+  }
+
+  .renewal-cell--firm .dealer-firm strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .renewal-action {
+    height: 32px;
+  }
+
+  .renewal-expand-btn {
+    width: auto;
+    min-width: 0;
+    height: auto;
+    flex-direction: row-reverse;
+    gap: 6px;
+  }
+
+  .renewal-table .renewal-row .dealer-contact small::after {
+    color: #777;
+  }
+  .renewal-table .renewal-row .dealer-contact span::after {
+    color: #3e3e3e;
+  }
+
+  .renewal-table .renewal-row .renewal-expand-btn,
+  .renewal-table .renewal-row .renewal-expand-btn::after {
+    color: #e3530f;
+  }
+
+  .renewal-table .renewal-row .renewal-expand-btn::after {
+    content: "View more";
+    font-size: 13px;
+    line-height: 18px;
+  }
+
+  .renewal-table .renewal-row .renewal-expand-btn::before {
+    border-color: #e3530f;
+  }
+
+  .renewal-table .renewal-row.is-expanded .renewal-expand-btn::after {
+    content: "View less";
+  }
+
+  .new-dealer-page.renewal-dashboard-page
+    .dealer-table-view-wrapper.renewal-grid-wrapper {
+    --nd-col1: clamp(104px, 32vw, 140px);
+    --nd-col2: clamp(92px, 27vw, 120px);
+  }
+
+  .renewal-table-view th:nth-child(-n + 2),
+  .renewal-table-view td:nth-child(-n + 2) {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .renewal-table-view .renewal-action-link {
+    font-size: 11px;
+    line-height: 14px;
+    gap: 4px;
+    white-space: normal;
+    text-align: left;
+  }
+
+  .renewal-table-view .table-firm {
+    gap: 4px;
+  }
+  .renewal-table-view .dealer-pin.material-symbols-outlined {
+    margin-right: 4px;
+  }
+}
+
+.renewal-table .renewal-row .renewal-expand-btn::before {
+  border-color: #e3530f;
+}

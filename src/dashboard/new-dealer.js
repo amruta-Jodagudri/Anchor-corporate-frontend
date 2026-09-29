@@ -2,6 +2,35 @@
 
 document.addEventListener("DOMContentLoaded", function () {
 
+    const TOAST_DURATION_MS = 2500;
+    const PIN_STORAGE_KEY = "dealerPinnedState";
+
+    const PIN_SORT_TARGETS = [
+        { body: "#dealerTableBody",                        row: ".dealer-row" },
+        { body: "#newDealerPage .dealer-table-view tbody", row: "tr" },
+        { body: "#txnTableBody",                           row: ".txn-row" },
+        { body: "#txnTableViewBody",                       row: "tr" },
+        { body: "#renewalTableBody",                       row: ".renewal-row" },
+        { body: "#renewalTableViewBody",                   row: "tr" }
+    ];
+
+    /* TODO(backend): replace with the logged-in user's saved emails */
+    const SHARE_SAVED_EMAILS = ["harish.sharma@gmail.com"];
+
+    const AMOUNT_RE = /^\d+(\.\d{1,2})?$/;
+
+    const CAL_MONTHS = ["January", "February", "March", "April", "May", "June", "July",
+                        "August", "September", "October", "November", "December"];
+    const CAL_WEEK = ["S", "M", "T", "W", "T", "F", "S"].map(function (d) { return "<b>" + d + "</b>"; }).join("");
+    const TXN_DAYS_LIMIT = { "0-15": 15, "1-month": 30, "3-months": 90 };
+
+    const MENU_ROUTES = {
+        "analytics dashboard": "dashboard",
+        "new dealer leads": "newdealer",
+        "transaction dashboard": "transaction",
+        "renewal details": "renewal"
+    };
+
     function escapeHtml(value) {
         const map = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
         return String(value).replace(/[&<>"']/g, function (ch) { return map[ch]; });
@@ -11,10 +40,34 @@ document.addEventListener("DOMContentLoaded", function () {
         return parseFloat(String(str).replace(/[₹,]/g, "")) || 0;
     }
 
+    function formatAmountMarkup(amount) {
+        return escapeHtml(amount).replace(/\.(\d{2})$/, '<span class="txn-paise">.$1</span>');
+    }
+
+    function wrapPaise(cell) {
+        if (!cell || cell.querySelector(".txn-paise")) return;
+        cell.innerHTML = formatAmountMarkup(cell.textContent.trim());
+    }
+
+    function initDealerAmounts() {
+        document.querySelectorAll("#dealerTableBody .dealer-row").forEach(function (row) {
+            wrapPaise(row.children[3]);
+            wrapPaise(row.children[4]);
+        });
+        document.querySelectorAll("#newDealerPage .dealer-table-view tbody tr").forEach(function (row) {
+            wrapPaise(row.children[8]);
+        });
+    }
+
     function setActive(items, activeItem) {
         items.forEach(function (item) {
             item.classList.toggle("active", item === activeItem);
         });
+    }
+
+    function bindClick(id, handler) {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener("click", handler);
     }
 
     function initDropdownMenu(button, menu) {
@@ -30,35 +83,24 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    function showAppToast(message, type) {
+    function showAppToast(message, type, subText) {
         const toast = document.getElementById("appToast");
         const text = document.getElementById("appToastText");
-        const icon = document.getElementById("appToastIcon");
+        const sub = document.getElementById("appToastSub");
         if (!toast) return;
 
-        const isError = type === "error";
-        toast.classList.toggle("error", isError);
-        if (icon) icon.textContent = isError ? "!" : "✓";
+        toast.classList.toggle("error", type === "error");
+        toast.classList.toggle("warning", type === "warning");
+        toast.classList.toggle("has-sub", Boolean(subText));
         if (text) text.textContent = message;
+        if (sub) sub.textContent = subText || "";
 
         toast.classList.add("show");
         clearTimeout(toast._hideTimer);
         toast._hideTimer = setTimeout(function () {
             toast.classList.remove("show");
-        }, 2500);
+        }, TOAST_DURATION_MS);
     }
-
-
-    const PIN_STORAGE_KEY = "dealerPinnedState";
-
-    const PIN_SORT_TARGETS = [
-        { body: "#dealerTableBody",                        row: ".dealer-row" },
-        { body: "#newDealerPage .dealer-table-view tbody", row: "tr" },
-        { body: "#txnTableBody",                           row: ".txn-row" },
-        { body: "#txnTableViewBody",                       row: "tr" }
-    ];
-
-    const SHARE_SAVED_EMAILS = ["harish.sharma@gmail.com"];   /* backend: user's saved emails */
 
     const dealerCellLabels = {
         2: "Dealer details",
@@ -179,7 +221,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     ];
 
-
     const newDealerPage = document.getElementById("newDealerPage");
     const hideDetailsBtn = document.getElementById("hideDetailsBtn");
     const searchInput = document.getElementById("dealerSearchInput");
@@ -190,6 +231,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let detailsHidden = false;
     let activeFilter = "all";
+
+    const leadSelection = new Set();
 
     let modalFilters = {
         sanction: "all",
@@ -278,12 +321,9 @@ document.addEventListener("DOMContentLoaded", function () {
         return "x".repeat(Math.max(v.length - 2, 6)) + v.slice(-2);
     }
 
-    function maskCode(value) {
+    function maskCodeValue(value) {
         const v = value.trim();
-        const m = v.match(/^(Code:\s*)(.+)$/i);
-        if (!m) return v;
-        const code = m[2].trim();
-        return m[1] + "x".repeat(Math.max(code.length - 3, 3)) + code.slice(-3);
+        return "x".repeat(Math.max(v.length - 3, 3)) + v.slice(-3);
     }
 
     function maskAccountNumber(value) {
@@ -359,8 +399,8 @@ document.addEventListener("DOMContentLoaded", function () {
             toggleTextMask(el, isHidden, function (v) { return "PAN: " + maskPAN(v); });
         });
 
-        document.querySelectorAll("#newDealerPage .dealer-firm small").forEach(function (el) {
-            toggleTextMask(el, isHidden, maskCode);
+        document.querySelectorAll("#newDealerPage .code-value").forEach(function (el) {
+            toggleTextMask(el, isHidden, maskCodeValue);
         });
 
         document.querySelectorAll("#newDealerPage .dealer-detail-item").forEach(function (item) {
@@ -378,9 +418,6 @@ document.addEventListener("DOMContentLoaded", function () {
         ];
 
         document.querySelectorAll("#newDealerPage .dealer-table-view tbody tr").forEach(function (row) {
-            const codeEl = row.querySelector(".table-firm-code");
-            if (codeEl) toggleTextMask(codeEl, isHidden, maskCode);
-
             gridColumns.forEach(function (column) {
                 const cell = row.children[column.index];
                 if (cell) toggleTextMask(cell, isHidden, column.maskFn);
@@ -389,8 +426,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function applyTxnMasking(isHidden) {
-        document.querySelectorAll(".txn-row .dealer-firm small, .txn-table-view .table-firm-code").forEach(function (el) {
-            toggleTextMask(el, isHidden, maskCode);
+        document.querySelectorAll("#transactionDashboardPage .code-value").forEach(function (el) {
+            toggleTextMask(el, isHidden, maskCodeValue);
         });
 
         document.querySelectorAll(".txn-scf-account").forEach(function (el) {
@@ -398,11 +435,44 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    function applyRenewalMasking(isHidden) {
+        document.querySelectorAll("#renewalDetailsPage .dealer-contact span[data-value]").forEach(function (el) {
+            toggleValueMask(el, isHidden, maskPhone);
+        });
+
+        document.querySelectorAll("#renewalDetailsPage .dealer-contact small[data-value]").forEach(function (el) {
+            toggleValueMask(el, isHidden, maskEmail);
+        });
+
+        document.querySelectorAll("#renewalDetailsPage .pan-value").forEach(function (el) {
+            toggleTextMask(el, isHidden, maskPAN);
+        });
+
+        document.querySelectorAll("#renewalDetailsPage .id-value").forEach(function (el) {
+            toggleTextMask(el, isHidden, maskDealerId);
+        });
+
+        const gridColumns = [
+            { index: 3, maskFn: maskPhone },
+            { index: 4, maskFn: maskEmail },
+            { index: 5, maskFn: maskPAN }
+        ];
+
+        document.querySelectorAll("#renewalDetailsPage .renewal-table-view tbody tr").forEach(function (row) {
+            gridColumns.forEach(function (column) {
+                const cell = row.children[column.index];
+                if (cell) toggleTextMask(cell, isHidden, column.maskFn);
+            });
+        });
+    }
+
     function applyAllMasking(isHidden) {
         applyDealerMasking(isHidden);
         applyTxnMasking(isHidden);
+        applyRenewalMasking(isHidden);
         updateHideButtonUI(document.getElementById("hideDetailsBtn"), isHidden);
         updateHideButtonUI(document.getElementById("txnHideDetailsBtn"), isHidden);
+        updateHideButtonUI(document.getElementById("renewalHideDetailsBtn"), isHidden);
     }
 
     function setDetailsHidden(isHidden) {
@@ -411,6 +481,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (hideDetailsBtn) hideDetailsBtn.classList.toggle("is-hidden-state", isHidden);
         applyAllMasking(isHidden);
     }
+
 
     function getProgressState(stage, stepKey) {
         if (stage === "rejected") {
@@ -587,6 +658,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 infoIcon.setAttribute("data-tooltip", getStatusTooltip(row.dataset.status, getDealerStage(row)));
             }
         });
+
         document.querySelectorAll("#newDealerPage .dealer-table-view tbody tr").forEach(function (tRow) {
             const statusEl = tRow.querySelector(".table-status");
             const infoIcon = tRow.querySelector(".table-status small");
@@ -602,6 +674,7 @@ document.addEventListener("DOMContentLoaded", function () {
             infoIcon.setAttribute("data-tooltip", getStatusTooltip(status, stage));
         });
     }
+
 
     function renderFirmOptions(panel, firms) {
         if (!panel) return;
@@ -772,6 +845,9 @@ document.addEventListener("DOMContentLoaded", function () {
         initFirmSearch(document.getElementById("firmSearchInput"), panel);
     }
 
+
+    //    NEW DEALER LEADS - FILTERS MODAL
+
     function readModalFilters() {
         return {
             sanction: getActivePillValue("#sanctionStatusPills"),
@@ -793,6 +869,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!overlay) return;
 
         let appliedSnapshot = null;
+
         function syncApplyState() {
             if (!applyBtn) return;
             applyBtn.disabled = appliedSnapshot !== null &&
@@ -854,10 +931,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 closeAllDealerDetails();
                 applyCurrentView();
                 closeOverlay();
+                showAppToast("Filters applied successfully");
             });
         }
     }
-
 
     function matchesModalFilters(dealerName) {
         const f = modalFilters;
@@ -878,7 +955,7 @@ document.addEventListener("DOMContentLoaded", function () {
             (f.application === "pending" && stage === "apply") ||
             stage === f.application || status === f.application;
         const matchLoan = (f.loanFrom === null || loanValue >= f.loanFrom) &&
-                        (f.loanTo === null || loanValue <= f.loanTo);
+                          (f.loanTo === null || loanValue <= f.loanTo);
         const matchLead = !f.leadTypes.length || f.leadTypes.includes(listRow.dataset.leadType);
         const matchUploader = !f.uploadedBy.length || f.uploadedBy.includes(uploadedKey);
 
@@ -954,6 +1031,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
             tRow.classList.toggle("hidden-by-filter", !visible);
         });
+
+        syncLeadSelection();
     }
 
     function initDealerFilterButtons() {
@@ -1003,7 +1082,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (viewMoreMenu) viewMoreMenu.classList.remove("show");
                 const fullText = button.textContent.trim();
                 const match = fullText.match(/^(.*)\((\d+)\)$/);
-                const label = match ? match[1].trim() : fullText;
+                const label = escapeHtml(match ? match[1].trim() : fullText);
                 const count = match ? match[2] : "";
                 const badge = count ? " <span>" + count + "</span>" : "";
 
@@ -1029,6 +1108,14 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    function wrapCodeValues() {
+        document.querySelectorAll(".dealer-firm small, .table-firm-code").forEach(function (el) {
+            if (el.querySelector(".code-value")) return;
+            const m = el.textContent.match(/^\s*Code:\s*(.+?)\s*$/i);
+            if (!m) return;
+            el.innerHTML = 'Code: <span class="code-value">' + escapeHtml(m[1]) + "</span>";
+        });
+    }
 
     function initDealerSearch() {
         if (searchInput) searchInput.addEventListener("input", applyCurrentView);
@@ -1053,6 +1140,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (listWrapper) listWrapper.style.display = isGrid ? "none" : "";
             if (gridWrapper) gridWrapper.style.display = isGrid ? "block" : "none";
             if (newDealerPage) newDealerPage.classList.toggle("table-view", isGrid);
+            syncLeadSelection();
         }
 
         buttons.forEach(function (button) {
@@ -1065,6 +1153,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         setView("list");
     }
+
 
     function getPinnedDealers() {
         try {
@@ -1102,7 +1191,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const next = row.nextElementSibling;
             const detail = next && (
                 next.classList.contains("dealer-details-row") ||
-                next.classList.contains("txn-details-row")
+                next.classList.contains("txn-details-row") ||
+                next.classList.contains("renewal-details-row")
             ) ? next : null;
 
             const pin = row.querySelector(".dealer-pin");
@@ -1162,6 +1252,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function sendShareMail(payload) {
+        /* TODO(backend): call the share-via-mail API here; resolve on success, reject on failure */
         return Promise.resolve(payload);
     }
 
@@ -1336,8 +1427,8 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
 
-        document.getElementById("shareMailClose").addEventListener("click", closeModal);
-        document.getElementById("shareMailCancel").addEventListener("click", closeModal);
+        bindClick("shareMailClose", closeModal);
+        bindClick("shareMailCancel", closeModal);
         submitBtn.addEventListener("click", submit);
     }
 
@@ -1376,16 +1467,624 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    /* =========================================================
-       14. TRANSACTION DASHBOARD
-       ========================================================= */
+    function deleteLeadsRequest(names) {
+        /* TODO(backend): call the delete API here; resolve on success, reject on failure */
+        return Promise.resolve(names);
+    }
+
+    function cellText(cell) {
+        return cell ? (cell.dataset.original || cell.textContent).trim() : "";
+    }
+
+    function stripInfoIcon(badge) {
+        if (!badge) return "";
+        const clone = badge.cloneNode(true);
+        const icon = clone.querySelector("small");
+        if (icon) icon.remove();
+        return clone.textContent.trim();
+    }
+
+    function getGridRowByName(name) {
+        return Array.from(document.querySelectorAll("#newDealerPage .dealer-table-view tbody tr")).find(function (tRow) {
+            return getRobustFirmName(tRow.querySelector(".table-firm-name")) === name;
+        });
+    }
+
+    function getLeadInfoFromList(row) {
+        const codeEl = row.querySelector(".dealer-firm small .code-value");
+        const codeSmall = row.querySelector(".dealer-firm small");
+        const panEl = row.querySelector(".dealer-association small");
+        const phoneEl = row.querySelector(".dealer-contact span[data-value]");
+
+        return {
+            firm: getDealerName(row),
+            code: codeEl
+                ? cellText(codeEl)
+                : (codeSmall ? codeSmall.textContent.replace(/^\s*Code:\s*/i, "").trim() : ""),
+            pan: cellText(panEl).replace(/^\s*PAN:\s*/i, ""),
+            mobile: phoneEl ? (phoneEl.dataset.original || phoneEl.dataset.value || "").trim() : "",
+            sales: row.children[3].textContent.trim(),
+            loan: row.children[4].textContent.trim(),
+            status: row.dataset.status || "",
+            statusText: stripInfoIcon(row.querySelector(".dealer-status"))
+        };
+    }
+
+    /* Fallback: lead exists only in the grid view (no list row) */
+    function getLeadInfoFromGrid(tRow) {
+        const cells = tRow.children;
+        const codeEl = tRow.querySelector(".table-firm-code .code-value") || tRow.querySelector(".table-firm-code");
+        const statusEl = tRow.querySelector(".table-status");
+        const status = ["actioned", "sanctioned", "rejected"].find(function (name) {
+            return statusEl && statusEl.classList.contains(name);
+        }) || "";
+
+        return {
+            firm: getRobustFirmName(tRow.querySelector(".table-firm-name")),
+            code: cellText(codeEl).replace(/^\s*Code:\s*/i, ""),
+            pan: cellText(cells[7]),
+            mobile: cellText(cells[5]),
+            sales: cellText(cells[8]),
+            loan: "-",
+            status: status,
+            statusText: stripInfoIcon(statusEl)
+        };
+    }
+
+    function getLeadInfo(name) {
+        const listRow = findDealerRow(name);
+        if (listRow) return getLeadInfoFromList(listRow);
+
+        const gridRow = getGridRowByName(name);
+        return gridRow ? getLeadInfoFromGrid(gridRow) : null;
+    }
+
+    function getLeadNameFromBox(box) {
+        const listRow = box.closest(".dealer-row");
+        if (listRow) return getDealerName(listRow);
+
+        const tRow = box.closest("tr");
+        return tRow ? getRobustFirmName(tRow.querySelector(".table-firm-name")) : "";
+    }
+
+    function getVisibleLeadNames() {
+        const isGrid = newDealerPage && newDealerPage.classList.contains("table-view");
+
+        if (isGrid) {
+            return Array.from(document.querySelectorAll("#newDealerPage .dealer-table-view tbody tr:not(.hidden-by-filter)"))
+                .map(function (tRow) { return getRobustFirmName(tRow.querySelector(".table-firm-name")); });
+        }
+
+        return dealerRows
+            .filter(function (row) { return !row.classList.contains("hidden-by-filter"); })
+            .map(getDealerName);
+    }
+
+    function getSelectedLeadNames() {
+        const visible = new Set(getVisibleLeadNames());
+        return Array.from(leadSelection).filter(function (name) { return visible.has(name); });
+    }
+
+    function syncLeadSelection() {
+        const visible = getVisibleLeadNames();
+        const selected = getSelectedLeadNames();
+        const picked = new Set(selected);
+
+        document.querySelectorAll("#newDealerPage .lead-select-row").forEach(function (box) {
+            box.checked = picked.has(getLeadNameFromBox(box));
+        });
+
+        const inView = visible.filter(function (name) { return picked.has(name); }).length;
+        document.querySelectorAll("#newDealerPage .lead-select-all").forEach(function (box) {
+            box.checked = visible.length > 0 && inView === visible.length;
+            box.indeterminate = inView > 0 && inView < visible.length;
+        });
+
+        const countEl = document.getElementById("leadBulkCount");
+        const deleteBtn = document.getElementById("leadBulkDelete");
+        if (countEl) countEl.textContent = selected.length;
+        if (deleteBtn) {
+            deleteBtn.textContent = "Delete (" + selected.length + ")";
+            deleteBtn.disabled = selected.length === 0;
+        }
+    }
+
+    function setLeadSelectMode(on) {
+        if (!newDealerPage) return;
+        newDealerPage.classList.toggle("select-mode", on);
+        if (on) closeAllDealerDetails();
+        else leadSelection.clear();
+        syncLeadSelection();
+    }
+
+    function removeLead(name) {
+        const row = findDealerRow(name);
+        if (row) {
+            const detailRow = row.nextElementSibling;
+            if (detailRow && detailRow.classList.contains("dealer-details-row")) detailRow.remove();
+
+            const index = dealerRows.indexOf(row);
+            if (index !== -1) dealerRows.splice(index, 1);
+            row.remove();
+        }
+
+        const gridRow = getGridRowByName(name);
+        if (gridRow) gridRow.remove();
+
+        document.querySelectorAll("#firmDropdown .dealer-filter-dropdown-panel input[type='checkbox']").forEach(function (input) {
+            if (input.value !== name) return;
+            const label = input.closest("label");
+            if (label) label.remove();
+        });
+
+        const pinned = getPinnedDealers();
+        if (pinned[name]) {
+            delete pinned[name];
+            savePinnedDealers(pinned);
+        }
+    }
+
+    function decrementBadge(el, by) {
+        if (!el || !by) return;
+        const value = parseInt(el.textContent, 10);
+        if (!isNaN(value)) el.textContent = Math.max(value - by, 0);
+    }
+
+    /* TODO(backend): if counts come from the API, remove this and set them directly */
+    function updateLeadCounts(infos) {
+        const toBeActionedBtn = document.getElementById("toBeActionedBtn");
+        const actioned = infos.filter(function (info) { return info.status === "actioned"; }).length;
+
+        decrementBadge(document.querySelector('#newDealerPage .dealer-filter-btn[data-filter="all"] span'), infos.length);
+        if (toBeActionedBtn && toBeActionedBtn.dataset.filter === "actioned") {
+            decrementBadge(toBeActionedBtn.querySelector("span"), actioned);
+        }
+        document.querySelectorAll('#newDealerPage .new-dealer-tab.active .new-dealer-count, [data-goto="newdealer"] .new-dealer-count')
+            .forEach(function (el) { decrementBadge(el, infos.length); });
+    }
+
+    function initLeadDeletion() {
+        const overlay = document.getElementById("deleteLeadOverlay");
+        if (!newDealerPage || !overlay) return;
+
+        const titleEl = document.getElementById("deleteLeadTitle");
+        const panel = document.getElementById("deleteLeadPanel");
+        const confirmBtn = document.getElementById("deleteLeadConfirm");
+        const toolbarBtn = document.getElementById("leadBulkDeleteBtn");
+        const bulkDeleteBtn = document.getElementById("leadBulkDelete");
+
+        let pendingNames = [];
+        let pendingIsBulk = false;
+
+        function makeCheckbox(cls, label) {
+            const box = document.createElement("input");
+            box.type = "checkbox";
+            box.className = "lead-select " + cls;
+            box.setAttribute("aria-label", label);
+            return box;
+        }
+
+        dealerRows.forEach(function (row) {
+            const del = row.querySelector(".dealer-row-actions button:nth-child(2)");
+            if (del) {
+                del.classList.add("dealer-delete-btn");
+                del.title = "Delete";
+            }
+
+            const firm = row.querySelector(".dealer-firm");
+            if (firm) firm.insertBefore(makeCheckbox("lead-select-row", "Select lead"), firm.firstChild);
+        });
+
+        document.querySelectorAll("#newDealerPage .dealer-table-view tbody .table-firm").forEach(function (firm) {
+            firm.insertBefore(makeCheckbox("lead-select-row", "Select lead"), firm.firstChild);
+        });
+
+        document.querySelectorAll(
+            "#newDealerPage .dealer-leads-table thead th:first-child .dealer-th-inner, " +
+            "#newDealerPage .dealer-table-view thead th:first-child .dealer-th-inner"
+        ).forEach(function (inner) {
+            inner.insertBefore(makeCheckbox("lead-select-all", "Select all leads"), inner.firstChild);
+        });
+
+        function panelRow(label, valueHtml) {
+            return '<div class="delete-lead-row"><span>' + label + "</span><strong>" + valueHtml + "</strong></div>";
+        }
+
+        function renderSingle(info) {
+            const badge = '<span class="dealer-status ' + escapeHtml(info.status) + '">' +
+                escapeHtml(info.statusText) + " <small>ⓘ</small></span>";
+
+            return panelRow("Firm", escapeHtml(info.firm)) +
+                panelRow("Dealer code", escapeHtml(info.code)) +
+                panelRow("PAN", escapeHtml(info.pan)) +
+                panelRow("Mobile number", escapeHtml(info.mobile)) +
+                panelRow("Sales to dealer (last 12M)", formatAmountMarkup(info.sales)) +
+                panelRow("Loan offer", formatAmountMarkup(info.loan)) +
+                panelRow("Sanction status", badge);
+        }
+
+        function renderBulk(infos) {
+            const rows = infos.map(function (info) {
+                return "<tr><td>" + escapeHtml(info.firm) + "</td><td>" + escapeHtml(info.code) +
+                    "</td><td>" + escapeHtml(info.loan) + "</td></tr>";
+            }).join("");
+
+            return '<div class="delete-lead-row"><span>Total leads</span>' +
+                '<div class="delete-lead-selected" tabindex="0">' +
+                    "<span>" + infos.length + " selected</span><i class=\"delete-lead-trash\"></i>" +
+                    '<div class="delete-lead-tip"><div class="delete-lead-tip-box"><table>' +
+                    "<thead><tr><th>Firm</th><th>Code</th><th>Loan offer</th></tr></thead>" +
+                    "<tbody>" + rows + "</tbody></table></div></div>" +
+                "</div></div>";
+        }
+
+        function openModal(names, isBulk) {
+            const infos = names.map(getLeadInfo).filter(Boolean);
+            if (!infos.length) return;
+
+            pendingNames = infos.map(function (info) { return info.firm; });
+            pendingIsBulk = isBulk;
+
+            titleEl.textContent = isBulk
+                ? "Are you sure you want to delete selected lead(s)?"
+                : "Are you sure you want to delete this lead?";
+            panel.innerHTML = isBulk ? renderBulk(infos) : renderSingle(infos[0]);
+
+            const modal = overlay.querySelector(".delete-lead-modal");
+            modal.classList.toggle("is-bulk", isBulk);
+            modal.classList.toggle("is-single", !isBulk);
+
+            overlay.classList.add("show");
+        }
+
+        function closeModal() {
+            overlay.classList.remove("show");
+        }
+
+        async function confirmDelete() {
+            if (!pendingNames.length || confirmBtn.disabled) return;
+
+            const names = pendingNames.slice();
+            const infos = names.map(getLeadInfo).filter(Boolean);   /* collect BEFORE removing rows */
+            confirmBtn.disabled = true;
+
+            try {
+                await deleteLeadsRequest(names);
+
+                names.forEach(removeLead);
+                updateLeadCounts(infos);
+                closeAllDealerDetails();
+                closeModal();
+
+                if (pendingIsBulk) {
+                    setLeadSelectMode(false);
+                } else {
+                    names.forEach(function (name) { leadSelection.delete(name); });
+                }
+
+                applyCurrentView();
+                showAppToast(pendingIsBulk ? "Leads deleted successfully" : "Lead deleted successfully");
+            } catch (error) {
+                console.error("Delete lead failed:", error);
+                showAppToast("Could not delete. Please try again.", "error");
+            } finally {
+                confirmBtn.disabled = false;
+            }
+        }
+
+        newDealerPage.addEventListener("click", function (event) {
+            const btn = event.target.closest(".dealer-delete-btn, .table-delete-btn");
+            if (!btn) return;
+
+            const listRow = btn.closest(".dealer-row");
+            const detailRow = btn.closest(".dealer-details-row");
+            const gridRow = btn.closest("tr");
+
+            const name = listRow
+                ? getDealerName(listRow)
+                : detailRow
+                    ? detailRow.dataset.dealerDetailsFor
+                    : getRobustFirmName(gridRow.querySelector(".table-firm-name"));
+
+            if (name) openModal([name], false);
+        });
+
+        newDealerPage.addEventListener("change", function (event) {
+            const box = event.target;
+
+            if (box.classList.contains("lead-select-all")) {
+                getVisibleLeadNames().forEach(function (name) {
+                    if (box.checked) leadSelection.add(name);
+                    else leadSelection.delete(name);
+                });
+            } else if (box.classList.contains("lead-select-row")) {
+                const name = getLeadNameFromBox(box);
+                if (box.checked) leadSelection.add(name);
+                else leadSelection.delete(name);
+            } else {
+                return;
+            }
+
+            syncLeadSelection();
+        });
+
+        if (toolbarBtn) {
+            toolbarBtn.addEventListener("click", function () {
+                setLeadSelectMode(!newDealerPage.classList.contains("select-mode"));
+            });
+        }
+
+        bindClick("leadBulkCancel", function () {
+            setLeadSelectMode(false);
+        });
+
+        if (bulkDeleteBtn) {
+            bulkDeleteBtn.addEventListener("click", function () {
+                openModal(getSelectedLeadNames(), true);
+            });
+        }
+
+        bindClick("deleteLeadClose", closeModal);
+        bindClick("deleteLeadCancel", closeModal);
+        confirmBtn.addEventListener("click", confirmDelete);
+
+        overlay.addEventListener("click", function (event) {
+            if (event.target === overlay) closeModal();
+        });
+
+        /* touch: tap on "N selected" toggles the tooltip */
+        panel.addEventListener("click", function (event) {
+            const selected = event.target.closest(".delete-lead-selected");
+            if (selected && !event.target.closest(".delete-lead-tip")) selected.classList.toggle("open");
+        });
+
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape" && overlay.classList.contains("show")) closeModal();
+        });
+    }
+
+
+    function cleanAmount(value) {
+        return String(value || "").replace(/[,\s\u00a0\u202f₹]/g, "");
+    }
+
+    function parseAmountInput(value) {
+        const clean = cleanAmount(value);
+        return AMOUNT_RE.test(clean) ? parseFloat(clean) : null;
+    }
+
+    function formatAmount(number) {
+        return number.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function initRangeField(opts) {
+        const from = document.getElementById(opts.fromId);
+        const to = document.getElementById(opts.toId);
+        const msgEl = document.getElementById(opts.errorId);
+        if (!from || !to || !msgEl) {
+            return { hasError: function () { return false; }, reset: function () {} };
+        }
+
+        let checkOrder = false;
+
+        function isFormatOk(el) {
+            const clean = cleanAmount(el.value);
+            return clean === "" || AMOUNT_RE.test(clean);
+        }
+
+        function isOrderBad() {
+            const a = parseAmountInput(from.value);
+            const b = parseAmountInput(to.value);
+            return a !== null && b !== null && a > b;
+        }
+
+        function decorate(el) {
+            const wrap = document.createElement("div");
+            const view = document.createElement("div");
+            wrap.className = "range-amount-wrap";
+            view.className = "range-amount-view";
+            el.parentNode.insertBefore(wrap, el);
+            wrap.append(el, view);
+
+            return function render() {
+                const number = parseAmountInput(el.value);
+                view.innerHTML = number !== null ? formatAmountMarkup(formatAmount(number)) : "";
+                wrap.classList.toggle("has-value", number !== null);
+            };
+        }
+
+        const renderFrom = decorate(from);
+        const renderTo = decorate(to);
+
+        function renderViews() {
+            renderFrom();
+            renderTo();
+        }
+
+        function paint(errFrom, errTo, message) {
+            from.closest(".dealer-filter-range-input").classList.toggle("is-error", errFrom);
+            to.closest(".dealer-filter-range-input").classList.toggle("is-error", errTo);
+            msgEl.textContent = message;
+            if (opts.onChange) opts.onChange();
+        }
+
+        function validate() {
+            const badFrom = !isFormatOk(from);
+            const badTo = !isFormatOk(to);
+
+            if (badFrom || badTo) {
+                paint(badFrom, badTo, opts.formatMsg);
+            } else if (checkOrder && isOrderBad()) {
+                paint(true, true, opts.orderMsg);
+            } else {
+                paint(false, false, "");
+            }
+        }
+
+        [from, to].forEach(function (el) {
+            const wrap = el.closest(".range-amount-wrap");
+
+            el.addEventListener("input", function () {
+                checkOrder = false;
+                validate();
+                renderViews();
+            });
+
+            el.addEventListener("focus", function () {
+                wrap.classList.add("is-focused");
+                el.value = cleanAmount(el.value);
+            });
+
+            el.addEventListener("blur", function () {
+                wrap.classList.remove("is-focused");
+                checkOrder = true;
+                const number = parseAmountInput(el.value);
+                if (number !== null) el.value = formatAmount(number);
+                validate();
+                renderViews();
+            });
+        });
+
+        return {
+            hasError: function () {
+                return !isFormatOk(from) || !isFormatOk(to) || (checkOrder && isOrderBad());
+            },
+            reset: function () {
+                checkOrder = false;
+                paint(false, false, "");
+                renderViews();
+            }
+        };
+    }
+
+    function formatDMY(d) {
+        return String(d.getDate()).padStart(2, "0") + "/" +
+               String(d.getMonth() + 1).padStart(2, "0") + "/" + d.getFullYear();
+    }
+
+    function initDateRangePicker(opts) {
+        const cal = opts.cal;
+        let tmpFrom = null, tmpTo = null, calView = null;
+
+        function shortDate(d) {
+            return d.getDate() + " " + CAL_MONTHS[d.getMonth()].slice(0, 3) + " '" + String(d.getFullYear()).slice(-2);
+        }
+
+        function renderMonth(offset) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const fromT = tmpFrom ? tmpFrom.getTime() : null;
+            const toT = tmpTo ? tmpTo.getTime() : null;
+            const hasRange = fromT !== null && toT !== null && toT > fromT;
+
+            const first = new Date(calView.getFullYear(), calView.getMonth() + offset, 1);
+            const total = new Date(first.getFullYear(), first.getMonth() + 1, 0).getDate();
+            let cells = "";
+
+            for (let i = 0; i < first.getDay(); i++) cells += "<span></span>";
+
+            for (let d = 1; d <= total; d++) {
+                const t = new Date(first.getFullYear(), first.getMonth(), d).getTime();
+                const col = (first.getDay() + d - 1) % 7;
+
+                let cellCls = "renewal-cal-cell";
+                if (hasRange && t >= fromT && t <= toT) {
+                    cellCls += " in-band";
+                    if (t === fromT || col === 0 || d === 1) cellCls += " band-l";
+                    if (t === toT || col === 6 || d === total) cellCls += " band-r";
+                }
+
+                let dayCls = "renewal-cal-day";
+                if (t === fromT) dayCls += " is-start";
+                if (t === toT) dayCls += " is-end";
+                if (t === today.getTime()) dayCls += " is-today";
+
+                cells += '<span class="' + cellCls + '"><button type="button" class="' + dayCls +
+                    '" data-ts="' + t + '">' + d + "</button></span>";
+            }
+
+            return '<div class="renewal-cal-month"><div class="renewal-cal-title">' +
+                CAL_MONTHS[first.getMonth()] + " " + first.getFullYear() +
+                '</div><div class="renewal-cal-grid">' + CAL_WEEK + cells + "</div></div>";
+        }
+
+        function render() {
+            const headText = tmpFrom
+                ? shortDate(tmpFrom) + (tmpTo ? " - " + shortDate(tmpTo) : "")
+                : "Select date range";
+
+            cal.innerHTML =
+                '<div class="renewal-cal-head"><span>' + headText + '</span><i class="renewal-cal-pencil"></i></div>' +
+                '<div class="renewal-cal-body">' +
+                    '<div class="renewal-cal-nav"><button type="button" data-nav="-1" aria-label="Previous month"></button>' +
+                    '<button type="button" data-nav="1" aria-label="Next month"></button></div>' +
+                    '<div class="renewal-cal-months">' + renderMonth(0) + renderMonth(1) + "</div>" +
+                "</div>" +
+                '<div class="renewal-cal-footer"><button type="button" data-cal="clear">Clear</button>' +
+                '<div><button type="button" data-cal="cancel">Cancel</button><button type="button" data-cal="ok">OK</button></div></div>';
+        }
+
+        function open() {
+            const range = opts.getRange();
+            tmpFrom = range.from;
+            tmpTo = range.to;
+            const base = tmpFrom || new Date();
+            calView = new Date(base.getFullYear(), base.getMonth(), 1);
+            render();
+            cal.classList.add("show");
+        }
+
+        cal.addEventListener("click", function (event) {
+            event.stopPropagation();
+
+            const nav = event.target.closest("[data-nav]");
+            if (nav) {
+                calView = new Date(calView.getFullYear(), calView.getMonth() + Number(nav.dataset.nav), 1);
+                render();
+                return;
+            }
+
+            const day = event.target.closest(".renewal-cal-day");
+            if (day) {
+                const picked = new Date(Number(day.dataset.ts));
+                if (!tmpFrom || tmpTo) { tmpFrom = picked; tmpTo = null; }
+                else if (picked < tmpFrom) { tmpFrom = picked; }
+                else { tmpTo = picked; }
+                render();
+                return;
+            }
+
+            const action = event.target.closest("[data-cal]");
+            if (!action) return;
+
+            if (action.dataset.cal === "clear") {
+                tmpFrom = tmpTo = null;
+                render();
+            } else if (action.dataset.cal === "cancel") {
+                cal.classList.remove("show");
+            } else if (action.dataset.cal === "ok") {
+                cal.classList.remove("show");
+                opts.onOk(tmpFrom, tmpTo || tmpFrom);
+            }
+        });
+
+        opts.fromBtn.addEventListener("click", open);
+        opts.toBtn.addEventListener("click", open);
+    }
+
+    //    TRANSACTION DASHBOARD
+
     const txnState = {
         tab: "all",
         search: "",
+        firms: [],
         sanctionFrom: null,
         sanctionTo: null,
         overdueFrom: null,
-        overdueTo: null
+        overdueTo: null,
+        daysDue: "all",
+        dateFrom: null,
+        dateTo: null
     };
 
     function getTxnDaysMarkup(item) {
@@ -1401,7 +2100,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function getTxnAmountMarkup(amount, pct) {
-        return escapeHtml(amount) + "<br><small>" + escapeHtml(pct) + "</small>";
+        return '<div class="txn-amount">' + formatAmountMarkup(amount) +
+            '<span class="txn-percent">' + escapeHtml(pct) + "</span></div>";
     }
 
     function getTxnOpenCountMarkup(item, index) {
@@ -1410,15 +2110,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function getTxnRowAttributes(item, index) {
         return `data-txn-index="${index}"` +
-               ` data-status="${item.days === "overdue" ? "overdue" : "upcoming"}"` +
-               ` data-sanction-value="${parseCurrency(item.sanction)}"` +
-               ` data-overdue-value="${parseCurrency(item.overdueAmount)}"`;
+            ` data-firm="${escapeHtml(item.firm)}"` +
+            ` data-days-left="${item.days === "overdue" ? "" : parseInt(item.days, 10)}"` +
+            ` data-status="${item.days === "overdue" ? "overdue" : "upcoming"}"` +
+            ` data-sanction-value="${parseCurrency(item.sanction)}"` +
+            ` data-overdue-value="${parseCurrency(item.overdueAmount)}"`;
     }
 
     function renderTxnRow(item, index) {
         return `
             <tr class="dealer-row txn-row" ${getTxnRowAttributes(item, index)}>
-                <td>
+                <td class="txn-cell txn-cell--firm">
                     <div class="dealer-firm">
                         <span class="material-symbols-outlined dealer-pin" role="button" tabindex="0">push_pin</span>
                         <div>
@@ -1427,27 +2129,30 @@ document.addEventListener("DOMContentLoaded", function () {
                         </div>
                     </div>
                 </td>
-                <td>${getTxnScfMarkup(item)}</td>
-                <td>${escapeHtml(item.sanction)}</td>
-                <td>${getTxnAmountMarkup(item.utilized, item.utilizedPct)}</td>
-                <td>${getTxnAmountMarkup(item.available, item.availablePct)}</td>
-                <td>${getTxnOpenCountMarkup(item, index)}</td>
-                <td>${escapeHtml(item.overdueAmount)}</td>
-                <td>${getTxnDaysMarkup(item)}</td>
-                <td>
+                <td class="txn-cell txn-cell--scf" data-label="SCF limit account">${getTxnScfMarkup(item)}</td>
+                <td class="txn-cell txn-cell--extra txn-cell--sanction" data-label="Sanction limit">${formatAmountMarkup(item.sanction)}</td>
+                <td class="txn-cell txn-cell--extra txn-cell--utilized" data-label="Utilized limit">${getTxnAmountMarkup(item.utilized, item.utilizedPct)}</td>
+                <td class="txn-cell txn-cell--extra txn-cell--available" data-label="Available limit">${getTxnAmountMarkup(item.available, item.availablePct)}</td>
+                <td class="txn-cell txn-cell--extra txn-cell--open" data-label="Open transactions">${getTxnOpenCountMarkup(item, index)}</td>
+                <td class="txn-cell txn-cell--overdue${item.overdueAmount === "-" ? " is-empty" : ""}" data-label="Overdue amount">${formatAmountMarkup(item.overdueAmount)}</td>
+                <td class="txn-cell txn-cell--days" data-label="Days to get in overdue">${getTxnDaysMarkup(item)}</td>
+                <td class="txn-cell txn-cell--actions">
                     <div class="dealer-row-actions">
                         <button type="button" class="txn-refresh-btn" title="Refresh"></button>
                         <button type="button" class="dealer-expand-btn">⌄</button>
                     </div>
                 </td>
+                <td class="txn-cell txn-cell--extra txn-cell--case txn-mobile-only" data-label="Case type">${escapeHtml(item.caseType || "-")}</td>
+                <td class="txn-cell txn-cell--extra txn-cell--expiry txn-mobile-only" data-label="A/c expiry date">${escapeHtml(item.acExpiry || "-")}</td>
             </tr>
             <tr class="txn-details-row" data-txn-details-for="${index}">
-                <td colspan="9">
-                    <div class="txn-detail-inline">
-                        <div><span>Case type</span><strong>${escapeHtml(item.caseType || "-")}</strong></div>
-                        <div><span>A/c expiry date</span><strong>${escapeHtml(item.acExpiry || "-")}</strong></div>
-                    </div>
+                <td>
+                    <div class="txn-detail-item"><span>Case type</span><strong>${escapeHtml(item.caseType || "-")}</strong></div>
                 </td>
+                <td>
+                    <div class="txn-detail-item"><span>A/c expiry date</span><strong>${escapeHtml(item.acExpiry || "-")}</strong></div>
+                </td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
             </tr>
         `;
     }
@@ -1461,19 +2166,19 @@ document.addEventListener("DOMContentLoaded", function () {
                         <div class="table-firm-name">${escapeHtml(item.firm)}<small class="table-firm-code">Code: ${escapeHtml(item.code)}</small></div>
                     </div>
                 </td>
-                <td>${getTxnDaysMarkup(item)}</td>
-                <td>${getTxnScfMarkup(item)}</td>
-                <td>${escapeHtml(item.sanction)}</td>
-                <td>${getTxnAmountMarkup(item.utilized, item.utilizedPct)}</td>
-                <td>${getTxnAmountMarkup(item.available, item.availablePct)}</td>
-                <td>${getTxnOpenCountMarkup(item, index)}</td>
-                <td>${escapeHtml(item.overdueAmount)}</td>
-                <td>${escapeHtml(item.caseType || "-")}</td>
                 <td>
                     <div class="table-action">
                         <button type="button" class="txn-refresh-btn" title="Refresh"></button>
                     </div>
                 </td>
+                <td>${getTxnDaysMarkup(item)}</td>
+                <td>${getTxnScfMarkup(item)}</td>
+                <td>${formatAmountMarkup(item.sanction)}</td>
+                <td>${getTxnAmountMarkup(item.utilized, item.utilizedPct)}</td>
+                <td>${getTxnAmountMarkup(item.available, item.availablePct)}</td>
+                <td>${getTxnOpenCountMarkup(item, index)}</td>
+                <td>${formatAmountMarkup(item.overdueAmount)}</td>
+                <td>${escapeHtml(item.caseType || "-")}</td>
             </tr>
         `;
     }
@@ -1492,6 +2197,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (s.tab !== "all" && row.dataset.status !== s.tab) return false;
         if (s.search && !row.textContent.toLowerCase().includes(s.search)) return false;
+        if (s.firms.length && !s.firms.includes(row.dataset.firm)) return false;
+
+        if (s.tab === "upcoming" && s.daysDue !== "all") {
+            const left = Number(row.dataset.daysLeft);
+
+            if (s.daysDue === "custom") {
+                const now = new Date();
+                const due = new Date(now.getFullYear(), now.getMonth(), now.getDate() + left);
+                if (s.dateFrom && due < s.dateFrom) return false;
+                if (s.dateTo && due > s.dateTo) return false;
+            } else if (left > TXN_DAYS_LIMIT[s.daysDue]) {
+                return false;
+            }
+        }
 
         const sanctionValue = parseFloat(row.dataset.sanctionValue) || 0;
         if (s.sanctionFrom !== null && sanctionValue < s.sanctionFrom) return false;
@@ -1543,6 +2262,70 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    function initInfoTooltips() {
+        const tip = document.createElement("div");
+        tip.className = "app-tooltip";
+        tip.setAttribute("role", "tooltip");
+        document.body.appendChild(tip);
+
+        const canHover = window.matchMedia("(hover: hover)");
+        const mobileMq = window.matchMedia("(max-width: 767.98px)");
+        let source = null;
+
+        function hide() {
+            tip.classList.remove("show");
+            source = null;
+        }
+
+        function show(el, text, rect) {
+            source = el;
+            tip.textContent = text;
+            tip.classList.remove("below");
+            tip.classList.add("show");
+
+            const r = rect || el.getBoundingClientRect();
+            const w = tip.offsetWidth;
+            const h = tip.offsetHeight;
+            const centerX = r.left + r.width / 2;
+            const left = Math.max(8, Math.min(centerX - w / 2, window.innerWidth - w - 8));
+            const below = r.top - h - 12 < 8;
+
+            tip.style.left = left + "px";
+            tip.style.top = (below ? r.bottom + 12 : r.top - h - 12) + "px";
+            tip.style.setProperty("--arrow-x", Math.max(14, Math.min(centerX - left, w - 14)) + "px");
+            tip.classList.toggle("below", below);
+        }
+
+        document.addEventListener("mouseover", function (event) {
+            if (!canHover.matches) return;
+            const dot = event.target.closest(".info-dot[data-tooltip]");
+            if (dot) show(dot, dot.dataset.tooltip);
+        });
+
+        document.addEventListener("mouseout", function (event) {
+            if (event.target.closest(".info-dot[data-tooltip]")) hide();
+        });
+
+        document.addEventListener("click", function (event) {
+            const dot = canHover.matches ? null : event.target.closest(".info-dot[data-tooltip]");
+            const cell = mobileMq.matches ? event.target.closest(".txn-cell--days") : null;
+            const el = dot || cell;
+
+            if (!el) { hide(); return; }
+            if (source === el) { hide(); return; }
+
+            if (cell) {
+                const r = cell.getBoundingClientRect();
+                show(cell, "Excluding cure days", { left: r.right - 13, width: 13, top: r.top, bottom: r.top + 16 });
+            } else {
+                show(dot, dot.dataset.tooltip);
+            }
+        });
+
+        window.addEventListener("scroll", hide, true);
+        window.addEventListener("resize", hide);
+    }
+
     function bindOpenTranchesModal() {
         const modal = document.getElementById("openTranchesModal");
         const countEl = document.getElementById("tranchesCount");
@@ -1561,11 +2344,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 bodyEl.innerHTML = item.tranches.map(function (t) {
                     return `
                         <tr>
-                            <td>${escapeHtml(t.id)}</td>
-                            <td>${escapeHtml(t.date)}</td>
-                            <td>${escapeHtml(t.type)}</td>
-                            <td>${escapeHtml(t.amount)}</td>
-                            <td>${escapeHtml(t.due)}</td>
+                            <td data-label="ID">${escapeHtml(t.id)}</td>
+                            <td data-label="Transaction date">${escapeHtml(t.date)}</td>
+                            <td data-label="Transaction type">${escapeHtml(t.type)}</td>
+                            <td data-label="Amount">${formatAmountMarkup(t.amount)}</td>
+                            <td data-label="Due date">${escapeHtml(t.due)}</td>
                         </tr>
                     `;
                 }).join("") || '<tr><td colspan="5" style="text-align:center;color:#999;">No open tranches</td></tr>';
@@ -1575,8 +2358,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         ["openTranchesClose", "openTranchesCloseBtn"].forEach(function (id) {
-            const btn = document.getElementById(id);
-            if (btn) btn.addEventListener("click", closeModal);
+            bindClick(id, closeModal);
         });
     }
 
@@ -1607,6 +2389,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 applyTxnFilters();
             });
         });
+
         if (txnSearchInput) {
             txnSearchInput.addEventListener("input", function () {
                 txnState.search = txnSearchInput.value.trim().toLowerCase();
@@ -1628,11 +2411,13 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
         setTxnView("list");
+
         if (txnHideBtn) {
             txnHideBtn.addEventListener("click", function () {
                 setDetailsHidden(!detailsHidden);
             });
         }
+
         initDropdownMenu(
             document.getElementById("txnAddDealerBtn"),
             document.getElementById("txnAddDealerMenu")
@@ -1648,14 +2433,83 @@ document.addEventListener("DOMContentLoaded", function () {
         const tabsWrap = document.getElementById("txnFilterTabs");
         const daysPills = Array.from(document.querySelectorAll("#txnDaysDuePills .dealer-filter-pill"));
         const toolbarTabs = Array.from(document.querySelectorAll(".txn-filter-btn"));
+        const customField = document.getElementById("txnCustomField");
+        const fromBtn = document.getElementById("txnDateFrom");
+        const toBtn = document.getElementById("txnDateTo");
+        const cal = document.getElementById("txnCalendar");
+
+        let daysDue = "all", dateFrom = null, dateTo = null;
 
         function readNumber(id) {
-            return parseFloat((document.getElementById(id) || {}).value) || null;
+            return parseAmountInput((document.getElementById(id) || {}).value);
+        }
+
+        function getActiveTab() {
+            const pill = tabsWrap ? tabsWrap.querySelector(".active") : null;
+            return (pill && pill.dataset.tab) || "all";
         }
 
         function closeOverlay() {
+            if (cal) cal.classList.remove("show");
             if (overlay) overlay.classList.remove("show");
         }
+
+        function syncTxnApply() {
+            if (!applyBtn) return;
+            const tab = getActiveTab();
+            const incomplete = tab === "upcoming" && daysDue === "custom" && (!dateFrom || !dateTo);
+            applyBtn.disabled = incomplete ||
+                sanctionField.hasError() ||
+                (tab === "overdue" && overdueField.hasError());
+        }
+
+        function updateDays() {
+            daysPills.forEach(function (pill) {
+                pill.classList.toggle("active", pill.dataset.value === daysDue);
+            });
+            customField.hidden = !(getActiveTab() === "upcoming" && daysDue === "custom");
+            fromBtn.firstElementChild.textContent = dateFrom ? formatDMY(dateFrom) : "Select date";
+            toBtn.firstElementChild.textContent = dateTo ? formatDMY(dateTo) : "Select date";
+            cal.classList.remove("show");
+            syncTxnApply();
+        }
+
+        function pickTab(tab) {
+            setTxnFilterTab(tab);
+            daysDue = "all";
+            dateFrom = dateTo = null;
+            updateDays();
+        }
+
+        const sanctionField = initRangeField({
+            fromId: "txnSanctionFrom",
+            toId: "txnSanctionTo",
+            errorId: "txnSanctionError",
+            formatMsg: "Entered sanction limit is in wrong format, please enter a valid limit.",
+            orderMsg: "Entered starting limit cannot be greater than ending limit, please enter a valid limit.",
+            onChange: syncTxnApply
+        });
+
+        const overdueField = initRangeField({
+            fromId: "txnOverdueFrom",
+            toId: "txnOverdueTo",
+            errorId: "txnOverdueError",
+            formatMsg: "Entered overdue amount is in wrong format, please enter a valid amount.",
+            orderMsg: "Entered starting amount cannot be greater than ending amount, please enter a valid amount.",
+            onChange: syncTxnApply
+        });
+
+        initDateRangePicker({
+            cal: cal,
+            fromBtn: fromBtn,
+            toBtn: toBtn,
+            getRange: function () { return { from: dateFrom, to: dateTo }; },
+            onOk: function (from, to) {
+                dateFrom = from;
+                dateTo = to;
+                updateDays();
+            }
+        });
 
         renderFirmOptions(
             document.querySelector("#txnFirmDropdown .dealer-filter-dropdown-panel"),
@@ -1666,6 +2520,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (openBtn && overlay) {
             openBtn.addEventListener("click", function () {
+                setTxnFilterTab(txnState.tab);
+                daysDue = txnState.daysDue;
+                dateFrom = txnState.dateFrom;
+                dateTo = txnState.dateTo;
+                updateDays();
                 overlay.classList.add("show");
             });
         }
@@ -1680,42 +2539,43 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (tabsWrap) {
             tabsWrap.querySelectorAll(".dealer-filter-pill").forEach(function (pill) {
-                pill.addEventListener("click", function () {
-                    setTxnFilterTab(pill.dataset.tab);
-                });
+                pill.addEventListener("click", function () { pickTab(pill.dataset.tab); });
             });
         }
 
         daysPills.forEach(function (pill) {
             pill.addEventListener("click", function () {
-                setActive(daysPills, pill);
+                daysDue = pill.dataset.value;
+                if (daysDue !== "custom") dateFrom = dateTo = null;
+                updateDays();
             });
         });
 
         if (resetBtn) {
             resetBtn.addEventListener("click", function () {
-                setTxnFilterTab("all");
-
                 ["txnSanctionFrom", "txnSanctionTo", "txnOverdueFrom", "txnOverdueTo"].forEach(function (id) {
                     const input = document.getElementById(id);
                     if (input) input.value = "";
                 });
 
-                daysPills.forEach(function (pill, index) {
-                    pill.classList.toggle("active", index === 0);
-                });
+                sanctionField.reset();
+                overdueField.reset();
+                overlay.querySelectorAll(".dealer-filter-dropdown").forEach(resetFilterDropdown);
+                pickTab("all");
             });
         }
 
         if (applyBtn) {
             applyBtn.addEventListener("click", function () {
-                const activePill = tabsWrap ? tabsWrap.querySelector(".active") : null;
-
-                txnState.tab = (activePill && activePill.dataset.tab) || "all";
+                txnState.tab = getActiveTab();
+                txnState.firms = getCheckedValues("#txnFirmDropdown");
                 txnState.sanctionFrom = readNumber("txnSanctionFrom");
                 txnState.sanctionTo = readNumber("txnSanctionTo");
                 txnState.overdueFrom = readNumber("txnOverdueFrom");
                 txnState.overdueTo = readNumber("txnOverdueTo");
+                txnState.daysDue = daysDue;
+                txnState.dateFrom = dateFrom;
+                txnState.dateTo = dateTo;
 
                 toolbarTabs.forEach(function (btn) {
                     btn.classList.toggle("active", btn.dataset.txnFilter === txnState.tab);
@@ -1744,11 +2604,441 @@ document.addEventListener("DOMContentLoaded", function () {
         initTxnFiltersModal();
     }
 
+    
+    // RENEWAL DETAILS
+
+    const renewalActions = {
+        enhance: "Enhance limit",
+        update:  "Update expiry",
+        renew:   "Renew limit"
+    };
+
+    const renewalCommon = {
+        id: "CLB-000203606-PRO",
+        phone: "+91 9836273854",
+        uploadedBy: "ICICI Bank"
+    };
+
+    /* TODO(backend): replace with API data */
+    const renewalData = [
+        { firm: "Zenith Steel Traders",        email: "harish@zenith.com",         years: "3 years", pan: "CFSG34527F", sales: "₹3,15,00,000.00", sanction: "₹70,00,000.00", state: "due",     days: 12, action: "enhance", vintage: "12 years" },
+        { firm: "SunDesh Systems Pvt. Ltd",    email: "keshav@sundesh.com",        years: "3 years", pan: "CFSG34527F", sales: "₹4,00,00,000.00", sanction: "₹65,00,000.00", state: "expired", days: 20, action: "update",  vintage: "14 years" },
+        { firm: "Chauhan Traders",             email: "shivam@chauhan.com",        years: "3 years", pan: "CFSG34527F", sales: "₹3,00,00,000.00", sanction: "₹80,00,000.00", state: "due",     days: 8,  action: "renew",   vintage: "15 years" },
+        { firm: "Polychem Global",             email: "aryan@polychem.com",        years: "5 years", pan: "CFSG34527F", sales: "₹2,95,00,000.00", sanction: "₹90,00,000.00", state: "expired", days: 20, action: "update",  vintage: "16 years" },
+        { firm: "Vertex Industrial Solutions", email: "kartik@polychem.com",       years: "2 years", pan: "CFSG34527F", sales: "₹3,15,00,000.00", sanction: "₹95,00,000.00", state: "due",     days: 4,  action: "renew",   vintage: "10 years" },
+        { firm: "Kartikey Corporations",       email: "keshav@kartikey.com",       years: "6 years", pan: "CFSG34527F", sales: "₹3,15,00,000.00", sanction: "₹70,00,000.00", state: "due",     days: 24, action: "enhance", vintage: "13 years" },
+        { firm: "TradersTech",                 email: "arjun@traderstech.com",     years: "7 years", pan: "YAHS8D9573", sales: "₹3,00,00,000.00", sanction: "₹86,00,000.00", state: "due",     days: 8,  action: "renew",   vintage: "9 years" },
+        { firm: "Global Traders",              email: "harshal@globaltraders.com", years: "9 years", pan: "MEJA8D9573", sales: "₹3,15,00,000.00", sanction: "₹86,00,000.00", state: "expired", days: 10, action: "update",  vintage: "11 years" }
+    ].map(function (item) {
+        const today = new Date();
+        const offset = item.state === "expired" ? -item.days : item.days;
+        return Object.assign({}, renewalCommon, item, {
+            recommendation: item.sanction,
+            expiryDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + offset)
+        });
+    });
+
+    const renewalState = {
+        filter: "all",
+        search: "",
+        firms: [],
+        uploadedBy: [],
+        sanctionFrom: null,
+        sanctionTo: null,
+        range: "all",
+        dateFrom: null,
+        dateTo: null
+    };
+
+    function getRenewalStatusMarkup(item, cls) {
+        const info = cls === "dealer-status" ? "ⓘ" : "i";
+
+        if (item.state === "expired") {
+            return '<div class="renewal-status">' +
+                '<span class="' + cls + ' rejected">Expired <small data-tooltip="This lead is expired.">' + info + "</small></span>" +
+                '<span class="renewal-status-sub">' + item.days + " days ago</span></div>";
+        }
+
+        return '<div class="renewal-status"><span class="' + cls + ' actioned">Expiry in ' + item.days + " days</span></div>";
+    }
+
+    function getRenewalActionMarkup(item) {
+        return '<button type="button" class="renewal-action-link ' + item.action + '">' +
+            renewalActions[item.action] + "</button>";
+    }
+
+    function renderRenewalRow(item, index) {
+        return `
+            <tr class="renewal-row" data-renewal-status="${item.state}" data-renewal-index="${index}">
+                <td class="renewal-cell renewal-cell--firm">
+                    <div class="dealer-firm">
+                        <span class="material-symbols-outlined dealer-pin" role="button" tabindex="0" aria-label="Pin dealer">push_pin</span>
+                        <div>
+                            <strong>${escapeHtml(item.firm)}</strong>
+                            <small class="renewal-firm-id">ID: <span class="id-value">${escapeHtml(item.id)}</span></small>
+                        </div>
+                    </div>
+                </td>
+                <td class="renewal-cell renewal-cell--extra renewal-cell--dealer" data-label="Dealer details">
+                    <div class="dealer-contact">
+                        <span data-value="${escapeHtml(item.phone)}">${escapeHtml(item.phone)}</span>
+                        <small data-value="${escapeHtml(item.email)}">${escapeHtml(item.email)}</small>
+                    </div>
+                </td>
+                <td class="renewal-cell renewal-cell--extra renewal-cell--assoc" data-label="Association with corporate">
+                    <div class="dealer-association">
+                        <strong>${escapeHtml(item.years)}</strong>
+                        <small>PAN: <span class="pan-value">${escapeHtml(item.pan)}</span></small>
+                    </div>
+                </td>
+                <td class="renewal-cell renewal-cell--extra renewal-cell--sales" data-label="Sales to dealer (last 12M)">${formatAmountMarkup(item.sales)}</td>
+                <td class="renewal-cell renewal-cell--sanction" data-label="Sanction limit">${formatAmountMarkup(item.sanction)}</td>
+                <td class="renewal-cell renewal-cell--status" data-label="Renewal status">${getRenewalStatusMarkup(item, "dealer-status")}</td>
+                <td class="renewal-cell renewal-cell--actions">
+                    <div class="renewal-action">
+                        ${getRenewalActionMarkup(item)}
+                        <button type="button" class="renewal-expand-btn" aria-label="Toggle details">⌄</button>
+                    </div>
+                </td>
+                <td class="renewal-cell renewal-cell--extra renewal-cell--vintage renewal-mobile-only" data-label="Business vintage">${escapeHtml(item.vintage)}</td>
+                <td class="renewal-cell renewal-cell--extra renewal-cell--uploaded renewal-mobile-only" data-label="Uploaded by">${escapeHtml(item.uploadedBy)}<i class="dealer-upload-user-icon"></i></td>
+                <td class="renewal-cell renewal-cell--extra renewal-cell--recommend renewal-mobile-only" data-label="Recommendation limit">${formatAmountMarkup(item.recommendation)}</td>
+            </tr>
+            <tr class="renewal-details-row">
+                <td><div class="renewal-detail-item"><span>Business vintage</span><strong>${escapeHtml(item.vintage)}</strong></div></td>
+                <td><div class="renewal-detail-item"><span>Uploaded by</span><strong>${escapeHtml(item.uploadedBy)}<i class="dealer-upload-user-icon"></i></strong></div></td>
+                <td><div class="renewal-detail-item renewal-detail-item--end"><span>Recommendation limit</span><strong>${formatAmountMarkup(item.recommendation)}</strong></div></td>
+                <td></td><td></td><td></td><td></td>
+            </tr>
+        `;
+    }
+
+    function renderRenewalGridRow(item, index) {
+        return `
+            <tr data-renewal-status="${item.state}" data-renewal-index="${index}">
+                <td>
+                    <div class="table-firm">
+                        <span class="material-symbols-outlined dealer-pin" role="button" tabindex="0" aria-label="Pin dealer">push_pin</span>
+                        <div class="table-firm-name">${escapeHtml(item.firm)}<small class="table-firm-code renewal-firm-id">ID: <span class="id-value">${escapeHtml(item.id)}</span></small></div>
+                    </div>
+                </td>
+                <td><div class="renewal-action">${getRenewalActionMarkup(item)}</div></td>
+                <td>${getRenewalStatusMarkup(item, "table-status")}</td>
+                <td>${escapeHtml(item.phone)}</td>
+                <td>${escapeHtml(item.email)}</td>
+                <td>${escapeHtml(item.pan)}</td>
+                <td>${formatAmountMarkup(item.sales)}</td>
+                <td>${escapeHtml(item.years)}</td>
+                <td>${formatAmountMarkup(item.sanction)}</td>
+            </tr>
+        `;
+    }
+
+    function closeAllRenewalDetails() {
+        document.querySelectorAll(".renewal-row.is-expanded").forEach(function (row) {
+            row.classList.remove("is-expanded");
+        });
+        document.querySelectorAll(".renewal-details-row.is-visible").forEach(function (row) {
+            row.classList.remove("is-visible");
+        });
+    }
+
+    function renewalItemMatches(item) {
+        const s = renewalState;
+
+        if (s.filter !== "all" && item.state !== s.filter) return false;
+        if (s.firms.length && !s.firms.includes(item.firm)) return false;
+
+        const sanction = parseCurrency(item.sanction);
+        if (s.sanctionFrom !== null && sanction < s.sanctionFrom) return false;
+        if (s.sanctionTo !== null && sanction > s.sanctionTo) return false;
+
+        if (s.uploadedBy.length) {
+            const key = /icici/i.test(item.uploadedBy) ? "icici" : "anchor";
+            if (!s.uploadedBy.includes(key)) return false;
+        }
+
+        if (s.filter !== "all" && s.range !== "all") {
+            if (s.range === "custom") {
+                if (s.dateFrom && item.expiryDate < s.dateFrom) return false;
+                if (s.dateTo && item.expiryDate > s.dateTo) return false;
+            } else if (item.days > Number(s.range)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function applyRenewalFilters() {
+        closeAllRenewalDetails();
+
+        document.querySelectorAll(".renewal-row, .renewal-table-view tbody tr").forEach(function (row) {
+            const item = renewalData[row.dataset.renewalIndex];
+            const matchFilter = item ? renewalItemMatches(item) : true;
+            const matchSearch = !renewalState.search || row.textContent.toLowerCase().includes(renewalState.search);
+            row.classList.toggle("hidden-by-filter", !(matchFilter && matchSearch));
+        });
+    }
+
+    function initRenewalFiltersModal() {
+        const overlay = document.getElementById("renewalFiltersOverlay");
+        const openBtn = document.getElementById("renewalFiltersBtn");
+        if (!overlay || !openBtn) return;
+
+        const page = document.getElementById("renewalDetailsPage");
+        const applyBtn = document.getElementById("renewalFiltersApply");
+        const resetBtn = document.getElementById("renewalFiltersReset");
+        const tabPills = Array.from(document.querySelectorAll("#renewalFilterTabs .dealer-filter-pill"));
+        const daysField = document.getElementById("renewalDaysField");
+        const daysLabel = document.getElementById("renewalDaysLabel");
+        const daysPills = Array.from(document.querySelectorAll("#renewalDaysPills .dealer-filter-pill"));
+        const customField = document.getElementById("renewalCustomField");
+        const fromBtn = document.getElementById("renewalDateFrom");
+        const toBtn = document.getElementById("renewalDateTo");
+        const cal = document.getElementById("renewalCalendar");
+        const firmPanel = document.querySelector("#renewalFirmDropdown .dealer-filter-dropdown-panel");
+
+        let tab = "all", range = "all", dateFrom = null, dateTo = null;
+        let snapshot = null;
+
+        function num(id) { return parseAmountInput(document.getElementById(id).value); }
+
+        renderFirmOptions(firmPanel, renewalData.map(function (item) {
+            return { name: item.firm, meta: "ID: " + item.id + "\nPAN: " + item.pan };
+        }));
+        initFirmSearch(document.getElementById("renewalFirmSearchInput"), firmPanel);
+
+        function readFilters() {
+            return {
+                filter: tab,
+                range: range,
+                dateFrom: dateFrom ? dateFrom.getTime() : null,
+                dateTo: dateTo ? dateTo.getTime() : null,
+                firms: getCheckedValues("#renewalFirmDropdown"),
+                uploadedBy: getCheckedValues("#renewalUploadedByDropdown"),
+                sanctionFrom: num("renewalSanctionFrom"),
+                sanctionTo: num("renewalSanctionTo")
+            };
+        }
+
+        function syncApply() {
+            const incomplete = range === "custom" && (!dateFrom || !dateTo);
+            const unchanged = snapshot !== null && JSON.stringify(readFilters()) === snapshot;
+            const invalid = sanctionField.hasError();
+            applyBtn.disabled = incomplete || unchanged || invalid;
+        }
+
+        const sanctionField = initRangeField({
+            fromId: "renewalSanctionFrom",
+            toId: "renewalSanctionTo",
+            errorId: "renewalSanctionError",
+            formatMsg: "Entered sanction limit is in wrong format, please enter a valid limit.",
+            orderMsg: "Entered starting limit cannot be greater than ending limit, please enter a valid limit.",
+            onChange: syncApply
+        });
+
+        function updateExtra() {
+            tabPills.forEach(function (p) { p.classList.toggle("active", p.dataset.tab === tab); });
+            daysField.style.display = tab === "all" ? "none" : "";
+            daysLabel.textContent = tab === "expired" ? "Expired since" : "Days to expire";
+            daysPills.forEach(function (p) { p.classList.toggle("active", p.dataset.value === range); });
+            customField.style.display = range === "custom" ? "" : "none";
+            fromBtn.firstElementChild.textContent = dateFrom ? formatDMY(dateFrom) : "Select date";
+            toBtn.firstElementChild.textContent = dateTo ? formatDMY(dateTo) : "Select date";
+            cal.classList.remove("show");
+        }
+
+        function setTab(next) {
+            tab = next;
+            range = "all";
+            dateFrom = dateTo = null;
+            updateExtra();
+        }
+
+        initDateRangePicker({
+            cal: cal,
+            fromBtn: fromBtn,
+            toBtn: toBtn,
+            getRange: function () { return { from: dateFrom, to: dateTo }; },
+            onOk: function (from, to) {
+                dateFrom = from;
+                dateTo = to;
+                updateExtra();
+                syncApply();
+            }
+        });
+
+        function closeOverlay() {
+            cal.classList.remove("show");
+            overlay.classList.remove("show");
+        }
+
+        openBtn.addEventListener("click", function () {
+            tab = renewalState.filter;
+            range = renewalState.range;
+            dateFrom = renewalState.dateFrom;
+            dateTo = renewalState.dateTo;
+            updateExtra();
+            if (snapshot === null) snapshot = JSON.stringify(readFilters());
+            overlay.classList.add("show");
+            syncApply();
+        });
+
+        bindClick("renewalFiltersClose", closeOverlay);
+        overlay.addEventListener("click", function (event) {
+            if (event.target === overlay) closeOverlay();
+        });
+
+        tabPills.forEach(function (pill) {
+            pill.addEventListener("click", function () { setTab(pill.dataset.tab); });
+        });
+
+        daysPills.forEach(function (pill) {
+            pill.addEventListener("click", function () {
+                range = pill.dataset.value;
+                if (range !== "custom") dateFrom = dateTo = null;
+                updateExtra();
+            });
+        });
+
+        ["change", "input", "click"].forEach(function (name) {
+            overlay.addEventListener(name, syncApply);
+        });
+
+        resetBtn.addEventListener("click", function () {
+            setTab("all");
+            ["renewalSanctionFrom", "renewalSanctionTo"].forEach(function (id) {
+                document.getElementById(id).value = "";
+            });
+            sanctionField.reset();
+            overlay.querySelectorAll(".dealer-filter-dropdown").forEach(resetFilterDropdown);
+            syncApply();
+        });
+
+        applyBtn.addEventListener("click", function () {
+            const f = readFilters();
+
+            renewalState.filter = f.filter;
+            renewalState.range = f.range;
+            renewalState.dateFrom = dateFrom;
+            renewalState.dateTo = dateTo;
+            renewalState.firms = f.firms;
+            renewalState.uploadedBy = f.uploadedBy;
+            renewalState.sanctionFrom = f.sanctionFrom;
+            renewalState.sanctionTo = f.sanctionTo;
+
+            page.querySelectorAll(".renewal-filter-btn").forEach(function (btn) {
+                btn.classList.toggle("active", btn.dataset.renewalFilter === f.filter);
+            });
+
+            snapshot = JSON.stringify(f);
+            applyRenewalFilters();
+            closeOverlay();
+            showAppToast("Filters applied successfully");
+        });
+    }
+
+    function initRenewalDashboard() {
+        const page = document.getElementById("renewalDetailsPage");
+        const listBody = document.getElementById("renewalTableBody");
+        const gridBody = document.getElementById("renewalTableViewBody");
+        if (!page || !listBody || !gridBody) return;
+
+        listBody.innerHTML = renewalData.map(renderRenewalRow).join("");
+        gridBody.innerHTML = renewalData.map(renderRenewalGridRow).join("");
+
+        const filterButtons = Array.from(page.querySelectorAll(".renewal-filter-btn"));
+        const viewButtons = Array.from(page.querySelectorAll(".view-switch-btn"));
+        const searchBox = document.getElementById("renewalSearchInput");
+        const hideBtn = document.getElementById("renewalHideDetailsBtn");
+
+        filterButtons.forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                renewalState.filter = btn.dataset.renewalFilter;
+                setActive(filterButtons, btn);
+                applyRenewalFilters();
+            });
+        });
+
+        if (searchBox) {
+            searchBox.addEventListener("input", function () {
+                renewalState.search = searchBox.value.trim().toLowerCase();
+                applyRenewalFilters();
+            });
+        }
+
+        viewButtons.forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                setActive(viewButtons, btn);
+                page.classList.toggle("renewal-grid-active", btn.dataset.view === "grid");
+            });
+        });
+
+        if (hideBtn) {
+            hideBtn.addEventListener("click", function () {
+                setDetailsHidden(!detailsHidden);
+            });
+        }
+
+        initDropdownMenu(
+            document.getElementById("renewalAddDealerBtn"),
+            document.getElementById("renewalAddDealerMenu")
+        );
+
+        /* expand / collapse (list view) */
+        listBody.addEventListener("click", function (event) {
+            const btn = event.target.closest(".renewal-expand-btn");
+            if (!btn) return;
+
+            const row = btn.closest(".renewal-row");
+            const detailRow = row.nextElementSibling;
+            const wasOpen = row.classList.contains("is-expanded");
+
+            closeAllRenewalDetails();
+
+            if (!wasOpen) {
+                row.classList.add("is-expanded");
+                if (detailRow) detailRow.classList.add("is-visible");
+            }
+        });
+
+        page.addEventListener("click", function (event) {
+            const link = event.target.closest(".renewal-action-link");
+            if (!link) return;
+
+            if (link.classList.contains("update")) {
+                showAppToast(
+                    "This lead is expired",
+                    "warning",
+                    "This lead is expired. Please contact ICICI Bank SM/RM for enhancement."
+                );
+            }
+            /* TODO: "Enhance limit" and "Renew limit" flows */
+        });
+
+        initRenewalFiltersModal();
+    }
+
+    function centerActiveTab(page) {
+        const activeTab = page.querySelector(".new-dealer-tab.active");
+        const tabList = activeTab && activeTab.closest(".new-dealer-tab-list");
+        if (!tabList) return;
+        tabList.scrollLeft = activeTab.offsetLeft - (tabList.clientWidth - activeTab.offsetWidth) / 2;
+    }
+
+    function syncMenuActive(which) {
+        menuItems.forEach(function (item) {
+            const title = item.querySelector(".menu-title");
+            const route = title ? MENU_ROUTES[title.textContent.trim().toLowerCase()] : "";
+            item.classList.toggle("active", route === which);
+        });
+    }
 
     function showPage(which) {
         const pages = {
             newdealer: document.getElementById("newDealerPage"),
             transaction: document.getElementById("transactionDashboardPage"),
+            renewal: document.getElementById("renewalDetailsPage"),
             dashboard: document.querySelector(".Dashboard-page-section")
         };
 
@@ -1760,32 +3050,19 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!target) return;
 
         target.style.display = which === "dashboard" ? "" : "block";
-    }
-
-    function bindMenuRoutes(items, routes) {
-        items.forEach(function (menuItem) {
-            const title = menuItem.querySelector(".menu-title");
-            if (!title) return;
-
-            const route = routes[title.textContent.trim().toLowerCase()];
-            if (!route) return;
-
-            menuItem.addEventListener("click", function () {
-                showPage(route);
-                menuItems.forEach(function (item) { item.classList.remove("active"); });
-                menuItem.classList.add("active");
-            });
-        });
+        centerActiveTab(target);
+        syncMenuActive(which);
     }
 
     function initNavigation() {
-        bindMenuRoutes(Array.from(menuItems), {
-            "new dealer leads": "newdealer",
-            "analytics dashboard": "dashboard"
-        });
+        menuItems.forEach(function (item) {
+            const title = item.querySelector(".menu-title");
+            const route = title ? MENU_ROUTES[title.textContent.trim().toLowerCase()] : "";
+            if (!route) return;
 
-        bindMenuRoutes(Array.from(document.querySelectorAll(".menu-item")), {
-            "transaction dashboard": "transaction"
+            item.addEventListener("click", function () {
+                showPage(route);   /* also syncs the active menu item */
+            });
         });
 
         document.querySelectorAll("[data-goto]").forEach(function (tab) {
@@ -1795,8 +3072,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-
     applyDealerCellLabels();
+    initDealerAmounts();
     initializeDetailRows();
     initStatusTooltips();
     initDealerFiltersModal();
@@ -1815,12 +3092,15 @@ document.addEventListener("DOMContentLoaded", function () {
     initRowExpansion();
     initDetailsToggle();
     initDealerViewSwitch();
+    initLeadDeletion();
     applyCurrentView();
 
-    /* Transaction dashboard */
     initTransactionDashboard();
+    initRenewalDashboard();
+    wrapCodeValues();
+    initInfoTooltips();
 
-    /* Shared */
+
     initPinning();
     initNavigation();
     applySavedPins();

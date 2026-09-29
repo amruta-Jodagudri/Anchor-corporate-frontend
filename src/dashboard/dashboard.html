@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="./dashboard.css" />
     <link rel="stylesheet" href="./new-dealer.css" />
     <link rel="stylesheet" href="new-dealer-responsive.css" />
+    <link rel="stylesheet" href="txn-responsive.css" />
+    <link rel="stylesheet" href="renewal-responsive.css" />
   </head>
 
   <body class="dashboard-page">
@@ -594,7 +596,7 @@
         </main>
       </div>
 
-  <!-- NEW DEALER LEADS PAGE -->
+      <!-- NEW DEALER LEADS PAGE -->
 
       <section class="new-dealer-page" id="newDealerPage" style="display: none">
         <!-- Page Header -->
@@ -616,8 +618,7 @@
           </div>
         </div>
 
-
-         <!-- TOP TABS -->
+        <!-- TOP TABS -->
 
         <div class="new-dealer-tabs">
           <div class="new-dealer-tab-list">
@@ -631,7 +632,7 @@
               <span class="new-dealer-count grey">90</span>
             </div>
 
-            <div class="new-dealer-tab">
+            <div class="new-dealer-tab" data-goto="renewal">
               <span>Renewal details</span>
               <span class="new-dealer-count grey">83</span>
             </div>
@@ -662,8 +663,7 @@
           </div>
         </div>
 
-        
-         <!-- FILTER / TOOLBAR -->
+        <!-- FILTER / TOOLBAR -->
 
         <div class="new-dealer-toolbar">
           <div class="new-dealer-filter-left">
@@ -769,6 +769,7 @@
             <button
               type="button"
               class="dealer-action-icon"
+              id="leadBulkDeleteBtn"
               title="Delete"
             ></button>
 
@@ -786,21 +787,20 @@
           </div>
         </div>
 
-
-         <!-- DEALER TABLE -->
+        <!-- DEALER TABLE -->
 
         <div class="new-dealer-table-wrapper dealer-leads-wrapper">
           <table class="new-dealer-table dealer-leads-table">
             <thead>
               <tr>
-              <th>
-                <div class="dealer-th-inner">
-                  <div>Firm details</div>
-                  <span>↕</span>
-                </div>
-              </th>
+                <th>
+                  <div class="dealer-th-inner">
+                    <div>Firm details</div>
+                    <span>↕</span>
+                  </div>
+                </th>
 
-               <th>Dealer details</th>
+                <th>Dealer details</th>
 
                 <th>
                   <div class="dealer-th-inner">
@@ -830,7 +830,6 @@
             </thead>
 
             <tbody id="dealerTableBody">
-
               <tr
                 class="dealer-row"
                 data-status="actioned"
@@ -1213,29 +1212,28 @@
           </table>
         </div>
 
-
         <div class="dealer-table-view-wrapper">
-          <table class="dealer-table-view new-dealer-table ">
+          <table class="dealer-table-view new-dealer-table">
             <thead>
               <tr>
-              <th>
-                <div class="dealer-th-inner">
-                  <div>Firm details</div>
-                  <span>↕</span>
-                </div>
-              </th>
-              <th>Action</th>
-              <th>Lead date</th>
-              <th>Sanction status</th>
-              <th>
-                <div class="dealer-th-inner">
-                  <div>Application status</div>
-                  <span>↕</span>
-                </div>
-              </th>
-              <th>Mobile number</th>
-              <th>Email ID</th>
-              <th>PAN</th>
+                <th>
+                  <div class="dealer-th-inner">
+                    <div>Firm details</div>
+                    <span>↕</span>
+                  </div>
+                </th>
+                <th>Action</th>
+                <th>Lead date</th>
+                <th>Sanction status</th>
+                <th>
+                  <div class="dealer-th-inner">
+                    <div>Application status</div>
+                    <span>↕</span>
+                  </div>
+                </th>
+                <th>Mobile number</th>
+                <th>Email ID</th>
+                <th>PAN</th>
                 <th>
                   <div class="dealer-th-inner">
                     <div>Sales to dealer<br />(last 12M)</div>
@@ -1825,10 +1823,81 @@
             </div>
           </div>
         </div>
+
+        <!-- BULK SELECT BAR -->
+        <div class="lead-bulk-bar" id="leadBulkBar">
+          <div class="lead-bulk-count">
+            Total leads selected : <strong id="leadBulkCount">0</strong>
+          </div>
+          <div class="lead-bulk-actions">
+            <button type="button" class="share-cancel-btn" id="leadBulkCancel">
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="share-submit-btn"
+              id="leadBulkDelete"
+              disabled
+            >
+              Delete (0)
+            </button>
+          </div>
+        </div>
+
+        <!-- DELETE CONFIRM MODAL (single + bulk) -->
+        <div
+          class="dealer-filters-overlay"
+          id="deleteLeadOverlay"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="deleteLeadTitle"
+        >
+          <div class="dealer-filters-modal delete-lead-modal">
+            <div class="dealer-filters-header delete-lead-header">
+              <div class="delete-lead-heading">
+                <span class="delete-lead-icon" aria-hidden="true">!</span>
+                <div>
+                  <h2 id="deleteLeadTitle">
+                    Are you sure you want to delete this lead?
+                  </h2>
+                  <p>This will remove the lead's details</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                class="dealer-filters-close"
+                id="deleteLeadClose"
+                aria-label="Close"
+              >
+                ×
+              </button>
+            </div>
+
+            <div class="dealer-filters-body">
+              <div class="delete-lead-panel" id="deleteLeadPanel"></div>
+            </div>
+
+            <div class="dealer-filters-footer">
+              <button
+                type="button"
+                class="share-cancel-btn"
+                id="deleteLeadCancel"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                class="share-submit-btn"
+                id="deleteLeadConfirm"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
       </section>
 
-
-     <!-- TRANSACTION DASHBOARD PAGE -->
+      <!-- TRANSACTION DASHBOARD PAGE -->
       <section
         class="new-dealer-page txn-dashboard-page"
         id="transactionDashboardPage"
@@ -1847,19 +1916,23 @@
         </div>
 
         <div class="new-dealer-tabs">
-          <div class="new-dealer-tab" data-goto="newdealer">
-            <span>New dealer leads</span>
-            <span class="new-dealer-count grey">65</span>
+          <div class="new-dealer-tab-list">
+            <div class="new-dealer-tab" data-goto="newdealer">
+              <span>New dealer leads</span>
+              <span class="new-dealer-count grey">65</span>
+            </div>
+            <div class="new-dealer-tab active">
+              <span>Transaction dashboard</span>
+              <span class="new-dealer-count orange">90</span>
+            </div>
+            <div class="new-dealer-tab" data-goto="renewal">
+              <span>Renewal details</span>
+              <span class="new-dealer-count grey">83</span>
+            </div>
           </div>
-          <div class="new-dealer-tab active">
-            <span>Transaction dashboard</span>
-            <span class="new-dealer-count orange">90</span>
-          </div>
-          <div class="new-dealer-tab" data-goto="renewal">
-            <span>Renewal details</span>
-            <span class="new-dealer-count grey">83</span>
-          </div>
+
           <div class="new-dealer-tab-spacer"></div>
+
           <div class="new-dealer-add-wrapper">
             <button
               type="button"
@@ -1918,13 +1991,13 @@
                 type="button"
                 class="view-switch-btn active"
                 data-view="list"
-                data-tooltip="List view"
+                data-tooltip="Switch to new list view"
               ></button>
               <button
                 type="button"
                 class="view-switch-btn"
                 data-view="grid"
-                data-tooltip="Table view"
+                data-tooltip="Switch to old table view"
               ></button>
             </div>
             <div class="dealer-search-box">
@@ -1947,52 +2020,116 @@
         <!-- LIST VIEW -->
         <div class="new-dealer-table-wrapper txn-list-wrapper">
           <table class="new-dealer-table txn-table">
-          <thead>
-            <tr>
-              <th><div class="dealer-th-inner"><div>Firm details</div><span>↕</span></div></th>
-              <th>SCF limit account</th>
-              <th><div class="dealer-th-inner"><div>Sanction limit</div><span>↕</span></div></th>
-              <th><div class="dealer-th-inner"><div>Utilized limit</div><span>↕</span></div></th>
-              <th><div class="dealer-th-inner"><div>Available limit</div><span>↕</span></div></th>
-              <th><div class="dealer-th-inner"><div>Open transactions</div><span>↕</span></div></th>
-              <th><div class="dealer-th-inner"><div>Overdue amount</div><span>↕</span></div></th>
-              <th>
-                <div class="dealer-th-inner">
-                  <div>Days to get in overdue</div>
-                  <span class="info-dot" data-tooltip="Excluding cure days"></span>
-                </div>
-              </th>
-              <th></th>
-            </tr>
-          </thead>
-            <tbody id="txnTableBody">
-            </tbody>
+            <thead>
+              <tr>
+                <th>
+                  <div class="dealer-th-inner">
+                    <div>Firm details</div>
+                    <span>↕</span>
+                  </div>
+                </th>
+                <th>SCF limit account</th>
+                <th>
+                  <div class="dealer-th-inner">
+                    <div>Sanction limit</div>
+                    <span>↕</span>
+                  </div>
+                </th>
+                <th>
+                  <div class="dealer-th-inner">
+                    <div>Utilized limit</div>
+                    <span>↕</span>
+                  </div>
+                </th>
+                <th>
+                  <div class="dealer-th-inner">
+                    <div>Available limit</div>
+                    <span>↕</span>
+                  </div>
+                </th>
+                <th>
+                  <div class="dealer-th-inner">
+                    <div>Open<br />transactions</div>
+                    <span>↕</span>
+                  </div>
+                </th>
+                <th>
+                  <div class="dealer-th-inner">
+                    <div>Overdue<br />amount</div>
+                    <span>↕</span>
+                  </div>
+                </th>
+                <th>
+                  <div class="dealer-th-inner">
+                    <div>Days to get<br />in overdue</div>
+                    <span
+                      class="info-dot"
+                      data-tooltip="Excluding cure days"
+                    ></span>
+                  </div>
+                </th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="txnTableBody"></tbody>
           </table>
         </div>
 
         <div class="dealer-table-view-wrapper txn-grid-wrapper">
           <table class="dealer-table-view txn-table-view">
-          <thead>
-            <tr>
-              <th><div class="dealer-th-inner"><div>Firm details</div><span>↕</span></div></th>
-              <th>
-                <div class="dealer-th-inner">
-                  <div>Days to get in overdue</div>
-                  <span class="info-dot" data-tooltip="Excluding cure days"></span>
-                </div>
-              </th>
-              <th>SCF limit account</th>
-              <th><div class="dealer-th-inner"><div>Sanction limit</div><span>↕</span></div></th>
-              <th><div class="dealer-th-inner"><div>Utilized limit</div><span>↕</span></div></th>
-              <th><div class="dealer-th-inner"><div>Available limit</div><span>↕</span></div></th>
-              <th><div class="dealer-th-inner"><div>Open transactions</div><span>↕</span></div></th>
-              <th><div class="dealer-th-inner"><div>Overdue amount</div><span>↕</span></div></th>
-              <th>Case type</th>
-              <th></th>
-            </tr>
-          </thead>
-            <tbody id="txnTableViewBody">
-            </tbody>
+            <thead>
+              <tr>
+                <th>
+                  <div class="dealer-th-inner">
+                    <div>Firm details</div>
+                    <span>↕</span>
+                  </div>
+                </th>
+                <th></th>
+                <th>
+                  <div class="dealer-th-inner">
+                    <div>Days to get in overdue</div>
+                    <span
+                      class="info-dot"
+                      data-tooltip="Excluding cure days"
+                    ></span>
+                  </div>
+                </th>
+                <th>SCF limit account</th>
+                <th>
+                  <div class="dealer-th-inner">
+                    <div>Sanction limit</div>
+                    <span>↕</span>
+                  </div>
+                </th>
+                <th>
+                  <div class="dealer-th-inner">
+                    <div>Utilized limit</div>
+                    <span>↕</span>
+                  </div>
+                </th>
+                <th>
+                  <div class="dealer-th-inner">
+                    <div>Available limit</div>
+                    <span>↕</span>
+                  </div>
+                </th>
+                <th>
+                  <div class="dealer-th-inner">
+                    <div>Open transactions</div>
+                    <span>↕</span>
+                  </div>
+                </th>
+                <th>
+                  <div class="dealer-th-inner">
+                    <div>Overdue amount</div>
+                    <span>↕</span>
+                  </div>
+                </th>
+                <th>Case type</th>
+              </tr>
+            </thead>
+            <tbody id="txnTableViewBody"></tbody>
           </table>
         </div>
 
@@ -2051,7 +2188,9 @@
                     <div class="dealer-filter-range-input">
                       <span>₹</span
                       ><input
-                        type="number"
+                        type="text"
+                        inputmode="decimal"
+                        autocomplete="off"
                         id="txnSanctionFrom"
                         placeholder="0"
                       />
@@ -2060,12 +2199,15 @@
                     <div class="dealer-filter-range-input">
                       <span>₹</span
                       ><input
-                        type="number"
+                        type="text"
+                        inputmode="decimal"
+                        autocomplete="off"
                         id="txnSanctionTo"
                         placeholder="0"
                       />
                     </div>
                   </div>
+                  <small class="filter-error" id="txnSanctionError"></small>
                 </div>
               </div>
 
@@ -2112,6 +2254,31 @@
                     Custom date range
                   </button>
                 </div>
+
+                <div
+                  class="dealer-filter-field renewal-custom-range"
+                  id="txnCustomField"
+                  hidden
+                >
+                  <label>Custom date range</label>
+                  <div class="dealer-filter-range">
+                    <button
+                      type="button"
+                      class="renewal-date-input"
+                      id="txnDateFrom"
+                    >
+                      <span>Select date</span>
+                    </button>
+                    <span class="dealer-filter-range-to">to</span>
+                    <button
+                      type="button"
+                      class="renewal-date-input"
+                      id="txnDateTo"
+                    >
+                      <span>Select date</span>
+                    </button>
+                  </div>
+                </div>
               </div>
 
               <div
@@ -2125,7 +2292,9 @@
                     <div class="dealer-filter-range-input">
                       <span>₹</span
                       ><input
-                        type="number"
+                        type="text"
+                        inputmode="decimal"
+                        autocomplete="off"
                         id="txnOverdueFrom"
                         placeholder="0"
                       />
@@ -2133,9 +2302,16 @@
                     <span class="dealer-filter-range-to">to</span>
                     <div class="dealer-filter-range-input">
                       <span>₹</span
-                      ><input type="number" id="txnOverdueTo" placeholder="0" />
+                      ><input
+                        type="text"
+                        inputmode="decimal"
+                        autocomplete="off"
+                        id="txnOverdueTo"
+                        placeholder="0"
+                      />
                     </div>
                   </div>
+                  <small class="filter-error" id="txnOverdueError"></small>
                 </div>
               </div>
             </div>
@@ -2156,9 +2332,409 @@
                 Apply
               </button>
             </div>
+
+            <div class="renewal-calendar" id="txnCalendar"></div>
           </div>
         </div>
       </section>
+
+      <!-- RENEWAL DETAILS PAGE -->
+      <section
+        class="new-dealer-page renewal-dashboard-page"
+        id="renewalDetailsPage"
+        style="display: none"
+      >
+        <div class="new-dealer-page-header">
+          <div class="new-dealer-heading">
+            <h1>Supply chain finance</h1>
+            <div class="new-dealer-program">
+              Program name: <span>Kartikey Corporations</span>
+            </div>
+          </div>
+          <div class="new-dealer-last-login">
+            Last updated: <strong>4 Jun '26</strong> at <strong>8:00 AM</strong>
+          </div>
+        </div>
+
+        <div class="new-dealer-tabs">
+          <div class="new-dealer-tab-list">
+            <div class="new-dealer-tab" data-goto="newdealer">
+              <span>New dealer leads</span>
+              <span class="new-dealer-count grey">65</span>
+            </div>
+            <div class="new-dealer-tab" data-goto="transaction">
+              <span>Transaction dashboard</span>
+              <span class="new-dealer-count grey">90</span>
+            </div>
+            <div class="new-dealer-tab active">
+              <span>Renewal details</span>
+              <span class="new-dealer-count orange">83</span>
+            </div>
+          </div>
+
+          <div class="new-dealer-tab-spacer"></div>
+
+          <div class="new-dealer-add-wrapper">
+            <button
+              type="button"
+              class="new-dealer-add-btn"
+              id="renewalAddDealerBtn"
+            >
+              Add dealer
+              <span class="new-dealer-chevron">⌄</span>
+            </button>
+            <div class="new-dealer-add-menu" id="renewalAddDealerMenu">
+              <div class="new-dealer-add-menu-item">Add single dealer</div>
+              <div class="new-dealer-add-menu-item">Bulk upload dealers</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="new-dealer-toolbar">
+          <div class="new-dealer-filter-left">
+            <button
+              type="button"
+              class="dealer-filter-btn active renewal-filter-btn"
+              data-renewal-filter="all"
+            >
+              All <span>83</span>
+            </button>
+            <button
+              type="button"
+              class="dealer-filter-btn renewal-filter-btn"
+              data-renewal-filter="expired"
+            >
+              Expired <span>5</span>
+            </button>
+            <button
+              type="button"
+              class="dealer-filter-btn renewal-filter-btn"
+              data-renewal-filter="due"
+            >
+              Renewal due <span>78</span>
+            </button>
+          </div>
+
+          <div class="new-dealer-toolbar-right">
+            <button
+              type="button"
+              class="hide-details-btn"
+              id="renewalHideDetailsBtn"
+            >
+              <span class="hide-details-label">Hide details</span>
+              <span class="hide-details-eye material-symbols-outlined"
+                >visibility_off</span
+              >
+            </button>
+            <div class="view-switch">
+              <button
+                type="button"
+                class="view-switch-btn active"
+                data-view="list"
+                data-tooltip="Switch to new list view"
+              ></button>
+              <button
+                type="button"
+                class="view-switch-btn"
+                data-view="grid"
+                data-tooltip="Switch to old table view"
+              ></button>
+            </div>
+            <div class="dealer-search-box">
+              <span class="dealer-search-icon">⌕</span>
+              <input
+                type="text"
+                id="renewalSearchInput"
+                placeholder="Search by dealer, PAN,..."
+              />
+            </div>
+            <button
+              type="button"
+              class="dealer-filters-btn"
+              id="renewalFiltersBtn"
+            >
+              <span>Filters</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- LIST VIEW -->
+        <div class="new-dealer-table-wrapper renewal-list-wrapper">
+          <table class="new-dealer-table renewal-table">
+            <thead>
+              <tr>
+                <th>
+                  <div class="dealer-th-inner">
+                    <div>Firm details</div>
+                    <span>↕</span>
+                  </div>
+                </th>
+                <th>Dealer details</th>
+                <th>
+                  <div class="dealer-th-inner">
+                    <div>Association<br />with corporate</div>
+                    <span>↕</span>
+                  </div>
+                </th>
+                <th>
+                  <div class="dealer-th-inner">
+                    <div>Sales to dealer<br />(last 12M)</div>
+                    <span>↕</span>
+                  </div>
+                </th>
+                <th>
+                  <div class="dealer-th-inner">
+                    <div>Sanction limit</div>
+                    <span>↕</span>
+                  </div>
+                </th>
+                <th>Renewal status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="renewalTableBody"></tbody>
+          </table>
+        </div>
+
+        <!-- GRID VIEW -->
+        <div class="dealer-table-view-wrapper renewal-grid-wrapper">
+          <table class="dealer-table-view renewal-table-view">
+            <thead>
+              <tr>
+                <th>
+                  <div class="dealer-th-inner">
+                    <div>Firm details</div>
+                    <span>↕</span>
+                  </div>
+                </th>
+                <th>Action</th>
+                <th>Renewal status</th>
+                <th>Mobile number</th>
+                <th>Email ID</th>
+                <th>PAN</th>
+                <th>
+                  <div class="dealer-th-inner">
+                    <div>Sales to dealer<br />(last 12M)</div>
+                    <span>↕</span>
+                  </div>
+                </th>
+                <th>
+                  <div class="dealer-th-inner">
+                    <div>Association with corporate</div>
+                    <span>↕</span>
+                  </div>
+                </th>
+                <th>
+                  <div class="dealer-th-inner">
+                    <div>Sanction limit</div>
+                    <span>↕</span>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody id="renewalTableViewBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- RENEWAL FILTERS MODAL -->
+      <div class="dealer-filters-overlay" id="renewalFiltersOverlay">
+        <div class="dealer-filters-modal renewal-filters-modal">
+          <div class="dealer-filters-header">
+            <h2>Renewal details filters</h2>
+            <button
+              type="button"
+              class="dealer-filters-close"
+              id="renewalFiltersClose"
+            >
+              ×
+            </button>
+          </div>
+
+          <div class="dealer-filters-body">
+            <div class="dealer-filter-pills" id="renewalFilterTabs">
+              <button
+                type="button"
+                class="dealer-filter-pill active"
+                data-tab="all"
+              >
+                All
+              </button>
+              <button
+                type="button"
+                class="dealer-filter-pill"
+                data-tab="expired"
+              >
+                Expired
+              </button>
+              <button type="button" class="dealer-filter-pill" data-tab="due">
+                Renewal due
+              </button>
+            </div>
+
+            <div class="dealer-filters-row">
+              <div class="dealer-filter-field">
+                <label>Firm</label>
+                <div class="dealer-filter-dropdown" id="renewalFirmDropdown">
+                  <div class="dealer-filter-search-input">
+                    <input
+                      type="text"
+                      id="renewalFirmSearchInput"
+                      placeholder="Search or select firm, code, PAN"
+                    />
+                    <span>⌄</span>
+                  </div>
+                  <div class="dealer-filter-dropdown-panel"></div>
+                </div>
+              </div>
+              <div class="dealer-filter-field">
+                <label>Sanction limit</label>
+                <div class="dealer-filter-range">
+                  <div class="dealer-filter-range-input">
+                    <span>₹</span
+                    ><input
+                      type="text"
+                      inputmode="decimal"
+                      autocomplete="off"
+                      id="renewalSanctionFrom"
+                      placeholder="0"
+                    />
+                  </div>
+                  <span class="dealer-filter-range-to">to</span>
+                  <div class="dealer-filter-range-input">
+                    <span>₹</span
+                    ><input
+                      type="text"
+                      inputmode="decimal"
+                      autocomplete="off"
+                      id="renewalSanctionTo"
+                      placeholder="0"
+                    />
+                  </div>
+                </div>
+                <small class="filter-error" id="renewalSanctionError"></small>
+              </div>
+            </div>
+
+            <div class="dealer-filters-row">
+              <div class="dealer-filter-field">
+                <label>Uploaded by</label>
+                <div
+                  class="dealer-filter-dropdown"
+                  id="renewalUploadedByDropdown"
+                >
+                  <button type="button" class="dealer-filter-dropdown-btn">
+                    All <span>⌄</span>
+                  </button>
+                  <div class="dealer-filter-dropdown-panel">
+                    <label
+                      ><input type="checkbox" value="all" checked /> All</label
+                    >
+                    <label
+                      ><input type="checkbox" value="icici" /> ICICI Bank</label
+                    >
+                    <label
+                      ><input type="checkbox" value="anchor" /> Anchor
+                      corporate</label
+                    >
+                  </div>
+                </div>
+              </div>
+              <div class="dealer-filter-field"></div>
+            </div>
+
+            <div
+              class="dealer-filter-field full"
+              id="renewalDaysField"
+              style="display: none"
+            >
+              <label id="renewalDaysLabel">Days to expire</label>
+              <div class="dealer-filter-pills" id="renewalDaysPills">
+                <button
+                  type="button"
+                  class="dealer-filter-pill active"
+                  data-value="all"
+                >
+                  All
+                </button>
+                <button
+                  type="button"
+                  class="dealer-filter-pill"
+                  data-value="15"
+                >
+                  0-15 days
+                </button>
+                <button
+                  type="button"
+                  class="dealer-filter-pill"
+                  data-value="30"
+                >
+                  1 month
+                </button>
+                <button
+                  type="button"
+                  class="dealer-filter-pill"
+                  data-value="90"
+                >
+                  3 months
+                </button>
+                <button
+                  type="button"
+                  class="dealer-filter-pill"
+                  data-value="custom"
+                >
+                  Custom date range
+                </button>
+              </div>
+            </div>
+
+            <div
+              class="dealer-filter-field renewal-custom-range"
+              id="renewalCustomField"
+              style="display: none"
+            >
+              <label>Custom date range</label>
+              <div class="dealer-filter-range">
+                <button
+                  type="button"
+                  class="renewal-date-input"
+                  id="renewalDateFrom"
+                >
+                  <span>Select date</span>
+                </button>
+                <span class="dealer-filter-range-to">to</span>
+                <button
+                  type="button"
+                  class="renewal-date-input"
+                  id="renewalDateTo"
+                >
+                  <span>Select date</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="dealer-filters-footer">
+            <button
+              type="button"
+              class="dealer-filters-reset"
+              id="renewalFiltersReset"
+            >
+              Reset
+            </button>
+            <button
+              type="button"
+              class="dealer-filters-apply"
+              id="renewalFiltersApply"
+              disabled
+            >
+              Apply
+            </button>
+          </div>
+
+          <div class="renewal-calendar" id="renewalCalendar"></div>
+        </div>
+      </div>
 
       <div class="custom-modal-overlay" id="openTranchesModal">
         <div class="custom-modal open-tranches-modal">
@@ -2171,18 +2747,20 @@
               <span class="material-icons">close</span>
             </button>
           </div>
-          <table class="tranches-table">
-            <thead>
-              <tr>
-                <th>Transaction ID</th>
-                <th>Transaction date <span>↕</span></th>
-                <th>Transaction type <span>↕</span></th>
-                <th>Amount <span>↕</span></th>
-                <th>Due date <span>↕</span></th>
-              </tr>
-            </thead>
-            <tbody id="tranchesTableBody"></tbody>
-          </table>
+          <div class="tranches-scroll">
+            <table class="tranches-table">
+              <thead>
+                <tr>
+                  <th>Transaction ID</th>
+                  <th>Transaction date <span>↕</span></th>
+                  <th>Transaction type <span>↕</span></th>
+                  <th>Amount <span>↕</span></th>
+                  <th>Due date <span>↕</span></th>
+                </tr>
+              </thead>
+              <tbody id="tranchesTableBody"></tbody>
+            </table>
+          </div>
           <div class="modal-footer-right">
             <button class="outline-orange-btn" id="openTranchesCloseBtn">
               Close
@@ -2315,8 +2893,11 @@
 
       <!-- TOAST  -->
       <div class="app-toast" id="appToast" role="status" aria-live="polite">
-        <span class="app-toast-icon" id="appToastIcon">✓</span>
-        <span class="app-toast-text" id="appToastText"></span>
+        <span class="app-toast-icon" id="appToastIcon"></span>
+        <div class="app-toast-body">
+          <span class="app-toast-text" id="appToastText"></span>
+          <span class="app-toast-sub" id="appToastSub"></span>
+        </div>
       </div>
 
       <div id="toast"></div>
