@@ -1605,6 +1605,439 @@ function applyAllCardsMasking(showReal) {
   });
 }
 
+// Add single lead
+$(document).on("click", "#addLeadProceedBtn", function (e) {
+  closeModal("#addDelarLeadModal");
+  openModal("#stepModal");
+});
+
+$(document).on("click", "#modalCloseBtn, #cancelBtn", function (e) {
+  closeModal("#addDelarLeadModal");
+});
+
+$(document).on("click", "#stepNextBtn", function (e) {
+  closeModal("#stepModal");
+  openModal("#reviewModal");
+});
+
+$(document).on("click", "#cancelStepBtn", function (e) {
+  closeModal("#stepModal");
+  openModal("#addDelarLeadModal");
+});
+
+$(document).on("click", "#reviewSubmitBtn", function (e) {
+  closeModal("#reviewModal");
+  openModal("#checkEligibilityModal");
+});
+
+$(document).on("click", "#reviewCancel", function (e) {
+  closeModal("#reviewModal");
+  openModal("#stepModal");
+});
+
+$(document).on("click", "#submitEligibilityBtn", function (e) {
+  closeModal("#checkEligibilityModal");
+  openModal("#leadSuccessModal");
+});
+
+$(document).on("click", "#modalReviewCloseBtn", function (e) {
+  closeModal("#reviewModal");
+});
+
+$(document).on("click", "#successSubmitBtn", function (e) {
+  closeModal("#leadSuccessModal");
+});
+
+$(document).on("click", "#addDealerMenu .menu-item", function (e) {
+  e.stopPropagation();
+  var action = $(this).data("action");
+
+  $("#addDealerMenu").removeClass("open");
+
+  if (action === "single-lead") {
+    openModal("#addDelarLeadModal");
+  } else if (action === "bulk-upload") {
+    openModal("#bulkUploadModal");
+  }
+});
+
+const constitutions = [
+  "Proprietorship",
+  "Partnership",
+  "Private Limited",
+  "LLP",
+  "HUF",
+];
+const cities = ["Mumbai", "Delhi", "Bangalore", "Chennai", "Kolkata", "Pune"];
+
+constitutions.forEach(function (item) {
+  $("#constitution").append(`<option value="${item}">${item}</option>`);
+});
+
+cities.forEach(function (item) {
+  $("#city").append(`<option value="${item}">${item}</option>`);
+});
+
+const months = [
+  "May '26",
+  "Apr '26",
+  "Mar '26",
+  "Feb '26",
+  "Jan '26",
+  "Dec '25",
+  "Nov '25",
+  "Oct '25",
+  "Sep '25",
+  "Aug '25",
+  "Jul '25",
+  "Jun '25",
+];
+
+function generateMonthlySalesGrid() {
+  const $grid = $("#monthlySalesGrid");
+  $grid.empty();
+  months.forEach(function (month) {
+    $grid.append(`
+        <div class="month-item">
+          <label>${month}</label>
+          <input type="text" class="monthly-sales-input" placeholder="₹" data-month="${month}">
+        </div>
+      `);
+  });
+  $("#monthlySalesSummary").hide();
+  $("#monthlySalesFooter").show();
+}
+
+$("#addMonthlySalesBtn").on("click", function () {
+  const startDate = $("#startDate").val();
+  const endDate = $("#endDate").val();
+
+  if (!startDate || !endDate) {
+    $("#dateRangeError").addClass("show");
+    return;
+  }
+
+  if (new Date(startDate) > new Date(endDate)) {
+    $("#dateRangeError").addClass("show");
+    return;
+  }
+
+  $("#dateRangeError").removeClass("show");
+  generateMonthlySalesGrid();
+  $("#monthlySalesContainer").show();
+
+  $("html, body").animate(
+    {
+      scrollTop: $("#monthlySalesContainer").offset().top - 100,
+    },
+    500,
+  );
+});
+
+$(document).on("click", "#editMonthlySales", function () {
+  $("#monthlySalesGrid input").prop("disabled", false);
+  $("#monthlySalesFooter").show();
+  $("#monthlySalesSummary").hide();
+});
+
+$(document).on("click", "#resetMonthlySales", function () {
+  $("#monthlySalesGrid input").val("").removeClass("input-error");
+  $("#monthlySalesGrid .error-msg").remove();
+});
+
+$(document).on("click", "#submitMonthlySalesBtn", function () {
+  let isValid = true;
+  let total = 0;
+
+  $(".monthly-sales-input").each(function () {
+    const val = $(this).val().trim();
+    if (val) {
+      const numVal = parseFloat(val.replace(/[^0-9.-]+/g, ""));
+      if (isNaN(numVal)) {
+        $(this).addClass("input-error");
+        isValid = false;
+      } else {
+        $(this).removeClass("input-error");
+        total += numVal;
+      }
+    } else {
+      $(this).removeClass("input-error");
+    }
+  });
+
+  if (!isValid) {
+    return;
+  }
+
+  const formattedTotal = new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(total);
+
+  $("#totalSalesValue").text(formattedTotal);
+  $("#monthlySalesSummary").show();
+  $("#monthlySalesFooter").hide();
+  $("#monthlySalesGrid input").prop("disabled", true);
+
+  validateForm();
+});
+
+function showError(elementId, errorId) {
+  $("#" + elementId).addClass("input-error");
+  $("#" + errorId).addClass("show");
+}
+
+function clearError(elementId, errorId) {
+  $("#" + elementId).removeClass("input-error");
+  $("#" + errorId).removeClass("show");
+}
+
+$(document).on(
+  "mouseleave",
+  "#firmName, #dealerCode, #panNumber, #mobileNumber, #emailId, #address1, #pinCode, #firstName, #associationYears, #recommendationLimit, #instancesOverdue, #chequeReturns",
+  function () {
+    validateField($(this));
+    validateForm();
+  },
+);
+
+$(document).on("change", "#constitution, #city, #salesType", function () {
+  validateField($(this));
+  validateForm();
+});
+
+function validateField($el) {
+  const id = $el.attr("id");
+  const val = $el.val().trim();
+  let isValid = true;
+
+  $el.removeClass("input-error");
+  $el.closest(".form-group").find(".error-msg").removeClass("show");
+
+  switch (id) {
+    case "firmName":
+      if (!val || !/^[a-zA-Z0-9\s&.,'-]+$/.test(val)) {
+        showError(id, "firmNameError");
+        isValid = false;
+      }
+      break;
+
+    case "dealerCode":
+      if (!val) {
+        showError(id, "dealerCodeError");
+        isValid = false;
+      }
+      break;
+
+    case "panNumber":
+      if (!val || !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(val.toUpperCase())) {
+        showError(id, "panError");
+        isValid = false;
+      }
+      break;
+
+    case "constitution":
+      if (!val) {
+        showError(id, "constitutionError");
+        isValid = false;
+      }
+      break;
+
+    case "mobileNumber":
+      if (!val || !/^\d{10}$/.test(val)) {
+        showError(id, "mobileError");
+        isValid = false;
+      }
+      break;
+
+    case "emailId":
+      if (!val || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+        showError(id, "emailError");
+        isValid = false;
+      }
+      break;
+
+    case "address1":
+      if (!val || val.length < 3) {
+        showError(id, "address1Error");
+        isValid = false;
+      }
+      break;
+
+    case "pinCode":
+      if (!val || !/^\d{6}$/.test(val)) {
+        showError(id, "pinError");
+        isValid = false;
+      }
+      break;
+
+    case "city":
+      if (!val) {
+        showError(id, "cityError");
+        isValid = false;
+      }
+      break;
+
+    case "firstName":
+      if (val && !/^[a-zA-Z\s]+$/.test(val)) {
+        showError(id, "firstNameError");
+        isValid = false;
+      }
+      break;
+
+    case "salesType":
+      if (!val) {
+        showError(id, "salesTypeError");
+        isValid = false;
+      }
+      break;
+
+    case "associationYears":
+      if (!val || !/^\d+$/.test(val) || parseInt(val) < 0) {
+        showError(id, "associationError");
+        isValid = false;
+      }
+      break;
+
+    case "recommendationLimit":
+      if (!val || isNaN(parseFloat(val.replace(/,/g, "")))) {
+        showError(id, "limitError");
+        isValid = false;
+      } else {
+        const num = parseFloat(val.replace(/,/g, ""));
+        $("#limitHelper").text(numberToWords(num) + " rupees");
+      }
+      break;
+
+    case "instancesOverdue":
+      if (!val || !/^\d+$/.test(val)) {
+        showError(id, "overdueError");
+        isValid = false;
+      }
+      break;
+
+    case "chequeReturns":
+      if (!val || !/^\d+$/.test(val)) {
+        showError(id, "chequeError");
+        isValid = false;
+      }
+      break;
+  }
+
+  return isValid;
+}
+
+function numberToWords(num) {
+  if (num === 0) return "Zero";
+  if (num === 30000000) return "Rupees three crore";
+  return num.toLocaleString("en-IN");
+}
+
+function validateForm() {
+  let isFormValid = true;
+
+  const requiredFields = [
+    "firmName",
+    "dealerCode",
+    "panNumber",
+    "constitution",
+    "mobileNumber",
+    "emailId",
+    "address1",
+    "pinCode",
+    "city",
+    "salesType",
+    "associationYears",
+    "recommendationLimit",
+    "instancesOverdue",
+    "chequeReturns",
+  ];
+
+  requiredFields.forEach(function (id) {
+    const $el = $("#" + id);
+    if (!$el.val() || $el.hasClass("input-error")) {
+      isFormValid = false;
+    }
+  });
+
+  if ($("#monthlySalesContainer").is(":visible")) {
+    const isGridSubmitted = $("#monthlySalesSummary").is(":visible");
+    if (!isGridSubmitted) {
+      isFormValid = false;
+    }
+  }
+
+  if (!$("#startDate").val() || !$("#endDate").val()) {
+    isFormValid = false;
+  }
+
+  // if (isFormValid) {
+  //   $("#stepNextBtn").prop("disabled", false);
+  // } else {
+  //   $("#stepNextBtn").prop("disabled", true);
+  // }
+}
+
+$("#startDate, #endDate")
+  .on("focus", function () {
+    $(this).attr("type", "date");
+  })
+  .on("blur", function () {
+    if (!$(this).val()) {
+      $(this).attr("type", "text");
+    }
+  });
+
+$("#startDate, #endDate").on("change", function () {
+  const val = $(this).val();
+  if (val) {
+    const date = new Date(val);
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const yyyy = date.getFullYear();
+    $(this).val(`${mm}-${yyyy}`);
+    $(this).attr("type", "text");
+  }
+  validateForm();
+});
+
+validateForm();
+
+// Eligible status
+const eligibleStatus = "Y";
+if (eligibleStatus === "Y") {
+  $("#eligibleStatus").show();
+  $("#submitEligibilityBtn")
+    .prop("disabled", false)
+    .removeClass("disabled-btn");
+} else {
+  $("#notEligibleStatus").show();
+  $("#submitEligibilityBtn").prop("disabled", true).addClass("disabled-btn");
+}
+
+// Add another lead
+$(document).on("click", "#addAnotherBtn", function (e) {
+  closeModal("#leadSuccessModal");
+
+  const isAddLeadTermChecked = $("#skipOverviewCheck").is(":checked");
+  if (isAddLeadTermChecked) {
+    openModal("#stepModal");
+  } else {
+    openModal("#addDelarLeadModal");
+  }
+});
+
+// Save and exit modal
+$(document).on("click", ".saveExitBtn", function (e) {
+  closeModal("#stepModal");
+  openModal("#saveAndExitModal");
+});
+
+$(document).on("click", "#saveAndCloseBtn", function (e) {
+  closeModal("#saveAndExitModal");
+  showToast("success", "Draft saved successfully", "");
+});
+
 // Common functions
 function lucideIconCommonCode() {
   if (window.lucide) lucide.createIcons();
