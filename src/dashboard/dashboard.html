@@ -10,9 +10,6 @@
     <link rel="stylesheet" href="../assets/css/material-symbols.css" />
     <link rel="stylesheet" href="./dashboard.css" />
     <link rel="stylesheet" href="./new-dealer.css" />
-    <link rel="stylesheet" href="new-dealer-responsive.css" />
-    <link rel="stylesheet" href="txn-responsive.css" />
-    <link rel="stylesheet" href="renewal-responsive.css" />
   </head>
 
   <body class="dashboard-page">
@@ -650,20 +647,15 @@
               <span class="new-dealer-chevron">⌄</span>
             </div>
 
-            <div class="new-dealer-add-wrapper">
-              <button
-                type="button"
-                class="new-dealer-add-btn"
-                id="newDealerAddBtn"
-              >
+            <div class="new-dealer-add-wrapper add-dealer-wrapper">
+              <button type="button" class="orange-btn" id="newDealerAddBtn">
                 Add dealer
-                <span class="new-dealer-chevron">⌄</span>
+                <i data-lucide="chevron-down"></i>
               </button>
 
-              <div class="new-dealer-add-menu" id="newDealerAddMenu">
-                <div class="new-dealer-add-menu-item">Add single dealer</div>
-
-                <div class="new-dealer-add-menu-item">Bulk upload dealers</div>
+              <div class="add-dealer-menu" id="newDealerAddMenu">
+                <div class="menu-item">Add single dealer</div>
+                <div class="menu-item">Bulk upload dealers</div>
               </div>
             </div>
           </div>
@@ -1951,18 +1943,15 @@
 
             <div class="new-dealer-tab-spacer"></div>
 
-            <div class="new-dealer-add-wrapper">
-              <button
-                type="button"
-                class="new-dealer-add-btn"
-                id="txnAddDealerBtn"
-              >
+            <div class="new-dealer-add-wrapper add-dealer-wrapper">
+              <button type="button" class="orange-btn" id="txnAddDealerBtn">
                 Add dealer
-                <span class="new-dealer-chevron">⌄</span>
+                <i data-lucide="chevron-down"></i>
               </button>
-              <div class="new-dealer-add-menu" id="txnAddDealerMenu">
-                <div class="new-dealer-add-menu-item">Add single dealer</div>
-                <div class="new-dealer-add-menu-item">Bulk upload dealers</div>
+
+              <div class="add-dealer-menu" id="txnAddDealerMenu">
+                <div class="menu-item">Add single dealer</div>
+                <div class="menu-item">Bulk upload dealers</div>
               </div>
             </div>
           </div>
@@ -2397,18 +2386,15 @@
 
             <div class="new-dealer-tab-spacer"></div>
 
-            <div class="new-dealer-add-wrapper">
-              <button
-                type="button"
-                class="new-dealer-add-btn"
-                id="renewalAddDealerBtn"
-              >
+            <div class="new-dealer-add-wrapper add-dealer-wrapper">
+              <button type="button" class="orange-btn" id="renewalAddDealerBtn">
                 Add dealer
-                <span class="new-dealer-chevron">⌄</span>
+                <i data-lucide="chevron-down"></i>
               </button>
-              <div class="new-dealer-add-menu" id="renewalAddDealerMenu">
-                <div class="new-dealer-add-menu-item">Add single dealer</div>
-                <div class="new-dealer-add-menu-item">Bulk upload dealers</div>
+
+              <div class="add-dealer-menu" id="renewalAddDealerMenu">
+                <div class="menu-item">Add single dealer</div>
+                <div class="menu-item">Bulk upload dealers</div>
               </div>
             </div>
           </div>
@@ -2910,6 +2896,35 @@
               disabled
             >
               Share
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- UPLOADED DETAILS MODAL (new dealer + renewal) -->
+      <div
+        class="custom-modal-overlay uploaded-details-overlay"
+        id="uploadedDetailsOverlay"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="uploadedDetailsTitle"
+      >
+        <div class="custom-modal uploaded-details-modal">
+          <div class="ud-head">
+            <div>
+              <h2 class="ud-title" id="uploadedDetailsTitle">Uploaded details</h2>
+              <p class="ud-subtitle" id="uploadedDetailsSubtitle"></p>
+            </div>
+            <button class="modal-close-btn" id="uploadedDetailsClose" type="button">
+              <span class="material-icons">close</span>
+            </button>
+          </div>
+
+          <div class="ud-body" id="uploadedDetailsBody"></div>
+
+          <div class="modal-footer-right">
+            <button class="outline-orange-btn" id="uploadedDetailsCloseBtn" type="button">
+              Close
             </button>
           </div>
         </div>
