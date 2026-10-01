@@ -1132,7 +1132,8 @@
                   <label>Dealer's firm name</label>
                   <input type="text" id="firmName" placeholder="Enter name" />
                   <span class="error-msg" id="firmNameError"
-                    >Entered firm name is in wrong format, please enter a valid
+                    ><i data-lucide="info" class="error-info-icon"></i> Entered
+                    firm name is in wrong format, please enter a valid
                     name.</span
                   >
                 </div>
@@ -1140,7 +1141,8 @@
                   <label>Dealer code</label>
                   <input type="text" id="dealerCode" placeholder="Enter code" />
                   <span class="error-msg" id="dealerCodeError"
-                    >Entered dealer code is invalid.</span
+                    ><i data-lucide="info" class="error-info-icon"></i> Entered
+                    dealer code is invalid.</span
                   >
                 </div>
                 <div class="form-group empty-group"></div>
@@ -1159,20 +1161,35 @@
                     maxlength="10"
                   />
                   <span class="error-msg" id="panError"
-                    >Entered PAN number is in wrong format, please enter a valid
+                    ><i data-lucide="info" class="error-info-icon"></i> Entered
+                    PAN number is in wrong format, please enter a valid
                     10-character alphanumeric identifier.</span
                   >
                 </div>
                 <div class="form-group">
                   <label>Constitution</label>
-                  <div class="custom-select-wrapper">
-                    <select id="constitution">
-                      <option value="">Select constitution</option>
-                    </select>
-                  </div>
-                  <span class="error-msg" id="constitutionError"
-                    >Please select a constitution.</span
+                  <div
+                    class="custom-select-wrapper"
+                    id="constitutionCustomSelect"
                   >
+                    <div class="custom-select-trigger">
+                      <span class="selected-option">Select constitution</span>
+                      <div class="select-right">
+                        <i class="material-icons">expand_more</i>
+                      </div>
+                    </div>
+                    <div
+                      class="custom-select-options"
+                      style="display: none"
+                    ></div>
+                  </div>
+                  <select id="constitutionSelect" style="display: none">
+                    <option value="">Select constitution</option>
+                  </select>
+                  <span class="error-msg" id="constitutionError">
+                    <i data-lucide="info" class="error-info-icon"></i> Please
+                    select a constitution.
+                  </span>
                 </div>
                 <div class="form-group empty-group"></div>
 
@@ -1185,7 +1202,8 @@
                     maxlength="10"
                   />
                   <span class="error-msg" id="mobileError"
-                    >Entered mobile number is of 9-digits, please enter a valid
+                    ><i data-lucide="info" class="error-info-icon"></i> Entered
+                    mobile number should be of 10-digits, please enter a valid
                     10-digit number.</span
                   >
                 </div>
@@ -1197,8 +1215,9 @@
                     placeholder="Enter email ID"
                   />
                   <span class="error-msg" id="emailError"
-                    >Entered email ID is in wrong format, please enter a valid
-                    email ID.</span
+                    ><i data-lucide="info" class="error-info-icon"></i> Entered
+                    email ID is in wrong format, please enter a valid email
+                    ID.</span
                   >
                 </div>
                 <div class="form-group empty-group"></div>
@@ -1211,7 +1230,8 @@
                     placeholder="Enter address"
                   />
                   <span class="error-msg" id="address1Error"
-                    >Please enter a valid address.</span
+                    ><i data-lucide="info" class="error-info-icon"></i> Please
+                    enter a valid address.</span
                   >
                 </div>
                 <div class="form-group">
@@ -1247,22 +1267,41 @@
                     maxlength="6"
                   />
                   <span class="error-msg" id="pinError"
-                    >Entered pin code is in wrong format, please enter a valid
-                    6-digit pin code.</span
+                    ><i data-lucide="info" class="error-info-icon"></i> Entered
+                    pin code is in wrong format, please enter a valid 6-digit
+                    pin code.</span
                   >
                 </div>
                 <div class="form-group empty-group"></div>
 
                 <div class="form-group">
                   <label>City</label>
-                  <div class="custom-select-wrapper">
-                    <select id="city">
-                      <option value="">Select city</option>
-                    </select>
+                  <div class="custom-select-wrapper" id="cityCustomSelect">
+                    <div class="custom-select-trigger">
+                      <span class="selected-option">Select city</span>
+                      <div class="select-right">
+                        <i class="material-icons">expand_more</i>
+                      </div>
+                    </div>
+                    <div
+                      class="custom-select-options"
+                      style="display: none"
+                    ></div>
                   </div>
-                  <span class="error-msg" id="cityError"
-                    >Please select a city.</span
+                  <select id="citySelect" style="display: none">
+                    <option value="">Select city</option>
+                  </select>
+                  <span
+                    class="state-display"
+                    id="cityStateDisplay"
+                    style="display: none"
                   >
+                    State: <span id="cityStateValue"></span>
+                  </span>
+                  <span class="error-msg" id="cityError">
+                    <i data-lucide="info" class="error-info-icon"></i> Please
+                    select a city.
+                  </span>
                 </div>
                 <div class="form-group">
                   <label
@@ -1271,7 +1310,8 @@
                   >
                   <input type="text" id="firstName" placeholder="Enter name" />
                   <span class="error-msg" id="firstNameError"
-                    >Entered first name is in wrong format, please enter a valid
+                    ><i data-lucide="info" class="error-info-icon"></i> Entered
+                    first name is in wrong format, please enter a valid
                     name.</span
                   >
                 </div>
@@ -1294,56 +1334,86 @@
               <div class="form-grid-3">
                 <div class="form-group">
                   <label>Sales type</label>
-                  <div class="custom-select-wrapper">
-                    <select id="salesType">
-                      <option value="">Select type</option>
-                      <option value="Past">Past</option>
-                      <option value="Current">Current</option>
-                    </select>
+                  <div class="custom-select-wrapper" id="saleTypeCustomSelect">
+                    <div class="custom-select-trigger">
+                      <span class="selected-option">Sales type</span>
+                      <div class="select-right">
+                        <i class="material-icons">expand_more</i>
+                      </div>
+                    </div>
+                    <div class="custom-select-options" style="display: none">
+                      <div class="option-item" data-value="general">
+                        General
+                      </div>
+                    </div>
                   </div>
-                  <span class="error-msg" id="salesTypeError"
-                    >Please select a sales type.</span
-                  >
+                  <select id="saleTypeSelect" style="display: none">
+                    <option value="">Sales type</option>
+                    <option value="general">General</option>
+                  </select>
+                  <span class="error-msg" id="salesTypeError">
+                    <i data-lucide="info" class="error-info-icon"></i> Please
+                    select a sales type.
+                  </span>
                 </div>
 
                 <div class="form-group">
                   <label>Date range (mm-yyyy)</label>
                   <div class="date-range-wrapper">
-                    <div class="date-input-wrap">
+                    <div class="date-input custom-datepicker-wrap">
                       <input
                         type="text"
-                        id="startDate"
+                        class="startDate"
                         placeholder="Start date"
                         readonly
                       />
-                      <span class="material-icons cal-icon"
+                      <span class="material-icons custom-cal-icon"
                         >calendar_today</span
                       >
+                      <div
+                        class="custom-calendar-popup"
+                        style="display: none"
+                      ></div>
                     </div>
                     <span class="range-separator">to</span>
                     <div class="date-input-wrap">
+                      <div class="end-date-input" id="endDateTrigger">
+                        <span class="material-icons">add</span> End date
+                      </div>
+                    </div>
+                    <div
+                      class="date-input custom-datepicker-wrap"
+                      id="endDateWrap"
+                      style="display: none"
+                    >
                       <input
                         type="text"
-                        id="endDate"
+                        class="endDate"
                         placeholder="End date"
                         readonly
                       />
-                      <span class="material-icons cal-icon"
+                      <span class="material-icons custom-cal-icon"
                         >calendar_today</span
                       >
+                      <div
+                        class="custom-calendar-popup"
+                        style="display: none"
+                      ></div>
                     </div>
                   </div>
                   <span class="error-msg" id="dateRangeError"
-                    >Entered start date cannot be older than end date, please
-                    enter a valid date range.</span
+                    ><i data-lucide="info" class="error-info-icon"></i> Entered
+                    start date cannot be older than end date, please enter a
+                    valid date range.</span
                   >
                 </div>
 
                 <div class="form-group add-btn-group">
                   <button
                     type="button"
-                    class="outline-orange-btn"
+                    class="outline-orange-btn btn-disabled"
                     id="addMonthlySalesBtn"
+                    disabled
                   >
                     Add
                   </button>
@@ -1358,28 +1428,43 @@
                 <div class="monthly-sales-header">
                   <h4>Monthly sales</h4>
                   <div class="header-actions">
-                    <span class="edit-action" id="editMonthlySales">Edit</span>
+                    <span
+                      class="edit-action"
+                      id="editMonthlySales"
+                      style="display: none"
+                    >
+                      <div class="edit-block">
+                        <span class="material-icons">edit</span> Edit
+                      </div>
+                    </span>
                   </div>
                 </div>
                 <div class="monthly-sales-grid" id="monthlySalesGrid"></div>
                 <div class="monthly-sales-footer" id="monthlySalesFooter">
-                  <span class="reset-action" id="resetMonthlySales">Reset</span>
+                  <span
+                    class="reset-action btn-disabled"
+                    id="resetMonthlySales"
+                    disabled
+                    >Reset</span
+                  >
                   <button
                     type="button"
-                    class="outline-orange-btn"
+                    class="outline-orange-btn btn-disabled"
                     id="submitMonthlySalesBtn"
+                    disabled
                   >
                     Submit
                   </button>
                 </div>
-                <div
-                  class="monthly-sales-summary"
-                  id="monthlySalesSummary"
-                  style="display: none"
-                >
-                  <span class="summary-value" id="totalSalesValue">₹0</span>
-                  <span class="summary-label">Sales to dealer (last 12M)</span>
-                </div>
+              </div>
+
+              <div
+                class="monthly-sales-summary"
+                id="monthlySalesSummary"
+                style="display: none"
+              >
+                <span class="summary-value" id="totalSalesValue">₹0</span>
+                <span class="summary-label">Sales to dealer (last 12M)</span>
               </div>
             </div>
 
@@ -1394,8 +1479,9 @@
                     placeholder="Enter years"
                   />
                   <span class="error-msg" id="associationError"
-                    >Entered years are in wrong format, please enter a valid
-                    number of years.</span
+                    ><i data-lucide="info" class="error-info-icon"></i> Entered
+                    years are in wrong format, please enter a valid number of
+                    years.</span
                   >
                 </div>
                 <div class="form-group">
@@ -1409,8 +1495,9 @@
                     />
                   </div>
                   <span class="error-msg" id="limitError"
-                    >Entered recommendation limit is in wrong format, please
-                    enter a valid limit.</span
+                    ><i data-lucide="info" class="error-info-icon"></i> Entered
+                    recommendation limit is in wrong format, please enter a
+                    valid limit.</span
                   >
                   <span
                     style="display: none"
@@ -1429,8 +1516,9 @@
                     placeholder="Enter instances"
                   />
                   <span class="error-msg" id="overdueError"
-                    >Entered instances of overdue is in wrong format, please
-                    enter a valid number of instances.</span
+                    ><i data-lucide="info" class="error-info-icon"></i> Entered
+                    instances of overdue is in wrong format, please enter a
+                    valid number of instances.</span
                   >
                 </div>
                 <div class="form-group">
@@ -1441,8 +1529,9 @@
                     placeholder="Enter no. of returns"
                   />
                   <span class="error-msg" id="chequeError"
-                    >Entered cheque returns is in wrong format, please enter a
-                    valid number of cheque returns.</span
+                    ><i data-lucide="info" class="error-info-icon"></i> Entered
+                    cheque returns is in wrong format, please enter a valid
+                    number of cheque returns.</span
                   >
                 </div>
                 <div class="form-group empty-group"></div>
@@ -1637,7 +1726,9 @@
                 </div>
                 <div class="detail-item">
                   <span class="detail-label">Recommendation limit</span>
-                  <span class="detail-value bold">₹3,00,00,000.00</span>
+                  <span class="detail-value bold"
+                    ><span>₹</span><span>3,00,00,000.00</span></span
+                  >
                 </div>
                 <div class="detail-item">
                   <span class="detail-label">Instances of overdue (7D+)</span>

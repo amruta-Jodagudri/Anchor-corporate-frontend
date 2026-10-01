@@ -1661,6 +1661,7 @@ $(document).on("click", "#addDealerMenu .menu-item", function (e) {
   }
 });
 
+// constitution select options
 const constitutions = [
   "Proprietorship",
   "Partnership",
@@ -1668,81 +1669,154 @@ const constitutions = [
   "LLP",
   "HUF",
 ];
-const cities = ["Mumbai", "Delhi", "Bangalore", "Chennai", "Kolkata", "Pune"];
 
-constitutions.forEach(function (item) {
-  $("#constitution").append(`<option value="${item}">${item}</option>`);
-});
+(function populateConstitutions() {
+  const $select = $("#constitutionSelect");
+  const $options = $("#constitutionCustomSelect .custom-select-options");
 
-cities.forEach(function (item) {
-  $("#city").append(`<option value="${item}">${item}</option>`);
-});
+  constitutions.forEach(function (item) {
+    $select.append(
+      `<option value="${item}" data-state="${item}">
+        ${item}
+      </option>`,
+    );
 
-const months = [
-  "May '26",
-  "Apr '26",
-  "Mar '26",
-  "Feb '26",
-  "Jan '26",
-  "Dec '25",
-  "Nov '25",
-  "Oct '25",
-  "Sep '25",
-  "Aug '25",
-  "Jul '25",
-  "Jun '25",
+    $options.append(
+      `<div class="option-item" data-value="${item}" data-state="${item}">
+        ${item}
+      </div>`,
+    );
+  });
+})();
+
+// city select options
+const cityStateData = [
+  { CITYNAME: "BASAI ROAD", STATENAME: "HARYANA" },
+  { CITYNAME: "URBAN ESTATE", STATENAME: "HARYANA" },
+  { CITYNAME: "SOHNA ADDA", STATENAME: "HARYANA" },
+  { CITYNAME: "GURGAON KTY.", STATENAME: "HARYANA" },
+  { CITYNAME: "GURGAON", STATENAME: "HARYANA" },
+  { CITYNAME: "NEW COLONY", STATENAME: "HARYANA" },
+  { CITYNAME: "SHIVAJI NAGAR", STATENAME: "HARYANA" },
 ];
 
+(function populateCities() {
+  const $select = $("#citySelect");
+  const $options = $("#cityCustomSelect .custom-select-options");
+
+  cityStateData.forEach(function (item) {
+    $select.append(
+      `<option value="${item.CITYNAME}" data-state="${item.STATENAME}">
+        ${item.CITYNAME}
+      </option>`,
+    );
+
+    $options.append(
+      `<div class="option-item" data-value="${item.CITYNAME}" data-state="${item.STATENAME}">
+        ${item.CITYNAME}
+      </div>`,
+    );
+  });
+})();
+
+$(document).on("click", "#cityCustomSelect .option-item", function () {
+  const state = $(this).data("state");
+  $("#cityStateValue").text(state);
+  $("#cityStateDisplay").show();
+});
+
 function generateMonthlySalesGrid() {
+  var startVal = $(".startDate").val();
+  var endVal = $(".endDate").val();
+
+  var monthsList =
+    startVal && endVal ? buildMonthsFromRange(startVal, endVal) : months;
+
   const $grid = $("#monthlySalesGrid");
   $grid.empty();
-  months.forEach(function (month) {
+
+  monthsList.forEach(function (month) {
     $grid.append(`
         <div class="month-item">
           <label>${month}</label>
-          <input type="text" class="monthly-sales-input" placeholder="₹" data-month="${month}">
+          <div class="input-wrapper">
+            <span class="currency-symbol">₹</span>
+            <input type="text" class="monthly-sales-input" placeholder="" data-month="${month}">
+          </div>
+          <span class="error-msg sale-value-error"><i data-lucide="info" class="error-info-icon"></i> Entered amount is in wrong format, please enter a valid amount.</span>
         </div>
       `);
   });
+
   $("#monthlySalesSummary").hide();
   $("#monthlySalesFooter").show();
+  $("#submitMonthlySalesBtn").prop("disabled", true).addClass("btn-disabled");
+  lucideIconCommonCode();
 }
 
-$("#addMonthlySalesBtn").on("click", function () {
-  const startDate = $("#startDate").val();
-  const endDate = $("#endDate").val();
-
-  if (!startDate || !endDate) {
-    $("#dateRangeError").addClass("show");
-    return;
+function buildMonthsFromRange(startVal, endVal) {
+  function myToDate(my) {
+    var parts = my.split("/");
+    var mm = parseInt(parts[0], 10);
+    var yy = parseInt(parts[1], 10);
+    var fullYear = yy < 100 ? 2000 + yy : yy;
+    return new Date(fullYear, mm - 1, 1);
   }
 
-  if (new Date(startDate) > new Date(endDate)) {
-    $("#dateRangeError").addClass("show");
-    return;
+  var start = myToDate(startVal);
+  var end = myToDate(endVal);
+
+  if (start > end) {
+    var tmp = start;
+    start = end;
+    end = tmp;
   }
 
-  $("#dateRangeError").removeClass("show");
-  generateMonthlySalesGrid();
-  $("#monthlySalesContainer").show();
+  var MONTH_ABBR = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
 
-  $("html, body").animate(
-    {
-      scrollTop: $("#monthlySalesContainer").offset().top - 100,
-    },
-    500,
-  );
-});
+  var result = [];
+  var cursor = new Date(end.getFullYear(), end.getMonth(), 1);
+  var startMonth = new Date(start.getFullYear(), start.getMonth(), 1);
+
+  while (cursor >= startMonth) {
+    var label =
+      MONTH_ABBR[cursor.getMonth()] +
+      " '" +
+      String(cursor.getFullYear()).slice(-2);
+    result.push(label);
+    cursor.setMonth(cursor.getMonth() - 1);
+  }
+
+  return result;
+}
 
 $(document).on("click", "#editMonthlySales", function () {
   $("#monthlySalesGrid input").prop("disabled", false);
   $("#monthlySalesFooter").show();
-  $("#monthlySalesSummary").hide();
+  $("#monthlySalesSummary, #editMonthlySales").hide();
+  $(".monthly-sales-input").removeClass("submitted").prop("disabled", false);
 });
 
 $(document).on("click", "#resetMonthlySales", function () {
   $("#monthlySalesGrid input").val("").removeClass("input-error");
   $("#monthlySalesGrid .error-msg").remove();
+  $("#submitMonthlySalesBtn, #resetMonthlySales")
+    .prop("disabled", true)
+    .addClass("btn-disabled");
+  $("#editMonthlySales").hide();
 });
 
 $(document).on("click", "#submitMonthlySalesBtn", function () {
@@ -1750,18 +1824,22 @@ $(document).on("click", "#submitMonthlySalesBtn", function () {
   let total = 0;
 
   $(".monthly-sales-input").each(function () {
-    const val = $(this).val().trim();
+    const $input = $(this);
+    const val = $input.val().trim();
+    const $error = $input.closest(".month-item").find(".sale-value-error");
+
+    $input.removeClass("input-error");
+    $error.removeClass("show");
+
     if (val) {
       const numVal = parseFloat(val.replace(/[^0-9.-]+/g, ""));
       if (isNaN(numVal)) {
-        $(this).addClass("input-error");
+        $input.addClass("input-error");
+        $error.addClass("show");
         isValid = false;
       } else {
-        $(this).removeClass("input-error");
         total += numVal;
       }
-    } else {
-      $(this).removeClass("input-error");
     }
   });
 
@@ -1776,11 +1854,41 @@ $(document).on("click", "#submitMonthlySalesBtn", function () {
   }).format(total);
 
   $("#totalSalesValue").text(formattedTotal);
-  $("#monthlySalesSummary").show();
+  $("#monthlySalesSummary, #editMonthlySales").show();
+  $(".monthly-sales-input").addClass("submitted").prop("disabled", true);
   $("#monthlySalesFooter").hide();
   $("#monthlySalesGrid input").prop("disabled", true);
 
   validateForm();
+});
+
+$(document).on("input change", ".monthly-sales-input", function () {
+  var allFilled = true;
+
+  $(".monthly-sales-input").each(function () {
+    if ($(this).val().trim() === "") {
+      allFilled = false;
+      return false;
+    }
+  });
+
+  if (allFilled) {
+    $("#submitMonthlySalesBtn, #resetMonthlySales")
+      .prop("disabled", false)
+      .removeClass("btn-disabled");
+  } else {
+    $("#submitMonthlySalesBtn, #resetMonthlySales")
+      .prop("disabled", true)
+      .addClass("btn-disabled");
+  }
+});
+
+$(document).on("focus", ".monthly-sales-input", function () {
+  const $input = $(this);
+  const $error = $input.closest(".month-item").find(".sale-value-error");
+
+  $input.removeClass("input-error");
+  $error.removeClass("show");
 });
 
 function showError(elementId, errorId) {
@@ -1788,13 +1896,8 @@ function showError(elementId, errorId) {
   $("#" + errorId).addClass("show");
 }
 
-function clearError(elementId, errorId) {
-  $("#" + elementId).removeClass("input-error");
-  $("#" + errorId).removeClass("show");
-}
-
 $(document).on(
-  "mouseleave",
+  "blur",
   "#firmName, #dealerCode, #panNumber, #mobileNumber, #emailId, #address1, #pinCode, #firstName, #associationYears, #recommendationLimit, #instancesOverdue, #chequeReturns",
   function () {
     validateField($(this));
@@ -1802,10 +1905,24 @@ $(document).on(
   },
 );
 
-$(document).on("change", "#constitution, #city, #salesType", function () {
-  validateField($(this));
-  validateForm();
-});
+$(document).on(
+  "focus",
+  "#firmName, #dealerCode, #panNumber, #mobileNumber, #emailId, #address1, #pinCode, #firstName, #associationYears, #recommendationLimit, #instancesOverdue, #chequeReturns",
+  function () {
+    const $el = $(this);
+    $el.removeClass("input-error");
+    $el.closest(".form-group").find(".error-msg").removeClass("show");
+  },
+);
+
+$(document).on(
+  "change",
+  "#constitutionSelect, #citySelect, #saleTypeSelect",
+  function () {
+    validateField($(this));
+    validateForm();
+  },
+);
 
 function validateField($el) {
   const id = $el.attr("id");
@@ -1837,19 +1954,21 @@ function validateField($el) {
       }
       break;
 
-    case "constitution":
-      if (!val) {
+    case "constitutionSelect":
+      if (!val || val === "select-constitution") {
         showError(id, "constitutionError");
         isValid = false;
       }
       break;
 
-    case "mobileNumber":
-      if (!val || !/^\d{10}$/.test(val)) {
+    case "mobileNumber": {
+      const digits = val.replace(/\D/g, "").replace(/^91/, "").slice(-10);
+      if (!digits || digits.length !== 10) {
         showError(id, "mobileError");
         isValid = false;
       }
       break;
+    }
 
     case "emailId":
       if (!val || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
@@ -1872,8 +1991,8 @@ function validateField($el) {
       }
       break;
 
-    case "city":
-      if (!val) {
+    case "citySelect":
+      if (!val || val === "select-city") {
         showError(id, "cityError");
         isValid = false;
       }
@@ -1886,8 +2005,8 @@ function validateField($el) {
       }
       break;
 
-    case "salesType":
-      if (!val) {
+    case "saleTypeSelect":
+      if (!val || val === "sales-type") {
         showError(id, "salesTypeError");
         isValid = false;
       }
@@ -1941,13 +2060,13 @@ function validateForm() {
     "firmName",
     "dealerCode",
     "panNumber",
-    "constitution",
+    "constitutionSelect",
     "mobileNumber",
     "emailId",
     "address1",
     "pinCode",
-    "city",
-    "salesType",
+    "citySelect",
+    "saleTypeSelect",
     "associationYears",
     "recommendationLimit",
     "instancesOverdue",
@@ -1968,37 +2087,131 @@ function validateForm() {
     }
   }
 
-  if (!$("#startDate").val() || !$("#endDate").val()) {
+  if (!$(".startDate").val() || !$(".endDate").val()) {
     isFormValid = false;
   }
 
-  // if (isFormValid) {
-  //   $("#stepNextBtn").prop("disabled", false);
-  // } else {
-  //   $("#stepNextBtn").prop("disabled", true);
-  // }
+  if (isFormValid) {
+    $("#stepNextBtn").prop("disabled", false);
+  } else {
+    $("#stepNextBtn").prop("disabled", true);
+  }
 }
 
-$("#startDate, #endDate")
-  .on("focus", function () {
-    $(this).attr("type", "date");
-  })
-  .on("blur", function () {
-    if (!$(this).val()) {
-      $(this).attr("type", "text");
-    }
-  });
+$(document).on("focus", "#mobileNumber", function () {
+  const digits = this.value.replace(/\D/g, "").slice(-10);
+  this.value = digits;
+});
 
-$("#startDate, #endDate").on("change", function () {
-  const val = $(this).val();
-  if (val) {
-    const date = new Date(val);
-    const mm = String(date.getMonth() + 1).padStart(2, "0");
-    const yyyy = date.getFullYear();
-    $(this).val(`${mm}-${yyyy}`);
-    $(this).attr("type", "text");
+$(document).on("input", "#mobileNumber", function () {
+  this.value = this.value.replace(/\D/g, "").slice(0, 10);
+});
+
+$(document).on("blur", "#mobileNumber", function () {
+  const digits = this.value.replace(/\D/g, "").slice(-10);
+
+  if (digits.length === 10) {
+    this.value = "+91 " + digits;
+  } else {
+    this.value = digits;
   }
+
+  validateField($(this));
   validateForm();
+});
+
+$(document).on("change", ".startDate", function () {
+  var startVal = $(this).val();
+
+  if (startVal) {
+    $("#endDateTrigger").closest(".date-input-wrap").hide();
+    $("#endDateWrap").show();
+
+    var parts = startVal.split("/");
+    if (parts.length === 2) {
+      var mm = parseInt(parts[0], 10) - 1;
+      var yy = parseInt(parts[1], 10);
+      var fullYear = yy < 100 ? 2000 + yy : yy;
+
+      var startDate = new Date(fullYear, mm, 1);
+      var endDate = new Date(fullYear, mm + 11, 1);
+
+      var endMM = String(endDate.getMonth() + 1).padStart(2, "0");
+      var endYY = String(endDate.getFullYear()).slice(-2);
+      var formattedEnd = endMM + "/" + endYY;
+
+      $(".endDate").val(formattedEnd);
+
+      $("#addMonthlySalesBtn")
+        .removeClass("btn-disabled")
+        .prop("disabled", false);
+
+      $("#dateRangeError").removeClass("show");
+    }
+  } else {
+    $("#endDateTrigger").closest(".date-input-wrap").show();
+    $("#endDateWrap").hide();
+    $(".endDate").val("");
+    $("#addMonthlySalesBtn").addClass("btn-disabled").prop("disabled", true);
+  }
+
+  validateForm();
+});
+
+$(document).on("change", ".endDate", function () {
+  var endVal = $(this).val();
+
+  if (endVal) {
+    $("#addMonthlySalesBtn")
+      .removeClass("btn-disabled")
+      .prop("disabled", false);
+  } else {
+    $("#addMonthlySalesBtn").addClass("btn-disabled").prop("disabled", true);
+  }
+
+  validateForm();
+});
+
+$(document).on("click", "#addMonthlySalesBtn", function (e) {
+  e.preventDefault();
+
+  var startVal = $(".startDate").val();
+  var endVal = $(".endDate").val();
+
+  if (!startVal || !endVal) {
+    $("#dateRangeError").addClass("show");
+    $("#monthlySalesContainer").hide();
+    return;
+  }
+
+  function myToDate(my) {
+    var parts = my.split("/");
+    var mm = parseInt(parts[0], 10);
+    var yy = parseInt(parts[1], 10);
+    var fullYear = yy < 100 ? 2000 + yy : yy;
+    return new Date(fullYear, mm - 1, 1);
+  }
+
+  var startDate = myToDate(startVal);
+  var endDate = myToDate(endVal);
+
+  if (startDate > endDate) {
+    $("#dateRangeError").addClass("show");
+    $("#monthlySalesContainer").hide();
+    return;
+  }
+
+  $("#dateRangeError").removeClass("show");
+  generateMonthlySalesGrid();
+  $("#monthlySalesContainer").show();
+  $("#addMonthlySalesBtn").addClass("btn-disabled").prop("disabled", true);
+
+  // $("html, body").animate(
+  //   {
+  //     scrollTop: $("#monthlySalesContainer").offset().top - 100,
+  //   },
+  //   500,
+  // );
 });
 
 validateForm();
@@ -2059,3 +2272,424 @@ function closeModal(modal) {
   $(modal).hide();
   $("body").removeClass("modal-open");
 }
+
+// ── Custom Calendar Picker
+(function () {
+  var MONTHS = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  var today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  function sameDay(a, b) {
+    return (
+      a &&
+      b &&
+      a.getFullYear() === b.getFullYear() &&
+      a.getMonth() === b.getMonth() &&
+      a.getDate() === b.getDate()
+    );
+  }
+
+  function pad(n) {
+    return n < 10 ? "0" + n : "" + n;
+  }
+
+  function formatMY(d) {
+    return pad(d.getMonth() + 1) + "/" + String(d.getFullYear()).slice(-2);
+  }
+
+  function initState() {
+    return {
+      view: "year",
+      viewMonth: today.getMonth(),
+      viewYear: today.getFullYear(),
+      centerYear: today.getFullYear(),
+      selected: null,
+    };
+  }
+
+  function buildWeekdays() {
+    var w = document.createElement("div");
+    w.className = "weekdays";
+    ["S", "M", "T", "W", "T", "F", "S"].forEach(function (d) {
+      var s = document.createElement("span");
+      s.textContent = d;
+      w.appendChild(s);
+    });
+    return w;
+  }
+
+  function isDOBPicker(pop) {
+    var wrap = pop.closest(".custom-datepicker-wrap");
+    var inp = wrap.querySelector(".dobDate");
+    return inp !== null;
+  }
+
+  function getCutoffDate() {
+    var cutoff = new Date(today);
+    cutoff.setFullYear(today.getFullYear() - 21);
+    return cutoff;
+  }
+
+  function buildDaysGrid(state, pop) {
+    var grid = document.createElement("div");
+    grid.className = "days";
+    var firstDay = new Date(state.viewYear, state.viewMonth, 1).getDay();
+    var totalDays = new Date(state.viewYear, state.viewMonth + 1, 0).getDate();
+
+    var isDOB = isDOBPicker(pop);
+    var cutoffDate = getCutoffDate();
+
+    for (var i = 0; i < firstDay; i++) {
+      var e = document.createElement("div");
+      e.className = "day empty";
+      grid.appendChild(e);
+    }
+    for (var d = 1; d <= totalDays; d++) {
+      (function (day) {
+        var cellDate = new Date(state.viewYear, state.viewMonth, day);
+        cellDate.setHours(0, 0, 0, 0);
+        var cell = document.createElement("div");
+        cell.className = "day";
+        cell.textContent = day;
+
+        if (isDOB) {
+          if (cellDate > today || cellDate > cutoffDate) {
+            cell.classList.add("disabled");
+          }
+        } else {
+          if (cellDate > today) {
+            cell.classList.add("disabled");
+          }
+        }
+
+        if (sameDay(cellDate, today)) cell.classList.add("today");
+        if (state.selected && sameDay(cellDate, state.selected))
+          cell.classList.add("selected");
+        if (!cell.classList.contains("disabled")) {
+          cell.addEventListener("click", function (e) {
+            e.stopPropagation();
+            state.selected = cellDate;
+            var wrap = pop.closest(".custom-datepicker-wrap");
+            var inp = wrap.querySelector(".startDate, .endDate");
+            inp.value = formatMY(cellDate);
+            pop.style.display = "none";
+            $(inp).trigger("change");
+          });
+        }
+        grid.appendChild(cell);
+      })(d);
+    }
+    return grid;
+  }
+
+  function buildMonthsGrid(state, pop) {
+    var grid = document.createElement("div");
+    grid.className = "months";
+    var isDOB = isDOBPicker(pop);
+    var cutoffYear = today.getFullYear() - 21;
+
+    MONTHS.forEach(function (m, idx) {
+      var item = document.createElement("div");
+      item.className = "month-item";
+      item.textContent = m;
+
+      if (isDOB) {
+        var isAfterCutoff =
+          (state.viewYear === cutoffYear && idx > today.getMonth()) ||
+          state.viewYear > cutoffYear;
+        if (isAfterCutoff) item.classList.add("disabled");
+      } else {
+        var isAfterToday =
+          (state.viewYear === today.getFullYear() && idx > today.getMonth()) ||
+          state.viewYear > today.getFullYear();
+        if (isAfterToday) item.classList.add("disabled");
+      }
+
+      if (idx === state.viewMonth && state.selected)
+        item.classList.add("selected");
+      if (idx === today.getMonth() && state.viewYear === today.getFullYear())
+        item.classList.add("current");
+
+      if (!item.classList.contains("disabled")) {
+        item.addEventListener("click", function (e) {
+          e.stopPropagation();
+          state.viewMonth = idx;
+
+          var selectedDate = new Date(state.viewYear, idx, 1);
+          state.selected = selectedDate;
+
+          var wrap = pop.closest(".custom-datepicker-wrap");
+          var inp = wrap.querySelector(".startDate, .endDate");
+          inp.value = formatMY(selectedDate);
+          pop.style.display = "none";
+          $(inp).trigger("change");
+        });
+      }
+      grid.appendChild(item);
+    });
+    return grid;
+  }
+
+  var MIN_YEAR = 1980;
+
+  function buildYearsGrid(state, pop) {
+    var grid = document.createElement("div");
+    grid.className = "years";
+    var start = MIN_YEAR;
+    var end = today.getFullYear();
+
+    var isDOB = isDOBPicker(pop);
+    var cutoffYear = today.getFullYear() - 21;
+
+    for (var y = start; y <= end; y++) {
+      (function (yr) {
+        var item = document.createElement("div");
+        item.className = "year-item";
+        item.textContent = yr;
+
+        var isFaded = false;
+
+        if (isDOB) {
+          if (yr > cutoffYear) {
+            item.classList.add("faded");
+            isFaded = true;
+          }
+        } else {
+          if (yr > today.getFullYear()) {
+            item.classList.add("faded");
+            isFaded = true;
+          }
+        }
+
+        if (isDOB) {
+          if (yr === cutoffYear) {
+            item.classList.add("current");
+          }
+        } else {
+          if (yr === today.getFullYear() && !isFaded) {
+            item.classList.add("current");
+          }
+        }
+
+        if (yr === state.viewYear && state.selected)
+          item.classList.add("selected");
+
+        var isClickable = false;
+        if (isDOB) {
+          if (yr <= cutoffYear) {
+            isClickable = true;
+          }
+        } else {
+          if (yr <= today.getFullYear()) {
+            isClickable = true;
+          }
+        }
+
+        if (isClickable) {
+          item.addEventListener("click", function (e) {
+            e.stopPropagation();
+            state.viewYear = yr;
+            state.centerYear = yr;
+            state.view = "month";
+            render(state, pop);
+          });
+        }
+        grid.appendChild(item);
+      })(y);
+    }
+    return grid;
+  }
+
+  function render(state, pop) {
+    pop.innerHTML = "";
+
+    var nav = document.createElement("div");
+    nav.className = "nav-dropdown";
+
+    var yBtn = document.createElement("div");
+    yBtn.className = "dd" + (state.view === "year" ? " active" : "");
+    yBtn.innerHTML =
+      "<span>" +
+      state.viewYear +
+      "</span><span class='caret'>" +
+      (state.view === "year" ? "&#9650;" : "&#9660;") +
+      "</span>";
+    yBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+      state.centerYear = state.viewYear;
+      state.view = state.view === "year" ? "day" : "year";
+      render(state, pop);
+    });
+
+    var mBtn = document.createElement("div");
+    mBtn.className = "dd" + (state.view === "month" ? " active" : "");
+    mBtn.innerHTML =
+      "<span>" +
+      MONTHS[state.viewMonth] +
+      "</span><span class='caret'>" +
+      (state.view === "month" ? "&#9650;" : "&#9660;") +
+      "</span>";
+    mBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+      state.view = state.view === "month" ? "day" : "month";
+      render(state, pop);
+    });
+
+    nav.appendChild(yBtn);
+    nav.appendChild(mBtn);
+    pop.appendChild(nav);
+
+    if (state.view === "day") {
+      pop.appendChild(buildWeekdays());
+      pop.appendChild(buildDaysGrid(state, pop));
+    } else if (state.view === "month") {
+      pop.appendChild(buildMonthsGrid(state, pop));
+    } else {
+      pop.appendChild(buildYearsGrid(state, pop));
+      var scrollTarget =
+        pop.querySelector(".year-item.selected") ||
+        pop.querySelector(".year-item.current");
+      if (scrollTarget) scrollTarget.scrollIntoView({ block: "center" });
+    }
+  }
+
+  function openPicker(wrap) {
+    var pop = wrap.querySelector(".custom-calendar-popup");
+    if (!pop._calState) pop._calState = initState();
+    var state = pop._calState;
+    var inp = wrap.querySelector(".startDate, .endDate");
+    state.valueOnOpen = inp.value;
+    state.selectedOnOpen = state.selected;
+    if (inp.value) {
+      var parts = inp.value.split("/");
+      if (parts.length === 2) {
+        var mm = parseInt(parts[0], 10);
+        var yy = parseInt(parts[1], 10);
+        var fullYear = yy < 100 ? 2000 + yy : yy;
+        var d = new Date(fullYear, mm - 1, 1);
+        d.setHours(0, 0, 0, 0);
+        state.selected = d;
+        state.viewYear = fullYear;
+        state.viewMonth = mm - 1;
+        state.centerYear = fullYear;
+      }
+    }
+    state.view = "year";
+    render(state, pop);
+    pop.style.display = "block";
+  }
+
+  $(document).on(
+    "click",
+    ".custom-datepicker-wrap .startDate, .custom-datepicker-wrap .endDate, .custom-datepicker-wrap .custom-cal-icon",
+    function (e) {
+      e.stopPropagation();
+      var wrap = $(this).closest(".custom-datepicker-wrap")[0];
+      var pop = wrap.querySelector(".custom-calendar-popup");
+      document.querySelectorAll(".custom-calendar-popup").forEach(function (p) {
+        if (p !== pop) p.style.display = "none";
+      });
+      if (pop.style.display === "none" || pop.style.display === "") {
+        openPicker(wrap);
+      } else {
+        pop.style.display = "none";
+      }
+    },
+  );
+
+  $(document).on("click", function (e) {
+    if ($(e.target).closest(".custom-datepicker-wrap").length === 0) {
+      document.querySelectorAll(".custom-calendar-popup").forEach(function (p) {
+        p.style.display = "none";
+      });
+    }
+  });
+})();
+
+// Custom dropdown
+$(document).on("click", ".custom-select-trigger", function (e) {
+  e.stopPropagation();
+
+  const wrapper = $(this).closest(".custom-select-wrapper");
+  const options = wrapper.find(".custom-select-options");
+  const isOpen = options.is(":visible");
+
+  $(".custom-select-options").not(options).hide();
+  $(".custom-select-trigger").not(this).removeClass("active");
+
+  if (isOpen) {
+    options.hide();
+    $(this).removeClass("active");
+  } else {
+    options.show();
+    $(this).addClass("active");
+  }
+});
+
+$(document).on("click", ".custom-select-options .option-item", function (e) {
+  e.stopPropagation();
+
+  const wrapper = $(this).closest(".custom-select-wrapper");
+  const trigger = wrapper.find(".custom-select-trigger");
+  const selectedSpan = trigger.find(".selected-option");
+  const hiddenSelect = wrapper.siblings("select");
+  const options = wrapper.find(".custom-select-options");
+
+  const value = $(this).data("value");
+  const text = $(this).text().trim();
+
+  selectedSpan.text(text);
+  selectedSpan.removeClass("placeholder");
+
+  if (hiddenSelect.length) {
+    hiddenSelect.val(value);
+    hiddenSelect.trigger("change");
+  }
+
+  options.find(".option-item").removeClass("selected");
+  $(this).addClass("selected");
+
+  options.hide();
+  trigger.removeClass("active");
+
+  const form = wrapper.closest(".bank-account-form");
+  if (form.length) {
+    validateBankForm(form);
+
+    const hasValue = form
+      .find("input")
+      .toArray()
+      .some((input) => $(input).val().trim() !== "");
+    const hasSelect = form
+      .find("select")
+      .toArray()
+      .some((select) => $(select).val() !== "");
+    isFormUnsaved = hasValue || hasSelect;
+
+    if (isFormUnsaved) {
+      $("#addBankAccount").addClass("disabled").removeClass("enabled");
+    }
+  }
+});
+
+$(document).on("click", function (e) {
+  if (!$(e.target).closest(".custom-select-wrapper").length) {
+    $(".custom-select-options").hide();
+    $(".custom-select-trigger").removeClass("active");
+  }
+});
