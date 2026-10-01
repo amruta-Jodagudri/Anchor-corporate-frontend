@@ -1,8 +1,10 @@
 "use strict";
 
 jQuery(function ($) {
+
   const TOAST_DURATION_MS = 2500;
   const PIN_STORAGE_KEY = "dealerPinnedState";
+  const PAGE_STORAGE_KEY = "activeDashboardPage";
 
   const PIN_SORT_TARGETS = [
     { body: "#dealerTableBody", row: ".dealer-row" },
@@ -39,11 +41,20 @@ jQuery(function ($) {
     .join("");
   const TXN_DAYS_LIMIT = { "0-15": 15, "1-month": 30, "3-months": 90 };
 
+  const LEAD_STATUSES = ["actioned", "sanctioned", "rejected"];
+  const STAGE_FILTERS = ["current-account", "esign", "limit-setup"];
+
   const MENU_ROUTES = {
     "analytics dashboard": "dashboard",
     "new dealer leads": "newdealer",
     "transaction dashboard": "transaction",
     "renewal details": "renewal",
+  };
+
+  const VIEW_DETAILS_ROUTES = {
+    "sanction across active dealers": "transaction",
+    "new dealer leads": "newdealer",
+    "renewal summary": "renewal",
   };
 
   function escapeHtml(value) {
@@ -75,17 +86,6 @@ jQuery(function ($) {
     $cell.html(formatAmountMarkup($cell.text().trim()));
   }
 
-  function initDealerAmounts() {
-    $("#dealerTableBody .dealer-row").each(function () {
-      const $cells = $(this).children();
-      wrapPaise($cells.eq(3));
-      wrapPaise($cells.eq(4));
-    });
-    $("#newDealerPage .dealer-table-view tbody tr").each(function () {
-      wrapPaise($(this).children().eq(8));
-    });
-  }
-
   function setActive($items, $activeItem) {
     const active = $activeItem && $activeItem.length ? $activeItem[0] : null;
     $items.each(function () {
@@ -97,16 +97,37 @@ jQuery(function ($) {
     $("#" + id).on("click", handler);
   }
 
+  function getFirstTextNode($el, skipBlank) {
+    return $el.contents().filter(function () {
+      return (
+        this.nodeType === Node.TEXT_NODE &&
+        (!skipBlank || this.textContent.trim() !== "")
+      );
+    })[0];
+  }
+
+  function setCssVar(el, name, value) {
+    el.style.setProperty(name, value);
+  }
+
+  function getBadgeStatus($el) {
+    return (
+      LEAD_STATUSES.find(function (name) {
+        return $el.hasClass(name);
+      }) || ""
+    );
+  }
+
   function initDropdownMenu($button, $menu) {
     if (!$button.length || !$menu.length) return;
 
     $button.on("click", function (event) {
       event.stopPropagation();
-      $menu.toggleClass("show");
+      $menu.toggleClass("show open");
     });
 
     $(document).on("click", function () {
-      $menu.removeClass("show");
+      $menu.removeClass("show open");
     });
   }
 
@@ -168,6 +189,7 @@ jQuery(function ($) {
     }),
     "Chauhan Traders": $.extend({}, commonDealerDetails, {
       vintage: "15 years",
+      uploadedBy: "Anchor corporate",
       overdue: "0 (7D +)",
       recommendation: "₹80,00,000.00",
     }),
@@ -211,6 +233,7 @@ jQuery(function ($) {
     sanction: "Application rejected",
   };
 
+  /* TODO(backend): remove once the API returns real tranches */
   function generateDummyTranches(count, seedId) {
     const types = [
       "Principal",
@@ -232,6 +255,7 @@ jQuery(function ($) {
     return list;
   }
 
+  /* TODO(backend): replace with API data */
   const transactionData = [
     {
       firm: "BluePeak Distributors",
@@ -320,15 +344,17 @@ jQuery(function ($) {
     },
   ];
 
+
+    //  NEW DEALER LEADS - STATE & LOOKUPS
+
   const $newDealerPage = $("#newDealerPage");
   const $hideDetailsBtn = $("#hideDetailsBtn");
   const $searchInput = $("#dealerSearchInput");
-
   const $menuItems = $("#menuPanel .menu-list .menu-item");
 
   let $dealerRows = $("#newDealerPage .new-dealer-table .dealer-row");
 
-  let detailsHidden = false;
+  let detailsHidden = true;
   let activeFilter = "all";
 
   const leadSelection = new Set();
@@ -354,6 +380,10 @@ jQuery(function ($) {
     return $clone.text().replace(/\s+/g, " ").trim();
   }
 
+  function getGridFirmName($tRow) {
+    return getRobustFirmName($tRow.find(".table-firm-name").first());
+  }
+
   function getDealerStage($row) {
     return dealerStages[getDealerName($row)] || "apply";
   }
@@ -364,6 +394,17 @@ jQuery(function ($) {
         return getDealerName($(this)) === dealerName;
       })
       .first();
+  }
+
+  function initDealerAmounts() {
+    $("#dealerTableBody .dealer-row").each(function () {
+      const $cells = $(this).children();
+      wrapPaise($cells.eq(3));
+      wrapPaise($cells.eq(4));
+    });
+    $("#newDealerPage .dealer-table-view tbody tr").each(function () {
+      wrapPaise($(this).children().eq(8));
+    });
   }
 
   function applyDealerCellLabels() {
@@ -394,6 +435,7 @@ jQuery(function ($) {
       $el.attr("data-value", $el.text().trim().replace("✉", "").trim());
     });
   }
+
 
   function maskPhone(value) {
     const v = value.trim();
@@ -477,6 +519,16 @@ jQuery(function ($) {
     }
   }
 
+  function maskGridColumns($rows, columns, isHidden) {
+    $rows.each(function () {
+      const $cells = $(this).children();
+      columns.forEach(function (column) {
+        const $cell = $cells.eq(column.index);
+        if ($cell.length) toggleTextMask($cell, isHidden, column.maskFn);
+      });
+    });
+  }
+
   function updateHideButtonUI($btn, isHidden) {
     if (!$btn.length) return;
 
@@ -487,11 +539,7 @@ jQuery(function ($) {
     if ($label.length) {
       $label.text(labelText);
     } else {
-      const textNode = $btn.contents().filter(function () {
-        return (
-          this.nodeType === Node.TEXT_NODE && this.textContent.trim() !== ""
-        );
-      })[0];
+      const textNode = getFirstTextNode($btn, true);
       if (textNode) textNode.textContent = labelText + " ";
     }
 
@@ -530,19 +578,15 @@ jQuery(function ($) {
       }
     });
 
-    const gridColumns = [
-      { index: 5, maskFn: maskPhone },
-      { index: 6, maskFn: maskEmail },
-      { index: 7, maskFn: maskPAN },
-    ];
-
-    $("#newDealerPage .dealer-table-view tbody tr").each(function () {
-      const $cells = $(this).children();
-      gridColumns.forEach(function (column) {
-        const $cell = $cells.eq(column.index);
-        if ($cell.length) toggleTextMask($cell, isHidden, column.maskFn);
-      });
-    });
+    maskGridColumns(
+      $("#newDealerPage .dealer-table-view tbody tr"),
+      [
+        { index: 5, maskFn: maskPhone },
+        { index: 6, maskFn: maskEmail },
+        { index: 7, maskFn: maskPAN },
+      ],
+      isHidden,
+    );
   }
 
   function applyTxnMasking(isHidden) {
@@ -574,19 +618,15 @@ jQuery(function ($) {
       toggleTextMask($(this), isHidden, maskDealerId);
     });
 
-    const gridColumns = [
-      { index: 3, maskFn: maskPhone },
-      { index: 4, maskFn: maskEmail },
-      { index: 5, maskFn: maskPAN },
-    ];
-
-    $("#renewalDetailsPage .renewal-table-view tbody tr").each(function () {
-      const $cells = $(this).children();
-      gridColumns.forEach(function (column) {
-        const $cell = $cells.eq(column.index);
-        if ($cell.length) toggleTextMask($cell, isHidden, column.maskFn);
-      });
-    });
+    maskGridColumns(
+      $("#renewalDetailsPage .renewal-table-view tbody tr"),
+      [
+        { index: 3, maskFn: maskPhone },
+        { index: 4, maskFn: maskEmail },
+        { index: 5, maskFn: maskPAN },
+      ],
+      isHidden,
+    );
   }
 
   function applyAllMasking(isHidden) {
@@ -650,29 +690,29 @@ jQuery(function ($) {
         const connectorClass = getConnectorClass(state, states[index + 1]);
 
         return `
-                <div class="dealer-progress-step ${state}">
-                    <div class="dealer-progress-node">${getProgressNodeMarkup(state, index)}</div>
-                    <span class="dealer-progress-label">${label}</span>
-                    ${isLast ? "" : `<span class="dealer-progress-connector ${connectorClass}"></span>`}
-                </div>
-            `;
+          <div class="dealer-progress-step ${state}">
+            <div class="dealer-progress-node">${getProgressNodeMarkup(state, index)}</div>
+            <span class="dealer-progress-label">${label}</span>
+            ${isLast ? "" : `<span class="dealer-progress-connector ${connectorClass}"></span>`}
+          </div>
+        `;
       })
       .join("");
 
     return `
-            <div class="dealer-progress">
-                <div class="dealer-progress-track">${stepsMarkup}</div>
-            </div>
-        `;
+      <div class="dealer-progress">
+        <div class="dealer-progress-track">${stepsMarkup}</div>
+      </div>
+    `;
   }
 
   function getDetailItemMarkup(label, valueHtml, extraClass) {
     return `
-            <div class="dealer-detail-item ${extraClass || ""}">
-                <span>${label}</span>
-                <strong>${valueHtml}</strong>
-            </div>
-        `;
+      <div class="dealer-detail-item ${extraClass || ""}">
+        <span>${label}</span>
+        <strong>${valueHtml}</strong>
+      </div>
+    `;
   }
 
   function createDealerDetailRow($row) {
@@ -688,33 +728,33 @@ jQuery(function ($) {
     );
 
     $detailRow.html(`
-            <td colspan="8">
-                <div class="dealer-detail-panel">
+      <td colspan="8">
+        <div class="dealer-detail-panel">
 
-                    <div class="dealer-detail-info">
-                        ${getDetailItemMarkup("Lead type", escapeHtml(leadType), "dealer-detail-item--mobile-only")}
-                        ${getDetailItemMarkup("Dealer ID", escapeHtml(details.dealerId))}
-                        ${getDetailItemMarkup("Cheque returns", escapeHtml(details.chequeReturns))}
-                        ${getDetailItemMarkup("Business vintage", escapeHtml(details.vintage))}
-                        ${getDetailItemMarkup("Instances of overdue", escapeHtml(details.overdue))}
-                        ${getDetailItemMarkup("Recommendation limit", escapeHtml(details.recommendation))}
-                        ${getDetailItemMarkup("Uploaded by", escapeHtml(details.uploadedBy) + ' <i class="dealer-upload-user-icon"></i>')}
-                        ${getDetailItemMarkup("Lead date", escapeHtml(details.leadDate))}
-                    </div>
+          <div class="dealer-detail-info">
+            ${getDetailItemMarkup("Lead type", escapeHtml(leadType), "dealer-detail-item--mobile-only")}
+            ${getDetailItemMarkup("Dealer ID", escapeHtml(details.dealerId))}
+            ${getDetailItemMarkup("Cheque returns", escapeHtml(details.chequeReturns))}
+            ${getDetailItemMarkup("Business vintage", escapeHtml(details.vintage))}
+            ${getDetailItemMarkup("Instances of overdue", escapeHtml(details.overdue))}
+            ${getDetailItemMarkup("Recommendation limit", escapeHtml(details.recommendation))}
+            ${getDetailItemMarkup("Uploaded by", escapeHtml(details.uploadedBy) + " " + getUploadIconMarkup(dealerName, details.uploadedBy))}
+            ${getDetailItemMarkup("Lead date", escapeHtml(details.leadDate))}
+          </div>
 
-                    ${getProgressMarkup(stage)}
+          ${getProgressMarkup(stage)}
 
-                    <div class="dealer-detail-footer">
-                        <div class="table-action">
-                            <button type="button" class="table-edit-btn" title="Edit"></button>
-                            <button type="button" class="table-delete-btn" title="Delete"></button>
-                        </div>
-                        <button type="button" class="dealer-collapse-btn">View less</button>
-                    </div>
+          <div class="dealer-detail-footer">
+            <div class="table-action">
+              <button type="button" class="table-edit-btn" title="Edit"></button>
+              <button type="button" class="table-delete-btn" title="Delete"></button>
+            </div>
+            <button type="button" class="dealer-collapse-btn">View less</button>
+          </div>
 
-                </div>
-            </td>
-        `);
+        </div>
+      </td>
+    `);
 
     $detailRow.find(".dealer-collapse-btn").on("click", function () {
       toggleDealerRow($row);
@@ -799,17 +839,12 @@ jQuery(function ($) {
       const $infoIcon = $tRow.find(".table-status small").first();
       if (!$statusEl.length || !$infoIcon.length) return;
 
-      const status =
-        ["actioned", "sanctioned", "rejected"].find(function (name) {
-          return $statusEl.hasClass(name);
-        }) || "";
+      const stage = dealerStages[getGridFirmName($tRow)] || "apply";
 
-      const dealerName = getRobustFirmName(
-        $tRow.find(".table-firm-name").first(),
+      $infoIcon.attr(
+        "data-tooltip",
+        getStatusTooltip(getBadgeStatus($statusEl), stage),
       );
-      const stage = dealerStages[dealerName] || "apply";
-
-      $infoIcon.attr("data-tooltip", getStatusTooltip(status, stage));
     });
   }
 
@@ -863,9 +898,7 @@ jQuery(function ($) {
     const $button = $dropdown.find(".dealer-filter-dropdown-btn").first();
     if (!$button.length) return;
 
-    const textNode = $button.contents().filter(function () {
-      return this.nodeType === Node.TEXT_NODE;
-    })[0];
+    const textNode = getFirstTextNode($button);
     if (textNode)
       textNode.textContent =
         (summary || $dropdown.attr("data-default-text")) + " ";
@@ -873,7 +906,7 @@ jQuery(function ($) {
 
   function closeFilterDropdown($dropdown) {
     $dropdown.removeClass("open");
-    $dropdown.find(".dealer-filter-dropdown-panel label").css("display", "");
+    $dropdown.find(".dealer-filter-dropdown-panel label").show();
     updateDropdownSummary($dropdown);
   }
 
@@ -917,9 +950,7 @@ jQuery(function ($) {
       const isSearch = $trigger.hasClass("dealer-filter-search-input");
       const $button = $dropdown.find(".dealer-filter-dropdown-btn").first();
       if ($button.length) {
-        const textNode = $button.contents().filter(function () {
-          return this.nodeType === Node.TEXT_NODE;
-        })[0];
+        const textNode = getFirstTextNode($button);
         $dropdown.attr(
           "data-default-text",
           textNode ? textNode.textContent.trim() : "",
@@ -1001,9 +1032,8 @@ jQuery(function ($) {
       const query = ($input.val() || "").trim().toLowerCase();
       $panel.find("label").each(function () {
         const $label = $(this);
-        $label.css(
-          "display",
-          !query || $label.text().toLowerCase().includes(query) ? "" : "none",
+        $label.toggle(
+          !query || $label.text().toLowerCase().includes(query),
         );
       });
     });
@@ -1157,6 +1187,7 @@ jQuery(function ($) {
     );
   }
 
+
   function matchesFilterValue(filter, status, leadType, stage) {
     switch (filter) {
       case "actioned":
@@ -1202,6 +1233,28 @@ jQuery(function ($) {
     );
   }
 
+  function matchesGridFilter($tRow, filter) {
+    const $status = $tRow.find(".table-status").first();
+    if (LEAD_STATUSES.includes(filter)) {
+      return $status.hasClass(filter);
+    }
+
+    if (STAGE_FILTERS.includes(filter)) {
+      const stageText = $tRow
+        .children()
+        .eq(4)
+        .text()
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z]/g, "");
+      const filterKey = String(filter).replace(/-/g, "");
+
+      return !$status.hasClass("rejected") && stageText.indexOf(filterKey) === 0;
+    }
+
+    return matchesFilterByName(getGridFirmName($tRow), filter);
+  }
+
   function applyCurrentView() {
     const searchValue = $searchInput.length
       ? ($searchInput.val() || "").trim().toLowerCase()
@@ -1210,28 +1263,31 @@ jQuery(function ($) {
     /* List view */
     $dealerRows.each(function () {
       const $row = $(this);
+      const $detailRow = $row.next(".dealer-details-row");
       const visible =
         matchesFilter($row, activeFilter) &&
         (!searchValue || $row.text().toLowerCase().includes(searchValue)) &&
         matchesModalFilters(getDealerName($row));
 
       $row.toggleClass("hidden-by-filter", !visible);
-      $row
-        .next(".dealer-details-row")
-        .toggleClass("hidden-by-filter", !visible);
+      $detailRow.toggleClass("hidden-by-filter", !visible);
+
+      const progressStage =
+        activeFilter === "sanctioned" && $row.attr("data-status") === "sanctioned"
+          ? "limit-setup"
+          : getDealerStage($row);
+      $detailRow
+        .find(".dealer-progress")
+        .replaceWith(getProgressMarkup(progressStage));
     });
 
     /* Grid view */
     $("#newDealerPage .dealer-table-view tbody tr").each(function () {
       const $tRow = $(this);
-      const dealerName = getRobustFirmName(
-        $tRow.find(".table-firm-name").first(),
-      );
-
       const visible =
-        matchesFilterByName(dealerName, activeFilter) &&
+        matchesGridFilter($tRow, activeFilter) &&
         (!searchValue || $tRow.text().toLowerCase().includes(searchValue)) &&
-        matchesModalFilters(dealerName);
+        matchesModalFilters(getGridFirmName($tRow));
 
       $tRow.toggleClass("hidden-by-filter", !visible);
     });
@@ -1293,8 +1349,7 @@ jQuery(function ($) {
       const count = match ? match[2] : "";
       const badge = count ? " <span>" + count + "</span>" : "";
 
-      const isCompact =
-        $toBeActionedBtn.length && $toBeActionedBtn.css("display") === "none";
+      const isCompact = $toBeActionedBtn.length && $toBeActionedBtn.is(":hidden");
 
       setActive($filterButtons, null);
 
@@ -1345,8 +1400,8 @@ jQuery(function ($) {
     function setView(view) {
       const isGrid = view === "grid";
 
-      $listWrapper.css("display", isGrid ? "none" : "");
-      $gridWrapper.css("display", isGrid ? "block" : "none");
+      $listWrapper.toggle(!isGrid);
+      $gridWrapper.toggle(isGrid);
       $newDealerPage.toggleClass("table-view", isGrid);
       syncLeadSelection();
     }
@@ -1459,6 +1514,7 @@ jQuery(function ($) {
       applySavedPins();
     });
   }
+
 
   function sendShareMail(payload) {
     /* TODO(backend): call the share-via-mail API here; resolve on success, reject on failure */
@@ -1665,10 +1721,11 @@ jQuery(function ($) {
 
   function initScrollLock() {
     const $overlays = $(
-      ".dealer-filters-overlay, #shareMailOverlay, #openTranchesModal",
+      ".dealer-filters-overlay, #shareMailOverlay, #openTranchesModal, #uploadedDetailsOverlay",
     );
     if (!$overlays.length) return;
 
+    const rootEl = document.documentElement;
     let locked = false;
 
     function sync() {
@@ -1679,19 +1736,18 @@ jQuery(function ($) {
       locked = shouldLock;
 
       if (shouldLock) {
-        const scrollbarWidth =
-          window.innerWidth - document.documentElement.clientWidth;
-        if (scrollbarWidth > 0)
-          $("body").css("paddingRight", scrollbarWidth + "px");
+        setCssVar(
+          rootEl,
+          "--nd-scrollbar-width",
+          window.innerWidth - rootEl.clientWidth + "px",
+        );
       } else {
-        $("body").css("paddingRight", "");
+        rootEl.style.removeProperty("--nd-scrollbar-width");
       }
 
-      $("html").toggleClass("nd-scroll-lock", shouldLock);
-      $("body").toggleClass("nd-scroll-lock", shouldLock);
+      $("html, body").toggleClass("nd-scroll-lock", shouldLock);
     }
 
-    /* MutationObserver has no jQuery equivalent - stays native */
     const observer = new MutationObserver(sync);
     $overlays.each(function () {
       observer.observe(this, { attributes: true, attributeFilter: ["class"] });
@@ -1721,9 +1777,7 @@ jQuery(function ($) {
   function getGridRowByName(name) {
     return $("#newDealerPage .dealer-table-view tbody tr")
       .filter(function () {
-        return (
-          getRobustFirmName($(this).find(".table-firm-name").first()) === name
-        );
+        return getGridFirmName($(this)) === name;
       })
       .first();
   }
@@ -1760,25 +1814,20 @@ jQuery(function ($) {
     };
   }
 
-  /* Fallback: lead exists only in the grid view (no list row) */
   function getLeadInfoFromGrid($tRow) {
     const $cells = $tRow.children();
     let $codeEl = $tRow.find(".table-firm-code .code-value").first();
     if (!$codeEl.length) $codeEl = $tRow.find(".table-firm-code").first();
     const $statusEl = $tRow.find(".table-status").first();
-    const status =
-      ["actioned", "sanctioned", "rejected"].find(function (name) {
-        return $statusEl.length && $statusEl.hasClass(name);
-      }) || "";
 
     return {
-      firm: getRobustFirmName($tRow.find(".table-firm-name").first()),
+      firm: getGridFirmName($tRow),
       code: cellText($codeEl).replace(/^\s*Code:\s*/i, ""),
       pan: cellText($cells.eq(7)),
       mobile: cellText($cells.eq(5)),
       sales: cellText($cells.eq(8)),
       loan: "-",
-      status: status,
+      status: getBadgeStatus($statusEl),
       statusText: stripInfoIcon($statusEl),
     };
   }
@@ -1796,20 +1845,14 @@ jQuery(function ($) {
     if ($listRow.length) return getDealerName($listRow);
 
     const $tRow = $box.closest("tr");
-    return $tRow.length
-      ? getRobustFirmName($tRow.find(".table-firm-name").first())
-      : "";
+    return $tRow.length ? getGridFirmName($tRow) : "";
   }
 
   function getVisibleLeadNames() {
-    const isGrid = $newDealerPage.hasClass("table-view");
-
-    if (isGrid) {
-      return $(
-        "#newDealerPage .dealer-table-view tbody tr:not(.hidden-by-filter)",
-      )
+    if ($newDealerPage.hasClass("table-view")) {
+      return $("#newDealerPage .dealer-table-view tbody tr:not(.hidden-by-filter)")
         .map(function () {
-          return getRobustFirmName($(this).find(".table-firm-name").first());
+          return getGridFirmName($(this));
         })
         .get();
     }
@@ -2055,9 +2098,7 @@ jQuery(function ($) {
       if (!pendingNames.length || $confirmBtn.prop("disabled")) return;
 
       const names = pendingNames.slice();
-      const infos = names
-        .map(getLeadInfo)
-        .filter(Boolean); /* collect BEFORE removing rows */
+      const infos = names.map(getLeadInfo).filter(Boolean);
       $confirmBtn.prop("disabled", true);
 
       try {
@@ -2103,7 +2144,7 @@ jQuery(function ($) {
           ? getDealerName($listRow)
           : $detailRow.length
             ? $detailRow.attr("data-dealer-details-for")
-            : getRobustFirmName($gridRow.find(".table-firm-name").first());
+            : getGridFirmName($gridRow);
 
         if (name) openModal([name], false);
       },
@@ -2455,7 +2496,8 @@ jQuery(function ($) {
     opts.$toBtn.on("click", open);
   }
 
-  //   TRANSACTION DASHBOARD
+
+    //  TRANSACTION DASHBOARD
 
   const txnState = {
     tab: "all",
@@ -2511,68 +2553,68 @@ jQuery(function ($) {
 
   function renderTxnRow(item, index) {
     return `
-            <tr class="dealer-row txn-row" ${getTxnRowAttributes(item, index)}>
-                <td class="txn-cell txn-cell--firm">
-                    <div class="dealer-firm">
-                        <span class="material-symbols-outlined dealer-pin" role="button" tabindex="0">push_pin</span>
-                        <div>
-                            <strong>${escapeHtml(item.firm)}</strong>
-                            <small>Code: ${escapeHtml(item.code)}</small>
-                        </div>
-                    </div>
-                </td>
-                <td class="txn-cell txn-cell--scf" data-label="SCF limit account">${getTxnScfMarkup(item)}</td>
-                <td class="txn-cell txn-cell--extra txn-cell--sanction" data-label="Sanction limit">${formatAmountMarkup(item.sanction)}</td>
-                <td class="txn-cell txn-cell--extra txn-cell--utilized" data-label="Utilized limit">${getTxnAmountMarkup(item.utilized, item.utilizedPct)}</td>
-                <td class="txn-cell txn-cell--extra txn-cell--available" data-label="Available limit">${getTxnAmountMarkup(item.available, item.availablePct)}</td>
-                <td class="txn-cell txn-cell--extra txn-cell--open" data-label="Open transactions">${getTxnOpenCountMarkup(item, index)}</td>
-                <td class="txn-cell txn-cell--overdue${item.overdueAmount === "-" ? " is-empty" : ""}" data-label="Overdue amount">${formatAmountMarkup(item.overdueAmount)}</td>
-                <td class="txn-cell txn-cell--days" data-label="Days to get in overdue">${getTxnDaysMarkup(item)}</td>
-                <td class="txn-cell txn-cell--actions">
-                    <div class="dealer-row-actions">
-                        <button type="button" class="txn-refresh-btn" title="Refresh"></button>
-                        <button type="button" class="dealer-expand-btn">⌄</button>
-                    </div>
-                </td>
-                <td class="txn-cell txn-cell--extra txn-cell--case txn-mobile-only" data-label="Case type">${escapeHtml(item.caseType || "-")}</td>
-                <td class="txn-cell txn-cell--extra txn-cell--expiry txn-mobile-only" data-label="A/c expiry date">${escapeHtml(item.acExpiry || "-")}</td>
-            </tr>
-            <tr class="txn-details-row" data-txn-details-for="${index}">
-                <td>
-                    <div class="txn-detail-item"><span>Case type</span><strong>${escapeHtml(item.caseType || "-")}</strong></div>
-                </td>
-                <td>
-                    <div class="txn-detail-item"><span>A/c expiry date</span><strong>${escapeHtml(item.acExpiry || "-")}</strong></div>
-                </td>
-                <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-            </tr>
-        `;
+      <tr class="dealer-row txn-row" ${getTxnRowAttributes(item, index)}>
+        <td class="txn-cell txn-cell--firm">
+          <div class="dealer-firm">
+            <span class="material-symbols-outlined dealer-pin" role="button" tabindex="0">push_pin</span>
+            <div>
+              <strong>${escapeHtml(item.firm)}</strong>
+              <small>Code: ${escapeHtml(item.code)}</small>
+            </div>
+          </div>
+        </td>
+        <td class="txn-cell txn-cell--scf" data-label="SCF limit account">${getTxnScfMarkup(item)}</td>
+        <td class="txn-cell txn-cell--extra txn-cell--sanction" data-label="Sanction limit">${formatAmountMarkup(item.sanction)}</td>
+        <td class="txn-cell txn-cell--extra txn-cell--utilized" data-label="Utilized limit">${getTxnAmountMarkup(item.utilized, item.utilizedPct)}</td>
+        <td class="txn-cell txn-cell--extra txn-cell--available" data-label="Available limit">${getTxnAmountMarkup(item.available, item.availablePct)}</td>
+        <td class="txn-cell txn-cell--extra txn-cell--open" data-label="Open transactions">${getTxnOpenCountMarkup(item, index)}</td>
+        <td class="txn-cell txn-cell--overdue${item.overdueAmount === "-" ? " is-empty" : ""}" data-label="Overdue amount">${formatAmountMarkup(item.overdueAmount)}</td>
+        <td class="txn-cell txn-cell--days" data-label="Days to get in overdue">${getTxnDaysMarkup(item)}</td>
+        <td class="txn-cell txn-cell--actions">
+          <div class="dealer-row-actions">
+            <button type="button" class="txn-refresh-btn" title="Refresh"></button>
+            <button type="button" class="dealer-expand-btn">⌄</button>
+          </div>
+        </td>
+        <td class="txn-cell txn-cell--extra txn-cell--case txn-mobile-only" data-label="Case type">${escapeHtml(item.caseType || "-")}</td>
+        <td class="txn-cell txn-cell--extra txn-cell--expiry txn-mobile-only" data-label="A/c expiry date">${escapeHtml(item.acExpiry || "-")}</td>
+      </tr>
+      <tr class="txn-details-row" data-txn-details-for="${index}">
+        <td>
+          <div class="txn-detail-item"><span>Case type</span><strong>${escapeHtml(item.caseType || "-")}</strong></div>
+        </td>
+        <td>
+          <div class="txn-detail-item"><span>A/c expiry date</span><strong>${escapeHtml(item.acExpiry || "-")}</strong></div>
+        </td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+    `;
   }
 
   function renderTxnGridRow(item, index) {
     return `
-            <tr ${getTxnRowAttributes(item, index)}>
-                <td>
-                    <div class="table-firm">
-                        <span class="material-symbols-outlined dealer-pin" role="button" tabindex="0">push_pin</span>
-                        <div class="table-firm-name">${escapeHtml(item.firm)}<small class="table-firm-code">Code: ${escapeHtml(item.code)}</small></div>
-                    </div>
-                </td>
-                <td>
-                    <div class="table-action">
-                        <button type="button" class="txn-refresh-btn" title="Refresh"></button>
-                    </div>
-                </td>
-                <td>${getTxnDaysMarkup(item)}</td>
-                <td>${getTxnScfMarkup(item)}</td>
-                <td>${formatAmountMarkup(item.sanction)}</td>
-                <td>${getTxnAmountMarkup(item.utilized, item.utilizedPct)}</td>
-                <td>${getTxnAmountMarkup(item.available, item.availablePct)}</td>
-                <td>${getTxnOpenCountMarkup(item, index)}</td>
-                <td>${formatAmountMarkup(item.overdueAmount)}</td>
-                <td>${escapeHtml(item.caseType || "-")}</td>
-            </tr>
-        `;
+      <tr ${getTxnRowAttributes(item, index)}>
+        <td>
+          <div class="table-firm">
+            <span class="material-symbols-outlined dealer-pin" role="button" tabindex="0">push_pin</span>
+            <div class="table-firm-name">${escapeHtml(item.firm)}<small class="table-firm-code">Code: ${escapeHtml(item.code)}</small></div>
+          </div>
+        </td>
+        <td>
+          <div class="table-action">
+            <button type="button" class="txn-refresh-btn" title="Refresh"></button>
+          </div>
+        </td>
+        <td>${getTxnDaysMarkup(item)}</td>
+        <td>${getTxnScfMarkup(item)}</td>
+        <td>${formatAmountMarkup(item.sanction)}</td>
+        <td>${getTxnAmountMarkup(item.utilized, item.utilizedPct)}</td>
+        <td>${getTxnAmountMarkup(item.available, item.availablePct)}</td>
+        <td>${getTxnOpenCountMarkup(item, index)}</td>
+        <td>${formatAmountMarkup(item.overdueAmount)}</td>
+        <td>${escapeHtml(item.caseType || "-")}</td>
+      </tr>
+    `;
   }
 
   function closeAllTxnDetails() {
@@ -2686,11 +2728,14 @@ jQuery(function ($) {
       );
       const below = r.top - h - 12 < 8;
 
-      $tip.css({
-        left: left + "px",
-        top: (below ? r.bottom + 12 : r.top - h - 12) + "px",
-      });
-      tipEl.style.setProperty(
+      setCssVar(tipEl, "--tip-left", left + "px");
+      setCssVar(
+        tipEl,
+        "--tip-top",
+        (below ? r.bottom + 12 : r.top - h - 12) + "px",
+      );
+      setCssVar(
+        tipEl,
         "--arrow-x",
         Math.max(14, Math.min(centerX - left, w - 14)) + "px",
       );
@@ -2758,17 +2803,17 @@ jQuery(function ($) {
         item.tranches
           .map(function (t) {
             return `
-                    <tr>
-                        <td data-label="ID">${escapeHtml(t.id)}</td>
-                        <td data-label="Transaction date">${escapeHtml(t.date)}</td>
-                        <td data-label="Transaction type">${escapeHtml(t.type)}</td>
-                        <td data-label="Amount">${formatAmountMarkup(t.amount)}</td>
-                        <td data-label="Due date">${escapeHtml(t.due)}</td>
-                    </tr>
-                `;
+              <tr>
+                <td data-label="ID">${escapeHtml(t.id)}</td>
+                <td data-label="Transaction date">${escapeHtml(t.date)}</td>
+                <td data-label="Transaction type">${escapeHtml(t.type)}</td>
+                <td data-label="Amount">${formatAmountMarkup(t.amount)}</td>
+                <td data-label="Due date">${escapeHtml(t.due)}</td>
+              </tr>
+            `;
           })
           .join("") ||
-          '<tr><td colspan="5" style="text-align:center;color:#999;">No open tranches</td></tr>',
+          '<tr><td colspan="5" class="tranches-empty">No open tranches</td></tr>',
       );
 
       $modal.addClass("show");
@@ -2785,10 +2830,7 @@ jQuery(function ($) {
     });
 
     $(".txn-filter-extra").each(function () {
-      $(this).css(
-        "display",
-        $(this).attr("data-extra-for") === tab ? "" : "none",
-      );
+      $(this).toggle($(this).attr("data-extra-for") === tab);
     });
   }
 
@@ -3026,7 +3068,8 @@ jQuery(function ($) {
     initTxnFiltersModal();
   }
 
-  //   RENEWAL DETAILS
+
+    //  RENEWAL DETAILS
 
   const renewalActions = {
     enhance: "Enhance limit",
@@ -3069,6 +3112,201 @@ jQuery(function ($) {
     {
       firm: "Chauhan Traders",
       email: "shivam@chauhan.com",
+      uploadedBy: "Anchor corporate",
+      years: "3 years",
+      pan: "CFSG34527F",
+      sales: "₹3,00,00,000.00",
+      sanction: "₹80,00,000.00",
+      state: "due",
+      days: 8,
+      action: "renew",
+      vintage: "15 years",
+    },
+    {
+      firm: "Polychem Global",
+      email: "aryan@polychem.com",
+      years: "5 years",
+      pan: "CFSG34527F",
+      sales: "₹2,95,00,000.00",
+      sanction: "₹90,00,000.00",
+      state: "expired",
+      days: 20,
+      action: "update",
+      vintage: "16 years",
+    },
+    {
+      firm: "Vertex Industrial Solutions",
+      email: "kartik@polychem.com",
+      years: "2 years",
+      pan: "CFSG34527F",
+      sales: "₹3,15,00,000.00",
+      sanction: "₹95,00,000.00",
+      state: "due",
+      days: 4,
+      action: "renew",
+      vintage: "10 years",
+    },
+    {
+      firm: "Kartikey Corporations",
+      email: "keshav@kartikey.com",
+      years: "6 years",
+      pan: "CFSG34527F",
+      sales: "₹3,15,00,000.00",
+      sanction: "₹70,00,000.00",
+      state: "due",
+      days: 24,
+      action: "enhance",
+      vintage: "13 years",
+    },
+    {
+      firm: "TradersTech",
+      email: "arjun@traderstech.com",
+      years: "7 years",
+      pan: "YAHS8D9573",
+      sales: "₹3,00,00,000.00",
+      sanction: "₹86,00,000.00",
+      state: "due",
+      days: 8,
+      action: "renew",
+      vintage: "9 years",
+    },
+    {
+      firm: "Global Traders",
+      email: "harshal@globaltraders.com",
+      years: "9 years",
+      pan: "MEJA8D9573",
+      sales: "₹3,15,00,000.00",
+      sanction: "₹86,00,000.00",
+      state: "expired",
+      days: 10,
+      action: "update",
+      vintage: "11 years",
+    },
+    {
+      firm: "Zenith Steel Traders",
+      email: "harish@zenith.com",
+      years: "3 years",
+      pan: "CFSG34527F",
+      sales: "₹3,15,00,000.00",
+      sanction: "₹70,00,000.00",
+      state: "due",
+      days: 12,
+      action: "enhance",
+      vintage: "12 years",
+    },
+    {
+      firm: "SunDesh Systems Pvt. Ltd",
+      email: "keshav@sundesh.com",
+      years: "3 years",
+      pan: "CFSG34527F",
+      sales: "₹4,00,00,000.00",
+      sanction: "₹65,00,000.00",
+      state: "expired",
+      days: 20,
+      action: "update",
+      vintage: "14 years",
+    },
+    {
+      firm: "Chauhan Traders",
+      email: "shivam@chauhan.com",
+      uploadedBy: "Anchor corporate",
+      years: "3 years",
+      pan: "CFSG34527F",
+      sales: "₹3,00,00,000.00",
+      sanction: "₹80,00,000.00",
+      state: "due",
+      days: 8,
+      action: "renew",
+      vintage: "15 years",
+    },
+    {
+      firm: "Polychem Global",
+      email: "aryan@polychem.com",
+      years: "5 years",
+      pan: "CFSG34527F",
+      sales: "₹2,95,00,000.00",
+      sanction: "₹90,00,000.00",
+      state: "expired",
+      days: 20,
+      action: "update",
+      vintage: "16 years",
+    },
+    {
+      firm: "Vertex Industrial Solutions",
+      email: "kartik@polychem.com",
+      years: "2 years",
+      pan: "CFSG34527F",
+      sales: "₹3,15,00,000.00",
+      sanction: "₹95,00,000.00",
+      state: "due",
+      days: 4,
+      action: "renew",
+      vintage: "10 years",
+    },
+    {
+      firm: "Kartikey Corporations",
+      email: "keshav@kartikey.com",
+      years: "6 years",
+      pan: "CFSG34527F",
+      sales: "₹3,15,00,000.00",
+      sanction: "₹70,00,000.00",
+      state: "due",
+      days: 24,
+      action: "enhance",
+      vintage: "13 years",
+    },
+    {
+      firm: "TradersTech",
+      email: "arjun@traderstech.com",
+      years: "7 years",
+      pan: "YAHS8D9573",
+      sales: "₹3,00,00,000.00",
+      sanction: "₹86,00,000.00",
+      state: "due",
+      days: 8,
+      action: "renew",
+      vintage: "9 years",
+    },
+    {
+      firm: "Global Traders",
+      email: "harshal@globaltraders.com",
+      years: "9 years",
+      pan: "MEJA8D9573",
+      sales: "₹3,15,00,000.00",
+      sanction: "₹86,00,000.00",
+      state: "expired",
+      days: 10,
+      action: "update",
+      vintage: "11 years",
+    },
+    {
+      firm: "Zenith Steel Traders",
+      email: "harish@zenith.com",
+      years: "3 years",
+      pan: "CFSG34527F",
+      sales: "₹3,15,00,000.00",
+      sanction: "₹70,00,000.00",
+      state: "due",
+      days: 12,
+      action: "enhance",
+      vintage: "12 years",
+    },
+    {
+      firm: "SunDesh Systems Pvt. Ltd",
+      email: "keshav@sundesh.com",
+      years: "3 years",
+      pan: "CFSG34527F",
+      sales: "₹4,00,00,000.00",
+      sanction: "₹65,00,000.00",
+      state: "expired",
+      days: 20,
+      action: "update",
+      vintage: "14 years",
+    },
+    {
+      firm: "Chauhan Traders",
+      email: "shivam@chauhan.com",
+      uploadedBy: "Anchor corporate",
       years: "3 years",
       pan: "CFSG34527F",
       sales: "₹3,00,00,000.00",
@@ -3201,69 +3439,69 @@ jQuery(function ($) {
 
   function renderRenewalRow(item, index) {
     return `
-            <tr class="renewal-row" data-renewal-status="${item.state}" data-renewal-index="${index}">
-                <td class="renewal-cell renewal-cell--firm">
-                    <div class="dealer-firm">
-                        <span class="material-symbols-outlined dealer-pin" role="button" tabindex="0" aria-label="Pin dealer">push_pin</span>
-                        <div>
-                            <strong>${escapeHtml(item.firm)}</strong>
-                            <small class="renewal-firm-id">ID: <span class="id-value">${escapeHtml(item.id)}</span></small>
-                        </div>
-                    </div>
-                </td>
-                <td class="renewal-cell renewal-cell--extra renewal-cell--dealer" data-label="Dealer details">
-                    <div class="dealer-contact">
-                        <span data-value="${escapeHtml(item.phone)}">${escapeHtml(item.phone)}</span>
-                        <small data-value="${escapeHtml(item.email)}">${escapeHtml(item.email)}</small>
-                    </div>
-                </td>
-                <td class="renewal-cell renewal-cell--extra renewal-cell--assoc" data-label="Association with corporate">
-                    <div class="dealer-association">
-                        <strong>${escapeHtml(item.years)}</strong>
-                        <small>PAN: <span class="pan-value">${escapeHtml(item.pan)}</span></small>
-                    </div>
-                </td>
-                <td class="renewal-cell renewal-cell--extra renewal-cell--sales" data-label="Sales to dealer (last 12M)">${formatAmountMarkup(item.sales)}</td>
-                <td class="renewal-cell renewal-cell--sanction" data-label="Sanction limit">${formatAmountMarkup(item.sanction)}</td>
-                <td class="renewal-cell renewal-cell--status" data-label="Renewal status">${getRenewalStatusMarkup(item, "dealer-status")}</td>
-                <td class="renewal-cell renewal-cell--actions">
-                    <div class="renewal-action">
-                        ${getRenewalActionMarkup(item)}
-                        <button type="button" class="renewal-expand-btn" aria-label="Toggle details">⌄</button>
-                    </div>
-                </td>
-                <td class="renewal-cell renewal-cell--extra renewal-cell--vintage renewal-mobile-only" data-label="Business vintage">${escapeHtml(item.vintage)}</td>
-                <td class="renewal-cell renewal-cell--extra renewal-cell--uploaded renewal-mobile-only" data-label="Uploaded by">${escapeHtml(item.uploadedBy)}<i class="dealer-upload-user-icon"></i></td>
-                <td class="renewal-cell renewal-cell--extra renewal-cell--recommend renewal-mobile-only" data-label="Recommendation limit">${formatAmountMarkup(item.recommendation)}</td>
-            </tr>
-            <tr class="renewal-details-row">
-                <td><div class="renewal-detail-item"><span>Business vintage</span><strong>${escapeHtml(item.vintage)}</strong></div></td>
-                <td><div class="renewal-detail-item"><span>Uploaded by</span><strong>${escapeHtml(item.uploadedBy)}<i class="dealer-upload-user-icon"></i></strong></div></td>
-                <td><div class="renewal-detail-item renewal-detail-item--end"><span>Recommendation limit</span><strong>${formatAmountMarkup(item.recommendation)}</strong></div></td>
-                <td></td><td></td><td></td><td></td>
-            </tr>
-        `;
+      <tr class="renewal-row" data-renewal-status="${item.state}" data-renewal-index="${index}">
+        <td class="renewal-cell renewal-cell--firm">
+          <div class="dealer-firm">
+            <span class="material-symbols-outlined dealer-pin" role="button" tabindex="0" aria-label="Pin dealer">push_pin</span>
+            <div>
+              <strong>${escapeHtml(item.firm)}</strong>
+              <small class="renewal-firm-id">ID: <span class="id-value">${escapeHtml(item.id)}</span></small>
+            </div>
+          </div>
+        </td>
+        <td class="renewal-cell renewal-cell--extra renewal-cell--dealer" data-label="Dealer details">
+          <div class="dealer-contact">
+            <span data-value="${escapeHtml(item.phone)}">${escapeHtml(item.phone)}</span>
+            <small data-value="${escapeHtml(item.email)}">${escapeHtml(item.email)}</small>
+          </div>
+        </td>
+        <td class="renewal-cell renewal-cell--extra renewal-cell--assoc" data-label="Association with corporate">
+          <div class="dealer-association">
+            <strong>${escapeHtml(item.years)}</strong>
+            <small>PAN: <span class="pan-value">${escapeHtml(item.pan)}</span></small>
+          </div>
+        </td>
+        <td class="renewal-cell renewal-cell--extra renewal-cell--sales" data-label="Sales to dealer (last 12M)">${formatAmountMarkup(item.sales)}</td>
+        <td class="renewal-cell renewal-cell--sanction" data-label="Sanction limit">${formatAmountMarkup(item.sanction)}</td>
+        <td class="renewal-cell renewal-cell--status" data-label="Renewal status">${getRenewalStatusMarkup(item, "dealer-status")}</td>
+        <td class="renewal-cell renewal-cell--actions">
+          <div class="renewal-action">
+            ${getRenewalActionMarkup(item)}
+            <button type="button" class="renewal-expand-btn" aria-label="Toggle details">⌄</button>
+          </div>
+        </td>
+        <td class="renewal-cell renewal-cell--extra renewal-cell--vintage renewal-mobile-only" data-label="Business vintage">${escapeHtml(item.vintage)}</td>
+        <td class="renewal-cell renewal-cell--extra renewal-cell--uploaded renewal-mobile-only" data-label="Uploaded by">${escapeHtml(item.uploadedBy)}${getUploadIconMarkup(item.firm, item.uploadedBy)}</td>
+        <td class="renewal-cell renewal-cell--extra renewal-cell--recommend renewal-mobile-only" data-label="Recommendation limit">${formatAmountMarkup(item.recommendation)}</td>
+      </tr>
+      <tr class="renewal-details-row">
+        <td><div class="renewal-detail-item"><span>Business vintage</span><strong>${escapeHtml(item.vintage)}</strong></div></td>
+        <td><div class="renewal-detail-item"><span>Uploaded by</span><strong>${escapeHtml(item.uploadedBy)}${getUploadIconMarkup(item.firm, item.uploadedBy)}</strong></div></td>
+        <td><div class="renewal-detail-item renewal-detail-item--end"><span>Recommendation limit</span><strong>${formatAmountMarkup(item.recommendation)}</strong></div></td>
+        <td></td><td></td><td></td><td></td>
+      </tr>
+    `;
   }
 
   function renderRenewalGridRow(item, index) {
     return `
-            <tr data-renewal-status="${item.state}" data-renewal-index="${index}">
-                <td>
-                    <div class="table-firm">
-                        <span class="material-symbols-outlined dealer-pin" role="button" tabindex="0" aria-label="Pin dealer">push_pin</span>
-                        <div class="table-firm-name">${escapeHtml(item.firm)}<small class="table-firm-code renewal-firm-id">ID: <span class="id-value">${escapeHtml(item.id)}</span></small></div>
-                    </div>
-                </td>
-                <td><div class="renewal-action">${getRenewalActionMarkup(item)}</div></td>
-                <td>${getRenewalStatusMarkup(item, "table-status")}</td>
-                <td>${escapeHtml(item.phone)}</td>
-                <td>${escapeHtml(item.email)}</td>
-                <td>${escapeHtml(item.pan)}</td>
-                <td>${formatAmountMarkup(item.sales)}</td>
-                <td>${escapeHtml(item.years)}</td>
-                <td>${formatAmountMarkup(item.sanction)}</td>
-            </tr>
-        `;
+      <tr data-renewal-status="${item.state}" data-renewal-index="${index}">
+        <td>
+          <div class="table-firm">
+            <span class="material-symbols-outlined dealer-pin" role="button" tabindex="0" aria-label="Pin dealer">push_pin</span>
+            <div class="table-firm-name">${escapeHtml(item.firm)}<small class="table-firm-code renewal-firm-id">ID: <span class="id-value">${escapeHtml(item.id)}</span></small></div>
+          </div>
+        </td>
+        <td><div class="renewal-action">${getRenewalActionMarkup(item)}</div></td>
+        <td>${getRenewalStatusMarkup(item, "table-status")}</td>
+        <td>${escapeHtml(item.phone)}</td>
+        <td>${escapeHtml(item.email)}</td>
+        <td>${escapeHtml(item.pan)}</td>
+        <td>${formatAmountMarkup(item.sales)}</td>
+        <td>${escapeHtml(item.years)}</td>
+        <td>${formatAmountMarkup(item.sanction)}</td>
+      </tr>
+    `;
   }
 
   function closeAllRenewalDetails() {
@@ -3388,12 +3626,12 @@ jQuery(function ($) {
       $tabPills.each(function () {
         $(this).toggleClass("active", $(this).attr("data-tab") === tab);
       });
-      $daysField.css("display", tab === "all" ? "none" : "");
+      $daysField.toggle(tab !== "all");
       $daysLabel.text(tab === "expired" ? "Expired since" : "Days to expire");
       $daysPills.each(function () {
         $(this).toggleClass("active", $(this).attr("data-value") === range);
       });
-      $customField.css("display", range === "custom" ? "" : "none");
+      $customField.toggle(range === "custom");
       $fromBtn
         .children()
         .first()
@@ -3536,8 +3774,7 @@ jQuery(function ($) {
     });
 
     initDropdownMenu($("#renewalAddDealerBtn"), $("#renewalAddDealerMenu"));
-
-    /* expand / collapse (list view) */
+    
     $listBody.on("click", ".renewal-expand-btn", function () {
       const $row = $(this).closest(".renewal-row");
       const $detailRow = $row.next();
@@ -3565,6 +3802,357 @@ jQuery(function ($) {
     initRenewalFiltersModal();
   }
 
+
+    //  UPLOADED DETAILS MODAL (shared: new dealer + renewal)
+
+  const UPLOAD_ROLES = {
+    icici: {
+      subtitle: "Dealer was added by ICICI Bank SM",
+      showSm: true,
+    },
+    anchor: {
+      subtitle: "Dealer was added by anchor corporate representative",
+      showSm: false,
+    },
+  };
+
+  /* TODO(backend): replace with API data */
+  const ICICI_SM = {
+    name: "Aryan Rathee",
+    phone: "+91 7432345677",
+    email: "aryan.rathee@icici.bank.in",
+  };
+  const ANCHOR_REP_DEFAULT = {
+    name: "Keshav Mishra",
+    mobile: "9867546875",
+    email: "keshav.mishra@gmail.com",
+  };
+  const EMPTY_REP = { name: "", mobile: "", email: "" };
+  const REP_TITLE = "Anchor corporate representative details";
+  const SM_AVATAR =
+    '<img src="../assets/image/dashboard/icici-icon.svg" alt="ICICI Bank" />';
+  const REP_AVATAR =
+    '<img src="../assets/image/dashboard/user-image.svg" alt="Human Image" />';
+  const UPLOAD_EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+  const UD_RULES = {
+    name: {
+      test: function (v) {
+        return /^[A-Za-z][A-Za-z\s.'-]*$/.test(v);
+      },
+      empty: "Please enter name.",
+      bad: "Entered name is in wrong format, please enter a valid name.",
+    },
+    mobile: {
+      test: function (v) {
+        return /^\d{10}$/.test(v);
+      },
+      empty: "Please enter mobile number.",
+      bad: "Entered mobile number is in wrong format, please enter a valid 10-digit mobile number.",
+    },
+    email: {
+      test: function (v) {
+        return UPLOAD_EMAIL_RE.test(v);
+      },
+      empty: "Please enter email ID.",
+      bad: "Entered email ID is in wrong format, please enter a valid email ID.",
+    },
+  };
+
+  function getUdError(field, value) {
+    const rule = UD_RULES[field];
+    if (!value) return rule.empty;
+    return rule.test(value) ? "" : rule.bad;
+  }
+
+  const anchorReps = {};
+
+  function getUploadRole(uploadedBy) {
+    return /icici/i.test(uploadedBy) ? "icici" : "anchor";
+  }
+
+  function getUploadIconMarkup(firm, uploadedBy) {
+    return (
+      '<i class="dealer-upload-user-icon" role="button" tabindex="0"' +
+      ' aria-label="View uploaded details"' +
+      ' data-upload-firm="' +
+      escapeHtml(firm) +
+      '"' +
+      ' data-upload-role="' +
+      getUploadRole(uploadedBy) +
+      '"></i>'
+    );
+  }
+
+  function getAnchorRep(firm, role) {
+    if (anchorReps[firm]) return anchorReps[firm];
+    return role === "anchor" ? ANCHOR_REP_DEFAULT : EMPTY_REP;
+  }
+
+  function isRepFilled(rep) {
+    return Boolean(rep.name && rep.mobile && rep.email);
+  }
+
+  function contactRowMarkup(icon, value) {
+    return (
+      '<div class="ud-contact"><span class="material-icons ud-contact-icon">' +
+      icon +
+      '</span><span class="ud-contact-text">' +
+      escapeHtml(value) +
+      '</span><button type="button" class="ud-copy" aria-label="Copy" data-copy="' +
+      escapeHtml(value) +
+      '"><span class="material-icons">content_copy</span></button></div>'
+    );
+  }
+
+  function personCardMarkup(opts) {
+    const edit = opts.editable
+      ? '<button type="button" class="ud-edit-link" data-ud-action="edit">' +
+        '<span class="material-icons">edit</span>Edit</button>'
+      : "";
+
+    return (
+      '<div class="ud-card ud-card--filled">' +
+      '<div class="ud-card-head"><p class="ud-card-title">' +
+      opts.title +
+      "</p>" +
+      edit +
+      "</div>" +
+      '<div class="ud-person"><div class="ud-person-main">' +
+      '<span class="ud-avatar">' +
+      opts.avatar +
+      "</span>" +
+      "<div><small>Name</small><strong>" +
+      escapeHtml(opts.name) +
+      "</strong></div></div>" +
+      '<div class="ud-person-contacts">' +
+      contactRowMarkup("call", opts.phone) +
+      contactRowMarkup("mail_outline", opts.email) +
+      "</div></div></div>"
+    );
+  }
+
+  function repEmptyMarkup() {
+    function field(label) {
+      return (
+        '<div><span class="ud-label">' +
+        label +
+        '</span><div class="ud-value">-</div></div>'
+      );
+    }
+    return (
+      '<div class="ud-card"><div class="ud-card-head"><p class="ud-card-title">' +
+      REP_TITLE +
+      "</p>" +
+      '<button type="button" class="ud-edit-link" data-ud-action="edit">' +
+      '<span class="material-icons">edit</span>Edit</button></div>' +
+      '<div class="ud-grid">' +
+      field("Name") +
+      field("Mobile number") +
+      field("Email ID") +
+      "</div></div>"
+    );
+  }
+
+  function repFormMarkup(rep) {
+    function err(field) {
+      return (
+        '<small class="filter-error" data-ud-error="' + field + '"></small>'
+      );
+    }
+    return (
+      '<div class="ud-card"><div class="ud-card-head"><p class="ud-card-title">' +
+      REP_TITLE +
+      "</p></div>" +
+      '<div class="ud-grid">' +
+      '<div class="ud-field"><label class="ud-label">Name</label>' +
+      '<input type="text" class="ud-input" data-ud-field="name" placeholder="Enter name" value="' +
+      escapeHtml(rep.name) +
+      '" />' +
+      err("name") +
+      "</div>" +
+      '<div class="ud-field"><label class="ud-label">Mobile number</label>' +
+      '<div class="ud-mobile"><span class="ud-mobile-prefix">+91</span>' +
+      '<input type="text" class="ud-input" data-ud-field="mobile" inputmode="numeric" maxlength="10" placeholder="10 digit mobile number" value="' +
+      escapeHtml(rep.mobile) +
+      '" /></div>' +
+      err("mobile") +
+      "</div>" +
+      '<div class="ud-field"><label class="ud-label">Email ID</label>' +
+      '<input type="text" class="ud-input" data-ud-field="email" placeholder="Enter email ID" value="' +
+      escapeHtml(rep.email) +
+      '" />' +
+      err("email") +
+      "</div>" +
+      '<div class="ud-actions"><button type="button" class="ud-save" data-ud-action="save">Save details</button></div>' +
+      "</div></div>"
+    );
+  }
+
+  function copyText(value) {
+    if (navigator.clipboard && window.isSecureContext) {
+      return navigator.clipboard.writeText(value);
+    }
+    return new Promise(function (resolve) {
+      const $tmp = $("<textarea>").val(value).appendTo("body");
+      $tmp[0].select();
+      document.execCommand("copy");
+      $tmp.remove();
+      resolve();
+    });
+  }
+
+  function initUploadedDetails() {
+    const $overlay = $("#uploadedDetailsOverlay");
+    if (!$overlay.length) return;
+
+    const $subtitle = $("#uploadedDetailsSubtitle");
+    const $body = $("#uploadedDetailsBody");
+    const state = { firm: "", role: "icici", mode: "view" };
+
+    function render() {
+      const cfg = UPLOAD_ROLES[state.role];
+      const rep = getAnchorRep(state.firm, state.role);
+      let html = "";
+
+      if (cfg.showSm) {
+        html += personCardMarkup({
+          title: "ICICI Bank SM details",
+          avatar: SM_AVATAR,
+          name: ICICI_SM.name,
+          phone: ICICI_SM.phone,
+          email: ICICI_SM.email,
+        });
+      }
+
+      if (state.mode === "edit") {
+        html += repFormMarkup(rep);
+      } else if (isRepFilled(rep)) {
+        html += personCardMarkup({
+          title: REP_TITLE,
+          avatar: REP_AVATAR,
+          name: rep.name,
+          phone: "+91 " + rep.mobile,
+          email: rep.email,
+          editable: true,
+        });
+      } else {
+        html += repEmptyMarkup();
+      }
+
+      $subtitle.text(cfg.subtitle);
+      $body.html(html);
+    }
+
+    function open(firm, role) {
+      state.firm = firm;
+      state.role = UPLOAD_ROLES[role] ? role : "icici";
+      state.mode = "view";
+      render();
+      $overlay.addClass("show");
+    }
+
+    function close() {
+      $overlay.removeClass("show");
+    }
+
+    function readForm() {
+      const values = {};
+      $body.find("[data-ud-field]").each(function () {
+        values[$(this).attr("data-ud-field")] = ($(this).val() || "").trim();
+      });
+      return values;
+    }
+
+    function setFieldError(field, message) {
+      const $input = $body.find('[data-ud-field="' + field + '"]');
+      const $wrap = $input.closest(".ud-mobile");
+      const $box = $wrap.length ? $wrap : $input;
+      $box.toggleClass("is-error", Boolean(message));
+      $body.find('[data-ud-error="' + field + '"]').text(message);
+    }
+
+    function saveRep() {
+      const values = readForm();
+      let valid = true;
+
+      Object.keys(UD_RULES).forEach(function (field) {
+        const message = getUdError(field, values[field]);
+        setFieldError(field, message);
+        if (message) valid = false;
+      });
+      if (!valid) return;
+
+      /* TODO(backend): save API call here */
+      anchorReps[state.firm] = values;
+      state.mode = "view";
+      render();
+    }
+
+    $(document).on("click", ".dealer-upload-user-icon", function (event) {
+      event.stopPropagation();
+      const $icon = $(this);
+      open($icon.attr("data-upload-firm"), $icon.attr("data-upload-role"));
+    });
+
+    $(document).on("keydown", ".dealer-upload-user-icon", function (event) {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        $(this).trigger("click");
+      }
+    });
+
+    $overlay.on("click", "[data-ud-action]", function () {
+      if ($(this).attr("data-ud-action") === "edit") {
+        state.mode = "edit";
+        render();
+      } else {
+        saveRep();
+      }
+    });
+
+    $overlay.on("click", ".ud-copy", function () {
+      const $btn = $(this);
+      const $icon = $btn.find(".material-icons");
+
+      copyText($btn.attr("data-copy") || "").then(function () {
+        $icon.text("check");
+        $btn.addClass("is-copied");
+        clearTimeout($btn.data("copyTimer"));
+        $btn.data(
+          "copyTimer",
+          setTimeout(function () {
+            $icon.text("content_copy");
+            $btn.removeClass("is-copied");
+          }, 1500),
+        );
+      });
+    });
+
+    $overlay.on("input", "[data-ud-field]", function () {
+      setFieldError($(this).attr("data-ud-field"), "");
+    });
+
+    $overlay.on("focusout", "[data-ud-field]", function () {
+      const field = $(this).attr("data-ud-field");
+      const value = ($(this).val() || "").trim();
+      if (value) setFieldError(field, getUdError(field, value));
+    });
+
+    $overlay.on("click", function (event) {
+      if (event.target === $overlay[0]) close();
+    });
+
+    bindClick("uploadedDetailsClose", close);
+    bindClick("uploadedDetailsCloseBtn", close);
+
+    $(document).on("keydown", function (event) {
+      if (event.key === "Escape" && $overlay.hasClass("show")) close();
+    });
+  }
+
+    //  NAVIGATION
+
   function centerActiveTab($page) {
     const $activeTab = $page.find(".new-dealer-tab.active").first();
     const $tabList = $activeTab.closest(".new-dealer-tab-list");
@@ -3575,15 +4163,35 @@ jQuery(function ($) {
     );
   }
 
+  function getMenuRoute($item) {
+    const $title = $item.find(".menu-title").first();
+    return $title.length
+      ? MENU_ROUTES[$title.text().trim().toLowerCase()]
+      : "";
+  }
+
   function syncMenuActive(which) {
     $menuItems.each(function () {
       const $item = $(this);
-      const $title = $item.find(".menu-title").first();
-      const route = $title.length
-        ? MENU_ROUTES[$title.text().trim().toLowerCase()]
-        : "";
-      $item.toggleClass("active", route === which);
+      $item.toggleClass("active", getMenuRoute($item) === which);
     });
+  }
+
+  function savePage(which) {
+    try {
+      sessionStorage.setItem(PAGE_STORAGE_KEY, which);
+    } catch (error) {
+      console.error("Could not save active page:", error);
+    }
+  }
+
+  function getSavedPage() {
+    try {
+      const saved = sessionStorage.getItem(PAGE_STORAGE_KEY);
+      return Object.values(MENU_ROUTES).includes(saved) ? saved : "";
+    } catch (error) {
+      return "";
+    }
   }
 
   function showPage(which) {
@@ -3595,35 +4203,54 @@ jQuery(function ($) {
     };
 
     $.each(pages, function (key, $page) {
-      $page.css("display", "none");
+      $page.hide();
     });
 
     const $target = pages[which];
     if (!$target || !$target.length) return;
 
-    $target.css("display", which === "dashboard" ? "" : "block");
+    $target.show();
     centerActiveTab($target);
     syncMenuActive(which);
+    savePage(which);
   }
 
   function initNavigation() {
     $menuItems.each(function () {
       const $item = $(this);
-      const $title = $item.find(".menu-title").first();
-      const route = $title.length
-        ? MENU_ROUTES[$title.text().trim().toLowerCase()]
-        : "";
+      const route = getMenuRoute($item);
       if (!route) return;
 
       $item.on("click", function () {
-        showPage(route); /* also syncs the active menu item */
+        showPage(route);
       });
     });
 
     $("[data-goto]").on("click", function () {
       showPage($(this).attr("data-goto"));
     });
+
+    $(document).on(
+      "click",
+      ".Dashboard-page-section .card-header .view-details",
+      function (event) {
+        event.preventDefault();
+
+        const title = $(this)
+          .closest(".card-header")
+          .find("h2")
+          .text()
+          .trim()
+          .toLowerCase();
+        const route = VIEW_DETAILS_ROUTES[title];
+
+        if (!route) return;
+        showPage(route);
+        window.scrollTo(0, 0);
+      },
+    );
   }
+
 
   applyDealerCellLabels();
   initDealerAmounts();
@@ -3649,9 +4276,21 @@ jQuery(function ($) {
   initRenewalDashboard();
   wrapCodeValues();
   initInfoTooltips();
-
+  initUploadedDetails();
   initPinning();
   initNavigation();
   applySavedPins();
-  applyAllMasking(detailsHidden);
+  setDetailsHidden(detailsHidden);
+
+  $(document).on("click", "#proceedBtn", function () {
+    try {
+      sessionStorage.removeItem(PAGE_STORAGE_KEY);
+    } catch (error) {
+      console.error("Could not clear active page:", error);
+    }
+  });
+
+  const savedPage = getSavedPage();
+  if (savedPage && savedPage !== "dashboard") showPage(savedPage);
+  $(".Dashboard-page-section").addClass("page-ready");
 });
