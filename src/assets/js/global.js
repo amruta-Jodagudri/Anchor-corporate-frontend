@@ -103,6 +103,9 @@ $(document).on("click", "#menuToggle", function () {
 $(document).on("click", ".menu-list .menu-item", function () {
   $(".menu-item").removeClass("active");
   $(this).addClass("active");
+  $("#menuPanel").removeClass("open");
+  $("#sidePanelOverlay").removeClass("show");
+  $("body").removeClass("modal-open");
 });
 
 $(document).on("click", "#menuLogoutBtn", function () {
@@ -153,6 +156,18 @@ $(document).on("click", function (e) {
   }
 });
 
+/* cross icon accessibility fix */
+$(document).on(
+  "click",
+  "#accessibilityPanel .modal-close-btn, #accessibilityPanel [data-close-modal]",
+  function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    $("#accessibilityPanel").hide();
+    $("#accessibilityOverlay").removeClass("show");
+  },
+);
+
 $(document).on("click", "[data-close-modal]", function () {
   $(".custom-modal-overlay").hide();
   $("body").removeClass("modal-open");
@@ -188,25 +203,79 @@ $(document).on("click", "#proceedBtn", function () {
   lucide.createIcons();
 });
 
-// Accessibility Settings
+/* fix accessibility */
+var zoomState = 1;
 function applyAccessibilitySettings() {
-  $("body").removeClass("text-small text-large");
+  let zoomLevel = 100;
 
-  // Text size
-  if (textSizeState === 0) {
-    $("body").addClass("text-small");
-  } else if (textSizeState === 2) {
-    $("body").addClass("text-large");
+  if (zoomState === 0) {
+    zoomLevel = 80;
+  } else if (zoomState === 2) {
+    zoomLevel = 110;
+  } else {
+    zoomLevel = 100;
   }
+
+  let lineHeight = defaultLineHeight;
+  let letterSpacing = defaultLetterSpacing;
+
+  if (lineHeightState === 0) {
+    lineHeight = defaultLineHeight - 0.2;
+  } else if (lineHeightState === 2) {
+    lineHeight = defaultLineHeight + 0.2;
+  }
+
+  if (letterSpacingState === 0) {
+    letterSpacing = defaultLetterSpacing - 1;
+  } else if (letterSpacingState === 2) {
+    letterSpacing = defaultLetterSpacing + 1;
+  }
+
+  /* fix accessibility - use zoom or CSS scaling on body safely without breaking fixed modals on UAT/Prod */
+  if (typeof document.body.style.zoom !== "undefined") {
+    $("body").css("zoom", `${zoomLevel}%`);
+    $("body").css({
+      transform: "",
+      transformOrigin: "",
+      width: "",
+    });
+  } else {
+    $("body").css({
+      transform: zoomLevel === 100 ? "" : `scale(${zoomLevel / 100})`,
+      transformOrigin: "top left",
+      width: zoomLevel === 100 ? "" : `${10000 / zoomLevel}%`,
+    });
+  }
+
+  $("body").css({
+    lineHeight: lineHeight,
+    letterSpacing: letterSpacing + "px",
+  });
+
+  const isHighContrast = $("#highContrastToggle").is(":checked");
+  $("body").toggleClass("high-contrast", isHighContrast);
 
   saveAccessibilitySettings();
 }
 
-$("#applyAccessibility").on("click", function () {
-  const highContrastEnabled = $("#highContrastToggle").is(":checked");
-  $("body").toggleClass("high-contrast", highContrastEnabled);
+function saveAccessibilitySettings() {
+  try {
+    const settings = {
+      zoomState: zoomState,
+      lineHeightState: lineHeightState,
+      letterSpacingState: letterSpacingState,
+      highContrast: $("#highContrastToggle").is(":checked"),
+    };
+    localStorage.setItem("accessibilitySettings", JSON.stringify(settings));
+    console.log("Settings saved:", settings);
+  } catch (e) {
+    console.warn("Could not save accessibility settings:", e);
+  }
+}
 
+$("#applyAccessibility").on("click", function () {
   applyAccessibilitySettings();
+
   disableAccessibilityButtons();
 
   $("#accessibilityPanel").hide();
@@ -222,23 +291,38 @@ $(document).on("click", "#accessibilityOverlay", function () {
 });
 
 $(document).ready(function () {
-  const settings = JSON.parse(localStorage.getItem("accessibilitySettings"));
+  /* fix accessibility - safe localStorage load for UAT/Prod */
+  try {
+    const rawSettings = localStorage.getItem("accessibilitySettings");
+    if (rawSettings) {
+      const settings = JSON.parse(rawSettings);
+      if (settings && typeof settings === "object") {
+        zoomState = settings.zoomState !== undefined ? settings.zoomState : 1;
+        lineHeightState =
+          settings.lineHeightState !== undefined ? settings.lineHeightState : 1;
+        letterSpacingState =
+          settings.letterSpacingState !== undefined
+            ? settings.letterSpacingState
+            : 1;
+        const highContrast = settings.highContrast || false;
 
-  if (settings) {
-    textSizeState = settings.textSizeState;
-    lineHeightState = settings.lineHeightState;
-    letterSpacingState = settings.letterSpacingState;
+        updateTextSizeUI();
+        updateLineHeightUI();
+        updateLetterSpacingUI();
 
-    updateTextSizeUI();
-    updateLineHeightUI();
-    updateLetterSpacingUI();
+        if (highContrast) {
+          $("#highContrastToggle").prop("checked", true);
+          $("body").addClass("high-contrast");
+        } else {
+          $("#highContrastToggle").prop("checked", false);
+          $("body").removeClass("high-contrast");
+        }
 
-    if (settings.highContrast) {
-      $("#highContrastToggle").prop("checked", true);
-      $("body").addClass("high-contrast");
+        applyAccessibilitySettings();
+      }
     }
-
-    applyAccessibilitySettings();
+  } catch (e) {
+    console.warn("Error reading accessibility settings:", e);
   }
 
   disableAccessibilityButtons();
@@ -276,8 +360,9 @@ $(document).on("change", "#highContrastToggle", function () {
   enableAccessibilityButtons();
 });
 
+/* fix accessibility - reset functionality */
 $("#resetAccessibility").on("click", function () {
-  textSizeState = 1;
+  zoomState = 1;
   lineHeightState = 1;
   letterSpacingState = 1;
 
@@ -287,94 +372,160 @@ $("#resetAccessibility").on("click", function () {
 
   $("#highContrastToggle").prop("checked", false);
 
+  if (typeof document.body.style.zoom !== "undefined") {
+    $("body").css("zoom", "");
+  }
+
   $("body").css({
-    fontSize: "",
+    transform: "",
+    transformOrigin: "",
+    width: "",
+    lineHeight: "",
+    letterSpacing: "",
+  });
+
+  $("body, body *").css({
     lineHeight: "",
     letterSpacing: "",
   });
 
   $("body").removeClass("high-contrast");
 
-  localStorage.removeItem("accessibilitySettings");
+  try {
+    localStorage.removeItem("accessibilitySettings");
+  } catch (e) {
+    console.warn("Could not remove accessibility settings:", e);
+  }
 
   disableAccessibilityButtons();
 });
 
 function updateTextSizeUI() {
-  const buttons = $(".setting-row").eq(0).find(".setting-controls button");
+  const controls = $(".decrease-font").closest(".setting-controls");
+  const buttons = controls.length
+    ? controls.find("button")
+    : $(".setting-row").eq(0).find(".setting-controls button");
 
-  buttons.removeClass("active");
+  if (!buttons.length) return;
 
-  if (textSizeState === 0) {
-    buttons.eq(1).addClass("active");
-    buttons.eq(0).prop("disabled", true);
-    buttons.eq(4).prop("disabled", false);
-  } else if (textSizeState === 1) {
-    buttons.eq(2).addClass("active");
-    buttons.eq(0).prop("disabled", false);
-    buttons.eq(4).prop("disabled", false);
+  buttons.removeClass("active").addClass("not-active");
+
+  if (zoomState === 0) {
+    buttons
+      .filter('[data-state="0"]')
+      .addClass("active")
+      .removeClass("not-active");
+    $(".decrease-font").prop("disabled", true);
+    $(".increase-font").prop("disabled", false);
+  } else if (zoomState === 1) {
+    buttons
+      .filter('[data-state="1"]')
+      .addClass("active")
+      .removeClass("not-active");
+    $(".decrease-font").prop("disabled", false);
+    $(".increase-font").prop("disabled", false);
   } else {
-    buttons.eq(3).addClass("active");
-    buttons.eq(0).prop("disabled", false);
-    buttons.eq(4).prop("disabled", true);
+    buttons
+      .filter('[data-state="2"]')
+      .addClass("active")
+      .removeClass("not-active");
+    $(".decrease-font").prop("disabled", false);
+    $(".increase-font").prop("disabled", true);
   }
 }
 
 function updateLineHeightUI() {
-  const buttons = $(".setting-row").eq(1).find(".setting-controls button");
-
-  buttons.removeClass("active");
+  const controls = $(".decrease-line").closest(".setting-controls");
+  if (!controls.length) return;
+  const buttons = controls.find("button");
+  buttons.removeClass("active").addClass("not-active");
 
   if (lineHeightState === 0) {
-    buttons.eq(1).addClass("active");
-    buttons.eq(0).prop("disabled", true);
-    buttons.eq(4).prop("disabled", false);
+    buttons
+      .filter('[data-state="0"]')
+      .addClass("active")
+      .removeClass("not-active");
+    $(".decrease-line").prop("disabled", true);
+    $(".increase-line").prop("disabled", false);
   } else if (lineHeightState === 1) {
-    buttons.eq(2).addClass("active");
-    buttons.eq(0).prop("disabled", false);
-    buttons.eq(4).prop("disabled", false);
+    buttons
+      .filter('[data-state="1"]')
+      .addClass("active")
+      .removeClass("not-active");
+    $(".decrease-line").prop("disabled", false);
+    $(".increase-line").prop("disabled", false);
   } else {
-    buttons.eq(3).addClass("active");
-    buttons.eq(0).prop("disabled", false);
-    buttons.eq(4).prop("disabled", true);
+    buttons
+      .filter('[data-state="2"]')
+      .addClass("active")
+      .removeClass("not-active");
+    $(".decrease-line").prop("disabled", false);
+    $(".increase-line").prop("disabled", true);
   }
 }
 
 function updateLetterSpacingUI() {
-  const buttons = $(".setting-row").eq(2).find(".setting-controls button");
-
-  buttons.removeClass("active");
+  const controls = $(".decrease-spacing").closest(".setting-controls");
+  if (!controls.length) return;
+  const buttons = controls.find("button");
+  buttons.removeClass("active").addClass("not-active");
 
   if (letterSpacingState === 0) {
-    buttons.eq(1).addClass("active");
-    buttons.eq(0).prop("disabled", true);
-    buttons.eq(4).prop("disabled", false);
+    buttons
+      .filter('[data-state="0"]')
+      .addClass("active")
+      .removeClass("not-active");
+    $(".decrease-spacing").prop("disabled", true);
+    $(".increase-spacing").prop("disabled", false);
   } else if (letterSpacingState === 1) {
-    buttons.eq(2).addClass("active");
-    buttons.eq(0).prop("disabled", false);
-    buttons.eq(4).prop("disabled", false);
+    buttons
+      .filter('[data-state="1"]')
+      .addClass("active")
+      .removeClass("not-active");
+    $(".decrease-spacing").prop("disabled", false);
+    $(".increase-spacing").prop("disabled", false);
   } else {
-    buttons.eq(3).addClass("active");
-    buttons.eq(0).prop("disabled", false);
-    buttons.eq(4).prop("disabled", true);
+    buttons
+      .filter('[data-state="2"]')
+      .addClass("active")
+      .removeClass("not-active");
+    $(".decrease-spacing").prop("disabled", false);
+    $(".increase-spacing").prop("disabled", true);
   }
 }
 
+/* fix accessibility - direct button handlers */
+$(document).on("click", ".setting-controls button[data-state]", function () {
+  const state = parseInt($(this).attr("data-state"), 10);
+  if (!isNaN(state)) {
+    const parentRow = $(this).closest(".setting-row");
+    if (parentRow.find(".decrease-font").length) {
+      zoomState = state;
+      updateTextSizeUI();
+    } else if (parentRow.find(".decrease-line").length) {
+      lineHeightState = state;
+      updateLineHeightUI();
+    } else if (parentRow.find(".decrease-spacing").length) {
+      letterSpacingState = state;
+      updateLetterSpacingUI();
+    }
+    enableAccessibilityButtons();
+  }
+});
+
 $(document).on("click", ".increase-font", function () {
-  if (textSizeState < 2) {
-    textSizeState++;
+  if (zoomState < 2) {
+    zoomState++;
     updateTextSizeUI();
     enableAccessibilityButtons();
-    saveAccessibilitySettings();
   }
 });
 
 $(document).on("click", ".decrease-font", function () {
-  if (textSizeState > 0) {
-    textSizeState--;
+  if (zoomState > 0) {
+    zoomState--;
     updateTextSizeUI();
     enableAccessibilityButtons();
-    saveAccessibilitySettings();
   }
 });
 
@@ -383,7 +534,6 @@ $(document).on("click", ".increase-line", function () {
     lineHeightState++;
     updateLineHeightUI();
     enableAccessibilityButtons();
-    saveAccessibilitySettings();
   }
 });
 
@@ -392,7 +542,6 @@ $(document).on("click", ".decrease-line", function () {
     lineHeightState--;
     updateLineHeightUI();
     enableAccessibilityButtons();
-    saveAccessibilitySettings();
   }
 });
 
@@ -401,7 +550,6 @@ $(document).on("click", ".increase-spacing", function () {
     letterSpacingState++;
     updateLetterSpacingUI();
     enableAccessibilityButtons();
-    saveAccessibilitySettings();
   }
 });
 
@@ -410,24 +558,10 @@ $(document).on("click", ".decrease-spacing", function () {
     letterSpacingState--;
     updateLetterSpacingUI();
     enableAccessibilityButtons();
-    saveAccessibilitySettings();
   }
 });
 
-function saveAccessibilitySettings() {
-  const settings = {
-    textSizeState: textSizeState,
-    lineHeightState: lineHeightState,
-    letterSpacingState: letterSpacingState,
-    highContrast: $("#highContrastToggle").is(":checked"),
-  };
-  localStorage.setItem("accessibilitySettings", JSON.stringify(settings));
-}
-
-$(document).on("click", ".copy-contact", function (e) {
-  e.stopPropagation();
-  e.preventDefault();
-
+$(document).on("click", ".copy-contact", function () {
   const value = $(this).siblings("span").text().trim();
   const $icon = $(this);
 

@@ -1657,7 +1657,7 @@ $(document).on("click", "#addDealerMenu .menu-item", function (e) {
   if (action === "single-lead") {
     openModal("#addDelarLeadModal");
   } else if (action === "bulk-upload") {
-    openModal("#bulkUploadModal");
+    // openModal("#bulkUploadModal");
   }
 });
 

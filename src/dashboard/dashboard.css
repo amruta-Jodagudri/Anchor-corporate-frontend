@@ -20,6 +20,7 @@ header {
 
 .header-left span {
   font-size: 30px;
+  cursor: pointer;
 }
 
 .dashboard-wrapper {
