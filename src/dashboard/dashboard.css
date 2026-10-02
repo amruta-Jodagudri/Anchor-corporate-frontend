@@ -4803,6 +4803,15 @@ td {
   .monthly-sales-grid {
     grid-template-columns: repeat(3, 1fr);
   }
+
+  .add-btn-group {
+    justify-content: flex-end;
+    height: 32px;
+  }
+
+  .monthly-sales-summary {
+    width: 48%;
+  }
 }
 
 @media (max-width: 980px) {
@@ -5783,6 +5792,18 @@ td {
 
   .pq-info {
     text-align: left;
+  }
+
+  .monthly-sales-container {
+    padding: 16px 16px;
+  }
+
+  .monthly-sales-footer .outline-orange-btn {
+    width: 45%;
+  }
+
+  .monthly-sales-summary {
+    width: 100%;
   }
 }
 
