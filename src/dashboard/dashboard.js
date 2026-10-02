@@ -1657,7 +1657,7 @@ $(document).on("click", ".addDealerMenu .menu-item", function (e) {
   if (action === "single-lead") {
     openModal("#addDelarLeadModal");
   } else if (action === "bulk-upload") {
-    // openModal("#bulkUploadModal");
+    openModal("#bulkUploadModal");
   }
 });
 
@@ -2254,6 +2254,67 @@ $(document).on("click", "#saveAndCloseBtn", function (e) {
   closeModal("#saveAndExitModal");
   showToast("success", "Draft saved successfully", "");
 });
+
+// Bulk upload
+$(document).on("change", "#bulkUploadDropZone .upload-file-input", function () {
+  const file = this.files[0];
+  if (!file) return;
+
+  const zone = $(this).closest("#bulkUploadDropZone");
+  const leftIcon = zone.find(".upload-left-icon");
+  const rightIcon = zone.find(".upload-right-icon");
+  const title = zone.find(".upload-title");
+  const loader = zone.find(".upload-loader");
+
+  leftIcon.hide();
+  loader.show();
+
+  rightIcon.html('<i data-lucide="x"></i>').addClass("right-icon-color").show();
+  lucide.createIcons();
+
+  const uploadTimer = setTimeout(() => {
+    loader.hide();
+
+    zone.addClass("uploaded");
+    leftIcon.show();
+    leftIcon
+      .html('<span class="material-symbols-outlined">draft</span>')
+      .addClass("file-name");
+    title.text(file.name).addClass("file-name");
+
+    lucide.createIcons();
+    clearTimeout(uploadTimer);
+    $("#bulkUploadBtn").removeClass("btn-disabled").prop("disabled", false);
+  }, 3000);
+});
+
+$(document).on("click", "#bulkUploadDropZone", function (e) {
+  e.stopPropagation();
+  $(this).find(".upload-file-input")[0].click();
+});
+
+$(document).on("click", "#bulkUploadBtn", function (e) {
+  closeModal("#bulkUploadModal");
+  openModal("#bulkUploadLoaderModal");
+  const uploadTimer = setTimeout(() => {
+    closeModal("#bulkUploadLoaderModal");
+    openModal("#bulkUploadEligibilityModal");
+    clearTimeout(uploadTimer);
+  }, 3000);
+});
+
+$(document).on("click", "#submitBulkUploadBtn", function (e) {
+  closeModal("#bulkUploadEligibilityModal");
+  openModal("#BulkUploadSuccessModal");
+});
+
+$(document).on(
+  "click",
+  "#BulkUploadSuccessSubmitBtn, #modalBulkUploadSuccessCloseBtn",
+  function (e) {
+    closeModal("#BulkUploadSuccessModal");
+  },
+);
 
 // Common functions
 function lucideIconCommonCode() {

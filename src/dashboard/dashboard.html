@@ -581,7 +581,6 @@
       </div>
 
       <!-- NEW DEALER LEADS PAGE -->
-
       <div class="max-content-area">
         <section
           class="new-dealer-page"
@@ -4312,6 +4311,226 @@
           <button id="saveAndCloseBtn" class="orange-btn" data-close-modal>
             Save & close
           </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bulk Upload modal -->
+    <div id="bulkUploadModal" class="custom-modal-overlay logout-common-modal">
+      <div class="custom-modal relationship-modal logout-modal">
+        <button class="modal-close-btn" data-close-modal>
+          <i data-lucide="x"></i>
+        </button>
+        <div class="d-flex gap-3">
+          <div class="d-flex flex-column gap-1">
+            <h5 class="modal-title">Bulk Upload leads</h5>
+          </div>
+        </div>
+
+        <div>
+          <div
+            class="upload-drop-zone itr-upload"
+            id="bulkUploadDropZone"
+            data-year="2022-23"
+          >
+            <div class="upload-loader input-loader" style="display: none"></div>
+
+            <div class="upload-left-icon">
+              <span class="material-symbols-outlined">draft</span>
+            </div>
+
+            <div class="upload-content">
+              <div class="upload-title">Upload / Drag & Drop file</div>
+              <div class="upload-info">
+                (Max size: 2MB | Format: PDF, Excel)
+              </div>
+            </div>
+
+            <div class="upload-right-icon">
+              <i data-lucide="upload"></i>
+            </div>
+
+            <input
+              type="file"
+              class="upload-file-input"
+              accept=".pdf,.xls,.xlsx"
+              hidden
+            />
+          </div>
+          <div class="download-link" id="downloadCORLink">
+            Download COR format
+            <span class="material-symbols-outlined">download</span>
+          </div>
+          <div class="file-size">(File size: 500KB)</div>
+        </div>
+
+        <button class="faq-btn" id="bulkUploadFAQBtn">
+          FAQ <span class="material-symbols-outlined">arrow_outward</span>
+        </button>
+        <div class="modal-footer-right">
+          <div class="footer-actions">
+            <button class="outline-orange-btn" data-close-modal>Cancel</button>
+            <button
+              id="bulkUploadBtn"
+              class="orange-btn btn-disabled"
+              data-close-modal
+              disabled
+            >
+              Proceed
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bulk Upload Loading modal -->
+    <div
+      id="bulkUploadLoaderModal"
+      class="custom-modal-overlay logout-common-modal"
+    >
+      <div class="custom-modal relationship-modal logout-modal">
+        <button class="modal-close-btn" data-close-modal>
+          <i data-lucide="x"></i>
+        </button>
+
+        <div class="bulk-loader-container">
+          <div class="upload-loader input-loader"></div>
+          <div class="bulk-loader-text">
+            <p class="loader-title">Processing uploaded data</p>
+            <p class="loader-subtitle">Dealer records are being processed</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bulk Upload Success modal -->
+    <div id="bulkUploadEligibilityModal" class="custom-modal-overlay">
+      <div class="custom-modal check-eligibility-modal">
+        <div class="eligibility-header">
+          <button class="modal-close-btn" data-close-modal>
+            <span class="material-icons">close</span>
+          </button>
+
+          <div class="alert-icon-container">
+            <div class="alert-icon-outer"></div>
+            <div class="alert-icon-middle"></div>
+            <div class="alert-icon-custom">
+              <span class="material-icons">account_balance</span>
+            </div>
+          </div>
+          <div>
+            <h2 class="modal-title">Dealer's eligibility status</h2>
+            <p>Verify the dealer’s eligibility status from the bank</p>
+          </div>
+        </div>
+
+        <div class="modal-body"></div>
+
+        <div class="modal-footer">
+          <div class="footer-actions">
+            <button class="orange-btn" id="submitBulkUploadBtn">Submit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bulk Upload Success modal -->
+    <div class="custom-modal-overlay review-modal" id="BulkUploadSuccessModal">
+      <div class="custom-modal form-modal sanction-modal lead-success-modal">
+        <div class="review-header">
+          <button class="modal-close-btn" id="modalBulkUploadSuccessCloseBtn">
+            <span class="material-icons">close</span>
+          </button>
+          <div class="alert-icon-container">
+            <div class="alert-icon-outer"></div>
+            <div class="alert-icon-middle"></div>
+            <div class="alert-icon-custom">
+              <span class="material-icons">check</span>
+            </div>
+          </div>
+          <div class="right-section-review">
+            <p class="review-title2">Successfully added dealers</p>
+          </div>
+        </div>
+
+        <div class="stepScroll">
+          <div class="lead-success-wrapper">
+            <div class="dealer-card">
+              <div class="dealer-card-top">
+                <div class="firm-info">
+                  <p class="label">Firm</p>
+                  <p class="value-title firm-title">SunDesh Solar Systems</p>
+                </div>
+                <div class="pq-info">
+                  <p class="label">PQ offer</p>
+                  <p class="value-title">
+                    <span>₹</span><span>3,00,00,000</span
+                    ><span class="decimal-point-value">.00</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="terms-review">
+          <div class="modal-footer">
+            <div class="footer-actions">
+              <button
+                class="outline-orange-btn btn-disabled"
+                id="BulkUploadSuccessSubmitBtn"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- document overview modal -->
+    <div
+      id="documentOverviewModal"
+      class="custom-modal-overlay logout-common-modal"
+    >
+      <div class="custom-modal relationship-modal logout-modal">
+        <button class="modal-close-btn" data-close-modal>
+          <i data-lucide="x"></i>
+        </button>
+        <div class="d-flex gap-3">
+          <div class="d-flex flex-column gap-1">
+            <h5 class="modal-title">Document overview</h5>
+          </div>
+        </div>
+
+        <div>
+          <div class="overview-text">
+            <span class="material-symbols-outlined">close</span>
+            Dealergroupfile.csv
+          </div>
+          <div class="error-summary">
+            <span class="error-text"
+              ><span class="error-count">14</span> errors found
+            </span>
+            in 80 records
+          </div>
+          <div class="review-block">
+            Review & correct the records in the downloaded error file, then
+            re-upload the revised file to proceed.
+          </div>
+        </div>
+
+        <div class="modal-footer-right">
+          <div class="footer-actions">
+            <button
+              id="reuploadBtn"
+              class="orange-btn reupload-btn"
+              data-close-modal
+            >
+              <span class="material-symbols-outlined">file_upload</span>
+              Re-upload file
+            </button>
+          </div>
         </div>
       </div>
     </div>
