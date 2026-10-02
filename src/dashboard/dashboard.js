@@ -2245,7 +2245,7 @@ $(document).on("click", "#addAnotherBtn", function (e) {
 });
 
 // Save and exit modal
-$(document).on("click", ".saveExitBtn", function (e) {
+$(document).on("click", ".saveExitBtn, #modalStep3CloseBtn", function (e) {
   closeModal("#stepModal");
   openModal("#saveAndExitModal");
 });
