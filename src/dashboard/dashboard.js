@@ -2308,11 +2308,16 @@ $(document).on("click", "#submitBulkUploadBtn", function (e) {
   openModal("#BulkUploadSuccessModal");
 });
 
+$(document).on("click", "#BulkUploadSuccessSubmitBtn", function (e) {
+  closeModal("#BulkUploadSuccessModal");
+});
+
 $(document).on(
   "click",
-  "#BulkUploadSuccessSubmitBtn, #modalBulkUploadSuccessCloseBtn",
+  "#bulkUploadEligibilityCloseBtn, #modalBulkUploadSuccessCloseBtn",
   function (e) {
-    closeModal("#BulkUploadSuccessModal");
+    closeModal("#bulkUploadEligibilityModal, #BulkUploadSuccessModal");
+    openModal("#uploadExitModal");
   },
 );
 

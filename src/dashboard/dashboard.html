@@ -4342,7 +4342,7 @@
             <div class="upload-content">
               <div class="upload-title">Upload / Drag & Drop file</div>
               <div class="upload-info">
-                (Max size: 2MB | Format: PDF, Excel)
+                (Max size: 2MB | Format: CSV)
               </div>
             </div>
 
@@ -4353,7 +4353,7 @@
             <input
               type="file"
               class="upload-file-input"
-              accept=".pdf,.xls,.xlsx"
+              accept=".xls,.xlsx"
               hidden
             />
           </div>
@@ -4407,7 +4407,7 @@
     <div id="bulkUploadEligibilityModal" class="custom-modal-overlay">
       <div class="custom-modal check-eligibility-modal">
         <div class="eligibility-header">
-          <button class="modal-close-btn" data-close-modal>
+          <button class="modal-close-btn" data-close-modal id="bulkUploadEligibilityCloseBtn">
             <span class="material-icons">close</span>
           </button>
 
@@ -4488,6 +4488,36 @@
       </div>
     </div>
 
+    <!-- Upload exit modal -->
+    <div id="uploadExitModal" class="custom-modal-overlay logout-common-modal">
+      <div class="custom-modal relationship-modal logout-modal">
+        <button class="modal-close-btn" data-close-modal>
+          <i data-lucide="x"></i>
+        </button>
+        <div class="d-flex gap-3">
+          <img
+            src="../assets/image/auth/logout.svg"
+            alt="verification-done"
+            class="verification-done"
+          />
+          <div class="d-flex flex-column gap-1">
+            <h5 class="modal-title">Are you sure you want to exit?</h5>
+            <p class="verification-subtitle">
+              Exiting will discard your current upload progress and close this
+              workflow
+            </p>
+          </div>
+        </div>
+
+        <div class="modal-footer-right">
+          <button class="outline-orange-btn" data-close-modal>Close</button>
+          <button id="uploadExitBtn" class="orange-btn" data-close-modal>
+            Exit
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- document overview modal -->
     <div
       id="documentOverviewModal"
@@ -4527,7 +4557,7 @@
               class="orange-btn reupload-btn"
               data-close-modal
             >
-              <span class="material-symbols-outlined">file_upload</span>
+              <i data-lucide="upload"></i>
               Re-upload file
             </button>
           </div>
