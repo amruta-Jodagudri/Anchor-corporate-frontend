@@ -340,9 +340,10 @@ $(function () {
   renderLegendList($("#renewalLegend"), renewalData);
 });
 
-$("#addDealerBtn").on("click", function (e) {
+$(document).on("click", ".addDealerBtn", function (e) {
   e.stopPropagation();
-  $("#addDealerMenu").toggleClass("open");
+  $(".addDealerMenu").removeClass("open");
+  $(this).siblings(".addDealerMenu").toggleClass("open");
 });
 
 $("#dateSelect").on("click", function (e) {
@@ -1467,23 +1468,6 @@ $(document).on("click", ".LeadTableHideShowBtn", function (e) {
   lucideIconCommonCode();
 });
 
-$(".custom-modal-overlay, .esign-modal-overlay").on("click", function (e) {
-  if (e.target === this) {
-    e.stopPropagation();
-    return false;
-  }
-});
-
-function openModal(modal) {
-  $(modal).show();
-  $("body").addClass("modal-open");
-}
-
-function closeModal(modal) {
-  $(modal).hide();
-  $("body").removeClass("modal-open");
-}
-
 // Card for new leads data in mobile
 var isCardDetailsShown = false;
 
@@ -1622,7 +1606,1119 @@ function applyAllCardsMasking(showReal) {
   });
 }
 
+// Add single lead
+$(document).on("click", "#addLeadProceedBtn", function (e) {
+  closeModal("#addDelarLeadModal");
+  openModal("#stepModal");
+});
+
+$(document).on("click", "#modalCloseBtn, #cancelBtn", function (e) {
+  closeModal("#addDelarLeadModal");
+});
+
+$(document).on("click", "#stepNextBtn", function (e) {
+  closeModal("#stepModal");
+  openModal("#reviewModal");
+});
+
+$(document).on("click", "#cancelStepBtn", function (e) {
+  closeModal("#stepModal");
+  openModal("#addDelarLeadModal");
+});
+
+$(document).on("click", "#reviewSubmitBtn", function (e) {
+  closeModal("#reviewModal");
+  openModal("#checkEligibilityModal");
+});
+
+$(document).on("click", "#reviewCancel", function (e) {
+  closeModal("#reviewModal");
+  openModal("#stepModal");
+});
+
+$(document).on("click", "#submitEligibilityBtn", function (e) {
+  closeModal("#checkEligibilityModal");
+  openModal("#leadSuccessModal");
+});
+
+$(document).on("click", "#modalReviewCloseBtn", function (e) {
+  closeModal("#reviewModal");
+});
+
+$(document).on("click", "#successSubmitBtn", function (e) {
+  closeModal("#leadSuccessModal");
+});
+
+$(document).on("click", ".addDealerMenu .menu-item", function (e) {
+  e.stopPropagation();
+  var action = $(this).data("action");
+  $(".addDealerMenu").removeClass("open");
+
+  if (action === "single-lead") {
+    openModal("#addDelarLeadModal");
+  } else if (action === "bulk-upload") {
+    // openModal("#bulkUploadModal");
+  }
+});
+
+$(document).on("click", function () {
+  $(".addDealerMenu").removeClass("open");
+});
+
+// constitution select options
+const constitutions = [
+  "Proprietorship",
+  "Partnership",
+  "Private Limited",
+  "LLP",
+  "HUF",
+];
+
+(function populateConstitutions() {
+  const $select = $("#constitutionSelect");
+  const $options = $("#constitutionCustomSelect .custom-select-options");
+
+  constitutions.forEach(function (item) {
+    $select.append(
+      `<option value="${item}" data-state="${item}">
+        ${item}
+      </option>`,
+    );
+
+    $options.append(
+      `<div class="option-item" data-value="${item}" data-state="${item}">
+        ${item}
+      </div>`,
+    );
+  });
+})();
+
+// city select options
+const cityStateData = [
+  { CITYNAME: "BASAI ROAD", STATENAME: "HARYANA" },
+  { CITYNAME: "URBAN ESTATE", STATENAME: "HARYANA" },
+  { CITYNAME: "SOHNA ADDA", STATENAME: "HARYANA" },
+  { CITYNAME: "GURGAON KTY.", STATENAME: "HARYANA" },
+  { CITYNAME: "GURGAON", STATENAME: "HARYANA" },
+  { CITYNAME: "NEW COLONY", STATENAME: "HARYANA" },
+  { CITYNAME: "SHIVAJI NAGAR", STATENAME: "HARYANA" },
+];
+
+(function populateCities() {
+  const $select = $("#citySelect");
+  const $options = $("#cityCustomSelect .custom-select-options");
+
+  cityStateData.forEach(function (item) {
+    $select.append(
+      `<option value="${item.CITYNAME}" data-state="${item.STATENAME}">
+        ${item.CITYNAME}
+      </option>`,
+    );
+
+    $options.append(
+      `<div class="option-item" data-value="${item.CITYNAME}" data-state="${item.STATENAME}">
+        ${item.CITYNAME}
+      </div>`,
+    );
+  });
+})();
+
+$(document).on("click", "#cityCustomSelect .option-item", function () {
+  const state = $(this).data("state");
+  $("#cityStateValue").text(state);
+  $("#cityStateDisplay").show();
+});
+
+function generateMonthlySalesGrid() {
+  var startVal = $(".startDate").val();
+  var endVal = $(".endDate").val();
+
+  var monthsList =
+    startVal && endVal ? buildMonthsFromRange(startVal, endVal) : months;
+
+  const $grid = $("#monthlySalesGrid");
+  $grid.empty();
+
+  monthsList.forEach(function (month) {
+    $grid.append(`
+        <div class="month-item">
+          <label>${month}</label>
+          <div class="input-wrapper">
+            <span class="currency-symbol">₹</span>
+            <input type="text" class="monthly-sales-input" placeholder="" data-month="${month}">
+          </div>
+          <span class="error-msg sale-value-error"><i data-lucide="info" class="error-info-icon"></i> Entered amount is in wrong format, please enter a valid amount.</span>
+        </div>
+      `);
+  });
+
+  $("#monthlySalesSummary").hide();
+  $("#monthlySalesFooter").show();
+  $("#submitMonthlySalesBtn").prop("disabled", true).addClass("btn-disabled");
+  lucideIconCommonCode();
+}
+
+function buildMonthsFromRange(startVal, endVal) {
+  function myToDate(my) {
+    var parts = my.split("/");
+    var mm = parseInt(parts[0], 10);
+    var yy = parseInt(parts[1], 10);
+    var fullYear = yy < 100 ? 2000 + yy : yy;
+    return new Date(fullYear, mm - 1, 1);
+  }
+
+  var start = myToDate(startVal);
+  var end = myToDate(endVal);
+
+  if (start > end) {
+    var tmp = start;
+    start = end;
+    end = tmp;
+  }
+
+  var MONTH_ABBR = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  var result = [];
+  var cursor = new Date(end.getFullYear(), end.getMonth(), 1);
+  var startMonth = new Date(start.getFullYear(), start.getMonth(), 1);
+
+  while (cursor >= startMonth) {
+    var label =
+      MONTH_ABBR[cursor.getMonth()] +
+      " '" +
+      String(cursor.getFullYear()).slice(-2);
+    result.push(label);
+    cursor.setMonth(cursor.getMonth() - 1);
+  }
+
+  return result;
+}
+
+$(document).on("click", "#editMonthlySales", function () {
+  $("#monthlySalesGrid input").prop("disabled", false);
+  $("#monthlySalesFooter").show();
+  $("#monthlySalesSummary, #editMonthlySales").hide();
+  $(".monthly-sales-input").removeClass("submitted").prop("disabled", false);
+});
+
+$(document).on("click", "#resetMonthlySales", function () {
+  $("#monthlySalesGrid input").val("").removeClass("input-error");
+  $("#monthlySalesGrid .error-msg").remove();
+  $("#submitMonthlySalesBtn, #resetMonthlySales")
+    .prop("disabled", true)
+    .addClass("btn-disabled");
+  $("#editMonthlySales").hide();
+});
+
+$(document).on("click", "#submitMonthlySalesBtn", function () {
+  let isValid = true;
+  let total = 0;
+
+  $(".monthly-sales-input").each(function () {
+    const $input = $(this);
+    const val = $input.val().trim();
+    const $error = $input.closest(".month-item").find(".sale-value-error");
+
+    $input.removeClass("input-error");
+    $error.removeClass("show");
+
+    if (val) {
+      const numVal = parseFloat(val.replace(/[^0-9.-]+/g, ""));
+      if (isNaN(numVal)) {
+        $input.addClass("input-error");
+        $error.addClass("show");
+        isValid = false;
+      } else {
+        total += numVal;
+      }
+    }
+  });
+
+  if (!isValid) {
+    return;
+  }
+
+  const formattedTotal = new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(total);
+
+  $("#totalSalesValue").text(formattedTotal);
+  $("#monthlySalesSummary, #editMonthlySales").show();
+  $(".monthly-sales-input").addClass("submitted").prop("disabled", true);
+  $("#monthlySalesFooter").hide();
+  $("#monthlySalesGrid input").prop("disabled", true);
+
+  validateForm();
+});
+
+$(document).on("input change", ".monthly-sales-input", function () {
+  var allFilled = true;
+
+  $(".monthly-sales-input").each(function () {
+    if ($(this).val().trim() === "") {
+      allFilled = false;
+      return false;
+    }
+  });
+
+  if (allFilled) {
+    $("#submitMonthlySalesBtn, #resetMonthlySales")
+      .prop("disabled", false)
+      .removeClass("btn-disabled");
+  } else {
+    $("#submitMonthlySalesBtn, #resetMonthlySales")
+      .prop("disabled", true)
+      .addClass("btn-disabled");
+  }
+});
+
+$(document).on("focus", ".monthly-sales-input", function () {
+  const $input = $(this);
+  const $error = $input.closest(".month-item").find(".sale-value-error");
+
+  $input.removeClass("input-error");
+  $error.removeClass("show");
+});
+
+function showError(elementId, errorId) {
+  $("#" + elementId).addClass("input-error");
+  $("#" + errorId).addClass("show");
+}
+
+$(document).on(
+  "blur",
+  "#firmName, #dealerCode, #panNumber, #mobileNumber, #emailId, #address1, #pinCode, #firstName, #associationYears, #recommendationLimit, #instancesOverdue, #chequeReturns",
+  function () {
+    validateField($(this));
+    validateForm();
+  },
+);
+
+$(document).on(
+  "focus",
+  "#firmName, #dealerCode, #panNumber, #mobileNumber, #emailId, #address1, #pinCode, #firstName, #associationYears, #recommendationLimit, #instancesOverdue, #chequeReturns",
+  function () {
+    const $el = $(this);
+    $el.removeClass("input-error");
+    $el.closest(".form-group").find(".error-msg").removeClass("show");
+  },
+);
+
+$(document).on(
+  "change",
+  "#constitutionSelect, #citySelect, #saleTypeSelect",
+  function () {
+    validateField($(this));
+    validateForm();
+  },
+);
+
+function validateField($el) {
+  const id = $el.attr("id");
+  const val = $el.val().trim();
+  let isValid = true;
+
+  $el.removeClass("input-error");
+  $el.closest(".form-group").find(".error-msg").removeClass("show");
+
+  switch (id) {
+    case "firmName":
+      if (!val || !/^[a-zA-Z0-9\s&.,'-]+$/.test(val)) {
+        showError(id, "firmNameError");
+        isValid = false;
+      }
+      break;
+
+    case "dealerCode":
+      if (!val) {
+        showError(id, "dealerCodeError");
+        isValid = false;
+      }
+      break;
+
+    case "panNumber":
+      if (!val || !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(val.toUpperCase())) {
+        showError(id, "panError");
+        isValid = false;
+      }
+      break;
+
+    case "constitutionSelect":
+      if (!val || val === "select-constitution") {
+        showError(id, "constitutionError");
+        isValid = false;
+      }
+      break;
+
+    case "mobileNumber": {
+      const digits = val.replace(/\D/g, "").replace(/^91/, "").slice(-10);
+      if (!digits || digits.length !== 10) {
+        showError(id, "mobileError");
+        isValid = false;
+      }
+      break;
+    }
+
+    case "emailId":
+      if (!val || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+        showError(id, "emailError");
+        isValid = false;
+      }
+      break;
+
+    case "address1":
+      if (!val || val.length < 3) {
+        showError(id, "address1Error");
+        isValid = false;
+      }
+      break;
+
+    case "pinCode":
+      if (!val || !/^\d{6}$/.test(val)) {
+        showError(id, "pinError");
+        isValid = false;
+      }
+      break;
+
+    case "citySelect":
+      if (!val || val === "select-city") {
+        showError(id, "cityError");
+        isValid = false;
+      }
+      break;
+
+    case "firstName":
+      if (val && !/^[a-zA-Z\s]+$/.test(val)) {
+        showError(id, "firstNameError");
+        isValid = false;
+      }
+      break;
+
+    case "saleTypeSelect":
+      if (!val || val === "sales-type") {
+        showError(id, "salesTypeError");
+        isValid = false;
+      }
+      break;
+
+    case "associationYears":
+      if (!val || !/^\d+$/.test(val) || parseInt(val) < 0) {
+        showError(id, "associationError");
+        isValid = false;
+      }
+      break;
+
+    case "recommendationLimit":
+      if (!val || isNaN(parseFloat(val.replace(/,/g, "")))) {
+        showError(id, "limitError");
+        isValid = false;
+      } else {
+        const num = parseFloat(val.replace(/,/g, ""));
+        $("#limitHelper").text(numberToWords(num) + " rupees");
+      }
+      break;
+
+    case "instancesOverdue":
+      if (!val || !/^\d+$/.test(val)) {
+        showError(id, "overdueError");
+        isValid = false;
+      }
+      break;
+
+    case "chequeReturns":
+      if (!val || !/^\d+$/.test(val)) {
+        showError(id, "chequeError");
+        isValid = false;
+      }
+      break;
+  }
+
+  return isValid;
+}
+
+function numberToWords(num) {
+  if (num === 0) return "Zero";
+  if (num === 30000000) return "Rupees three crore";
+  return num.toLocaleString("en-IN");
+}
+
+function validateForm() {
+  let isFormValid = true;
+
+  const requiredFields = [
+    "firmName",
+    "dealerCode",
+    "panNumber",
+    "constitutionSelect",
+    "mobileNumber",
+    "emailId",
+    "address1",
+    "pinCode",
+    "citySelect",
+    "saleTypeSelect",
+    "associationYears",
+    "recommendationLimit",
+    "instancesOverdue",
+    "chequeReturns",
+  ];
+
+  requiredFields.forEach(function (id) {
+    const $el = $("#" + id);
+    if (!$el.val() || $el.hasClass("input-error")) {
+      isFormValid = false;
+    }
+  });
+
+  if ($("#monthlySalesContainer").is(":visible")) {
+    const isGridSubmitted = $("#monthlySalesSummary").is(":visible");
+    if (!isGridSubmitted) {
+      isFormValid = false;
+    }
+  }
+
+  if (!$(".startDate").val() || !$(".endDate").val()) {
+    isFormValid = false;
+  }
+
+  if (isFormValid) {
+    $("#stepNextBtn").prop("disabled", false);
+  } else {
+    $("#stepNextBtn").prop("disabled", true);
+  }
+}
+
+$(document).on("focus", "#mobileNumber", function () {
+  const digits = this.value.replace(/\D/g, "").slice(-10);
+  this.value = digits;
+});
+
+$(document).on("input", "#mobileNumber", function () {
+  this.value = this.value.replace(/\D/g, "").slice(0, 10);
+});
+
+$(document).on("blur", "#mobileNumber", function () {
+  const digits = this.value.replace(/\D/g, "").slice(-10);
+
+  if (digits.length === 10) {
+    this.value = "+91 " + digits;
+  } else {
+    this.value = digits;
+  }
+
+  validateField($(this));
+  validateForm();
+});
+
+$(document).on("change", ".startDate", function () {
+  var startVal = $(this).val();
+
+  if (startVal) {
+    $("#endDateTrigger").closest(".date-input-wrap").hide();
+    $("#endDateWrap").show();
+
+    var parts = startVal.split("/");
+    if (parts.length === 2) {
+      var mm = parseInt(parts[0], 10) - 1;
+      var yy = parseInt(parts[1], 10);
+      var fullYear = yy < 100 ? 2000 + yy : yy;
+
+      var startDate = new Date(fullYear, mm, 1);
+      var endDate = new Date(fullYear, mm + 11, 1);
+
+      var endMM = String(endDate.getMonth() + 1).padStart(2, "0");
+      var endYY = String(endDate.getFullYear()).slice(-2);
+      var formattedEnd = endMM + "/" + endYY;
+
+      $(".endDate").val(formattedEnd);
+
+      $("#addMonthlySalesBtn")
+        .removeClass("btn-disabled")
+        .prop("disabled", false);
+
+      $("#dateRangeError").removeClass("show");
+    }
+  } else {
+    $("#endDateTrigger").closest(".date-input-wrap").show();
+    $("#endDateWrap").hide();
+    $(".endDate").val("");
+    $("#addMonthlySalesBtn").addClass("btn-disabled").prop("disabled", true);
+  }
+
+  validateForm();
+});
+
+$(document).on("change", ".endDate", function () {
+  var endVal = $(this).val();
+
+  if (endVal) {
+    $("#addMonthlySalesBtn")
+      .removeClass("btn-disabled")
+      .prop("disabled", false);
+  } else {
+    $("#addMonthlySalesBtn").addClass("btn-disabled").prop("disabled", true);
+  }
+
+  validateForm();
+});
+
+$(document).on("click", "#addMonthlySalesBtn", function (e) {
+  e.preventDefault();
+
+  var startVal = $(".startDate").val();
+  var endVal = $(".endDate").val();
+
+  if (!startVal || !endVal) {
+    $("#dateRangeError").addClass("show");
+    $("#monthlySalesContainer").hide();
+    return;
+  }
+
+  function myToDate(my) {
+    var parts = my.split("/");
+    var mm = parseInt(parts[0], 10);
+    var yy = parseInt(parts[1], 10);
+    var fullYear = yy < 100 ? 2000 + yy : yy;
+    return new Date(fullYear, mm - 1, 1);
+  }
+
+  var startDate = myToDate(startVal);
+  var endDate = myToDate(endVal);
+
+  if (startDate > endDate) {
+    $("#dateRangeError").addClass("show");
+    $("#monthlySalesContainer").hide();
+    return;
+  }
+
+  $("#dateRangeError").removeClass("show");
+  generateMonthlySalesGrid();
+  $("#monthlySalesContainer").show();
+  $("#addMonthlySalesBtn").addClass("btn-disabled").prop("disabled", true);
+
+  // $("html, body").animate(
+  //   {
+  //     scrollTop: $("#monthlySalesContainer").offset().top - 100,
+  //   },
+  //   500,
+  // );
+});
+
+validateForm();
+
+// Eligible status
+const eligibleStatus = "Y";
+if (eligibleStatus === "Y") {
+  $("#eligibleStatus").show();
+  $("#submitEligibilityBtn")
+    .prop("disabled", false)
+    .removeClass("disabled-btn");
+} else {
+  $("#notEligibleStatus").show();
+  $("#submitEligibilityBtn").prop("disabled", true).addClass("disabled-btn");
+}
+
+// Add another lead
+$(document).on("click", "#addAnotherBtn", function (e) {
+  closeModal("#leadSuccessModal");
+
+  const isAddLeadTermChecked = $("#skipOverviewCheck").is(":checked");
+  if (isAddLeadTermChecked) {
+    openModal("#stepModal");
+  } else {
+    openModal("#addDelarLeadModal");
+  }
+});
+
+// Save and exit modal
+$(document).on("click", ".saveExitBtn", function (e) {
+  closeModal("#stepModal");
+  openModal("#saveAndExitModal");
+});
+
+$(document).on("click", "#saveAndCloseBtn", function (e) {
+  closeModal("#saveAndExitModal");
+  showToast("success", "Draft saved successfully", "");
+});
+
 // Common functions
 function lucideIconCommonCode() {
   if (window.lucide) lucide.createIcons();
 }
+
+$(".custom-modal-overlay, .esign-modal-overlay").on("click", function (e) {
+  if (e.target === this) {
+    e.stopPropagation();
+    return false;
+  }
+});
+
+function openModal(modal) {
+  $(modal).show();
+  $("body").addClass("modal-open");
+}
+
+function closeModal(modal) {
+  $(modal).hide();
+  $("body").removeClass("modal-open");
+}
+
+// ── Custom Calendar Picker
+(function () {
+  var MONTHS = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  var today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  function sameDay(a, b) {
+    return (
+      a &&
+      b &&
+      a.getFullYear() === b.getFullYear() &&
+      a.getMonth() === b.getMonth() &&
+      a.getDate() === b.getDate()
+    );
+  }
+
+  function pad(n) {
+    return n < 10 ? "0" + n : "" + n;
+  }
+
+  function formatMY(d) {
+    return pad(d.getMonth() + 1) + "/" + String(d.getFullYear()).slice(-2);
+  }
+
+  function initState() {
+    return {
+      view: "year",
+      viewMonth: today.getMonth(),
+      viewYear: today.getFullYear(),
+      centerYear: today.getFullYear(),
+      selected: null,
+    };
+  }
+
+  function buildWeekdays() {
+    var w = document.createElement("div");
+    w.className = "weekdays";
+    ["S", "M", "T", "W", "T", "F", "S"].forEach(function (d) {
+      var s = document.createElement("span");
+      s.textContent = d;
+      w.appendChild(s);
+    });
+    return w;
+  }
+
+  function isDOBPicker(pop) {
+    var wrap = pop.closest(".custom-datepicker-wrap");
+    var inp = wrap.querySelector(".dobDate");
+    return inp !== null;
+  }
+
+  function getCutoffDate() {
+    var cutoff = new Date(today);
+    cutoff.setFullYear(today.getFullYear() - 21);
+    return cutoff;
+  }
+
+  function buildDaysGrid(state, pop) {
+    var grid = document.createElement("div");
+    grid.className = "days";
+    var firstDay = new Date(state.viewYear, state.viewMonth, 1).getDay();
+    var totalDays = new Date(state.viewYear, state.viewMonth + 1, 0).getDate();
+
+    var isDOB = isDOBPicker(pop);
+    var cutoffDate = getCutoffDate();
+
+    for (var i = 0; i < firstDay; i++) {
+      var e = document.createElement("div");
+      e.className = "day empty";
+      grid.appendChild(e);
+    }
+    for (var d = 1; d <= totalDays; d++) {
+      (function (day) {
+        var cellDate = new Date(state.viewYear, state.viewMonth, day);
+        cellDate.setHours(0, 0, 0, 0);
+        var cell = document.createElement("div");
+        cell.className = "day";
+        cell.textContent = day;
+
+        if (isDOB) {
+          if (cellDate > today || cellDate > cutoffDate) {
+            cell.classList.add("disabled");
+          }
+        } else {
+          if (cellDate > today) {
+            cell.classList.add("disabled");
+          }
+        }
+
+        if (sameDay(cellDate, today)) cell.classList.add("today");
+        if (state.selected && sameDay(cellDate, state.selected))
+          cell.classList.add("selected");
+        if (!cell.classList.contains("disabled")) {
+          cell.addEventListener("click", function (e) {
+            e.stopPropagation();
+            state.selected = cellDate;
+            var wrap = pop.closest(".custom-datepicker-wrap");
+            var inp = wrap.querySelector(".startDate, .endDate");
+            inp.value = formatMY(cellDate);
+            pop.style.display = "none";
+            $(inp).trigger("change");
+          });
+        }
+        grid.appendChild(cell);
+      })(d);
+    }
+    return grid;
+  }
+
+  function buildMonthsGrid(state, pop) {
+    var grid = document.createElement("div");
+    grid.className = "months";
+    var isDOB = isDOBPicker(pop);
+    var cutoffYear = today.getFullYear() - 21;
+
+    MONTHS.forEach(function (m, idx) {
+      var item = document.createElement("div");
+      item.className = "month-item";
+      item.textContent = m;
+
+      if (isDOB) {
+        var isAfterCutoff =
+          (state.viewYear === cutoffYear && idx > today.getMonth()) ||
+          state.viewYear > cutoffYear;
+        if (isAfterCutoff) item.classList.add("disabled");
+      } else {
+        var isAfterToday =
+          (state.viewYear === today.getFullYear() && idx > today.getMonth()) ||
+          state.viewYear > today.getFullYear();
+        if (isAfterToday) item.classList.add("disabled");
+      }
+
+      if (idx === state.viewMonth && state.selected)
+        item.classList.add("selected");
+      if (idx === today.getMonth() && state.viewYear === today.getFullYear())
+        item.classList.add("current");
+
+      if (!item.classList.contains("disabled")) {
+        item.addEventListener("click", function (e) {
+          e.stopPropagation();
+          state.viewMonth = idx;
+
+          var selectedDate = new Date(state.viewYear, idx, 1);
+          state.selected = selectedDate;
+
+          var wrap = pop.closest(".custom-datepicker-wrap");
+          var inp = wrap.querySelector(".startDate, .endDate");
+          inp.value = formatMY(selectedDate);
+          pop.style.display = "none";
+          $(inp).trigger("change");
+        });
+      }
+      grid.appendChild(item);
+    });
+    return grid;
+  }
+
+  var MIN_YEAR = 1980;
+
+  function buildYearsGrid(state, pop) {
+    var grid = document.createElement("div");
+    grid.className = "years";
+    var start = MIN_YEAR;
+    var end = today.getFullYear();
+
+    var isDOB = isDOBPicker(pop);
+    var cutoffYear = today.getFullYear() - 21;
+
+    for (var y = start; y <= end; y++) {
+      (function (yr) {
+        var item = document.createElement("div");
+        item.className = "year-item";
+        item.textContent = yr;
+
+        var isFaded = false;
+
+        if (isDOB) {
+          if (yr > cutoffYear) {
+            item.classList.add("faded");
+            isFaded = true;
+          }
+        } else {
+          if (yr > today.getFullYear()) {
+            item.classList.add("faded");
+            isFaded = true;
+          }
+        }
+
+        if (isDOB) {
+          if (yr === cutoffYear) {
+            item.classList.add("current");
+          }
+        } else {
+          if (yr === today.getFullYear() && !isFaded) {
+            item.classList.add("current");
+          }
+        }
+
+        if (yr === state.viewYear && state.selected)
+          item.classList.add("selected");
+
+        var isClickable = false;
+        if (isDOB) {
+          if (yr <= cutoffYear) {
+            isClickable = true;
+          }
+        } else {
+          if (yr <= today.getFullYear()) {
+            isClickable = true;
+          }
+        }
+
+        if (isClickable) {
+          item.addEventListener("click", function (e) {
+            e.stopPropagation();
+            state.viewYear = yr;
+            state.centerYear = yr;
+            state.view = "month";
+            render(state, pop);
+          });
+        }
+        grid.appendChild(item);
+      })(y);
+    }
+    return grid;
+  }
+
+  function render(state, pop) {
+    pop.innerHTML = "";
+
+    var nav = document.createElement("div");
+    nav.className = "nav-dropdown";
+
+    var yBtn = document.createElement("div");
+    yBtn.className = "dd" + (state.view === "year" ? " active" : "");
+    yBtn.innerHTML =
+      "<span>" +
+      state.viewYear +
+      "</span><span class='caret'>" +
+      (state.view === "year" ? "&#9650;" : "&#9660;") +
+      "</span>";
+    yBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+      state.centerYear = state.viewYear;
+      state.view = state.view === "year" ? "day" : "year";
+      render(state, pop);
+    });
+
+    var mBtn = document.createElement("div");
+    mBtn.className = "dd" + (state.view === "month" ? " active" : "");
+    mBtn.innerHTML =
+      "<span>" +
+      MONTHS[state.viewMonth] +
+      "</span><span class='caret'>" +
+      (state.view === "month" ? "&#9650;" : "&#9660;") +
+      "</span>";
+    mBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+      state.view = state.view === "month" ? "day" : "month";
+      render(state, pop);
+    });
+
+    nav.appendChild(yBtn);
+    nav.appendChild(mBtn);
+    pop.appendChild(nav);
+
+    if (state.view === "day") {
+      pop.appendChild(buildWeekdays());
+      pop.appendChild(buildDaysGrid(state, pop));
+    } else if (state.view === "month") {
+      pop.appendChild(buildMonthsGrid(state, pop));
+    } else {
+      pop.appendChild(buildYearsGrid(state, pop));
+      var scrollTarget =
+        pop.querySelector(".year-item.selected") ||
+        pop.querySelector(".year-item.current");
+      if (scrollTarget) scrollTarget.scrollIntoView({ block: "center" });
+    }
+  }
+
+  function openPicker(wrap) {
+    var pop = wrap.querySelector(".custom-calendar-popup");
+    if (!pop._calState) pop._calState = initState();
+    var state = pop._calState;
+    var inp = wrap.querySelector(".startDate, .endDate");
+    state.valueOnOpen = inp.value;
+    state.selectedOnOpen = state.selected;
+    if (inp.value) {
+      var parts = inp.value.split("/");
+      if (parts.length === 2) {
+        var mm = parseInt(parts[0], 10);
+        var yy = parseInt(parts[1], 10);
+        var fullYear = yy < 100 ? 2000 + yy : yy;
+        var d = new Date(fullYear, mm - 1, 1);
+        d.setHours(0, 0, 0, 0);
+        state.selected = d;
+        state.viewYear = fullYear;
+        state.viewMonth = mm - 1;
+        state.centerYear = fullYear;
+      }
+    }
+    state.view = "year";
+    render(state, pop);
+    pop.style.display = "block";
+  }
+
+  $(document).on(
+    "click",
+    ".custom-datepicker-wrap .startDate, .custom-datepicker-wrap .endDate, .custom-datepicker-wrap .custom-cal-icon",
+    function (e) {
+      e.stopPropagation();
+      var wrap = $(this).closest(".custom-datepicker-wrap")[0];
+      var pop = wrap.querySelector(".custom-calendar-popup");
+      document.querySelectorAll(".custom-calendar-popup").forEach(function (p) {
+        if (p !== pop) p.style.display = "none";
+      });
+      if (pop.style.display === "none" || pop.style.display === "") {
+        openPicker(wrap);
+      } else {
+        pop.style.display = "none";
+      }
+    },
+  );
+
+  $(document).on("click", function (e) {
+    if ($(e.target).closest(".custom-datepicker-wrap").length === 0) {
+      document.querySelectorAll(".custom-calendar-popup").forEach(function (p) {
+        p.style.display = "none";
+      });
+    }
+  });
+})();
+
+// Custom dropdown
+$(document).on("click", ".custom-select-trigger", function (e) {
+  e.stopPropagation();
+
+  const wrapper = $(this).closest(".custom-select-wrapper");
+  const options = wrapper.find(".custom-select-options");
+  const isOpen = options.is(":visible");
+
+  $(".custom-select-options").not(options).hide();
+  $(".custom-select-trigger").not(this).removeClass("active");
+
+  if (isOpen) {
+    options.hide();
+    $(this).removeClass("active");
+  } else {
+    options.show();
+    $(this).addClass("active");
+  }
+});
+
+$(document).on("click", ".custom-select-options .option-item", function (e) {
+  e.stopPropagation();
+
+  const wrapper = $(this).closest(".custom-select-wrapper");
+  const trigger = wrapper.find(".custom-select-trigger");
+  const selectedSpan = trigger.find(".selected-option");
+  const hiddenSelect = wrapper.siblings("select");
+  const options = wrapper.find(".custom-select-options");
+
+  const value = $(this).data("value");
+  const text = $(this).text().trim();
+
+  selectedSpan.text(text);
+  selectedSpan.removeClass("placeholder");
+
+  if (hiddenSelect.length) {
+    hiddenSelect.val(value);
+    hiddenSelect.trigger("change");
+  }
+
+  options.find(".option-item").removeClass("selected");
+  $(this).addClass("selected");
+
+  options.hide();
+  trigger.removeClass("active");
+
+  const form = wrapper.closest(".bank-account-form");
+  if (form.length) {
+    validateBankForm(form);
+
+    const hasValue = form
+      .find("input")
+      .toArray()
+      .some((input) => $(input).val().trim() !== "");
+    const hasSelect = form
+      .find("select")
+      .toArray()
+      .some((select) => $(select).val() !== "");
+    isFormUnsaved = hasValue || hasSelect;
+
+    if (isFormUnsaved) {
+      $("#addBankAccount").addClass("disabled").removeClass("enabled");
+    }
+  }
+});
+
+$(document).on("click", function (e) {
+  if (!$(e.target).closest(".custom-select-wrapper").length) {
+    $(".custom-select-options").hide();
+    $(".custom-select-trigger").removeClass("active");
+  }
+});
+
+// Shared "Add dealer" dropdown template
+var addDealerTemplate = `
+  <button class="orange-btn addDealerBtn">
+    Add dealer
+    <i data-lucide="chevron-down"></i>
+  </button>
+  <div class="add-dealer-menu addDealerMenu">
+    <div class="menu-item" data-action="bulk-upload">Bulk leads upload</div>
+    <div class="menu-item" data-action="single-lead">Add a single lead</div>
+  </div>
+`;
+
+function renderAddDealerDropdowns() {
+  $("[data-add-dealer]").each(function () {
+    if (!$(this).children().length) {
+      $(this).html(addDealerTemplate);
+    }
+  });
+  lucideIconCommonCode();
+}
+
+$(function () {
+  renderAddDealerDropdowns();
+});

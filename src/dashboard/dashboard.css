@@ -20,6 +20,7 @@ header {
 
 .header-left span {
   font-size: 30px;
+  cursor: pointer;
 }
 
 .dashboard-wrapper {
@@ -389,11 +390,12 @@ header {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  padding: 0px 32px;
 }
 
 .form-modal input {
-  width: 100%;
-  height: 48px;
+  width: 20px;
+  height: 20px;
 
   border: 1px solid #d2d2d2;
   border-radius: 8px;
@@ -411,15 +413,15 @@ header {
 
 .sanction-step {
   display: flex;
-  gap: 16px;
+  gap: 8px;
   align-items: center;
 }
 
 .sanction-step span {
-  width: 20px;
-  height: 20px;
+  width: 7px;
+  height: 7px;
 
-  background: #d2d2d2;
+  background: #2f2f2f;
 
   border-radius: 50%;
 
@@ -430,17 +432,7 @@ header {
   font-size: 14px;
   font-weight: 700;
   z-index: 999;
-  color: #6f6f6f;
-}
-
-.sanction-step:not(:last-child)::before {
-  content: "";
-  position: absolute;
-  left: 41px;
-  top: 133px;
-  bottom: 442px;
-  width: 2px;
-  background: #d2d2d2;
+  color: #2f2f2f;
 }
 
 .sanction-step h6 {
@@ -538,29 +530,63 @@ header {
   background-color: #fceee7;
 }
 
-.icon-circle svg {
+.icon-circle span {
   color: #e3530f;
   stroke: #e3530f;
-  width: 16px;
-  height: 16px;
+  font-size: 20px;
+}
+
+.firm {
+  color: #8c8c8c;
 }
 
 .grid-section {
   display: grid;
   flex-wrap: wrap;
   gap: 12px 28px;
-  grid-template-columns: repeat(2, 1fr);
-  max-width: 556px;
+  grid-template-columns: repeat(1, 1fr);
+  max-width: 25%;
   margin-top: 10px;
 }
 
 .grid-section-part {
+  display: flex;
   padding: 12px 16px !important;
   background-color: #fff;
   border-radius: 8px;
   gap: 14px !important;
   font-size: 14px;
   color: #2f2f2f;
+  align-items: center;
+}
+
+.skip-block {
+  position: absolute;
+  bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.skip-block input {
+  width: 18px;
+  height: 18px;
+  stroke: #e3530f;
+  accent-color: #e3530f;
+  background-color: #fef1e9;
+}
+
+.skip-block span {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2f2f2f;
+}
+
+.saveExitBtn.active {
+  color: #e3530f !important;
+  pointer-events: auto !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
 }
 
 .apply-modal .outline-orange-btn {
@@ -727,9 +753,8 @@ header {
 }
 
 .review-modal .modal-footer {
-  padding: 0 0 24px;
-  padding-top: 0px;
-  justify-content: space-between;
+  padding: 0px 32px;
+  justify-content: flex-end;
   position: sticky;
   bottom: 0;
   background-color: #fff;
@@ -739,6 +764,30 @@ header {
 .step-Modal .custom-modal {
   padding: 0px 0px !important;
   scrollbar-width: none !important;
+}
+
+.check-eligibility-modal .modal-footer {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+}
+
+.check-eligibility-modal {
+  padding: 0px 0px;
+}
+
+.eligibility-header p {
+  font-size: 14px;
+  color: #6f6f6f;
+}
+
+.eligibility-header {
+  padding: 24px 32px;
+  background: #fef9f6;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0px 8px 20px 0px #00000014;
 }
 
 .step3-grid {
@@ -1229,7 +1278,7 @@ header {
 }
 
 .date-input {
-  width: 100%;
+  width: 45%;
 }
 
 .date-input input[type="date"] {
@@ -1573,10 +1622,20 @@ header {
   overflow-x: hidden;
 }
 
-.step-Modal .stepScroll,
+.step-Modal .stepScroll {
+  height: calc(100% - 190px);
+  max-height: calc(100% - 190px);
+  margin-right: 10px !important;
+  margin: 5px 0px;
+}
+
+.step-Modal .custom-modal h2 {
+  padding: 24px 32px !important;
+}
+
 .review-modal .stepScroll {
-  height: calc(100% - 230px);
-  max-height: calc(100% - 230px);
+  height: calc(100% - 205px);
+  max-height: calc(100% - 205px);
   margin-right: 10px !important;
   margin: 5px 0px;
 }
@@ -1694,201 +1753,6 @@ header {
 
 .container {
   width: 100% !important;
-}
-
-/* ── Custom Calendar Picker ─────────────────────────────────────────────── */
-.custom-datepicker-wrap {
-  position: relative;
-  cursor: pointer;
-}
-
-.custom-datepicker-wrap .incorporationDate {
-  cursor: pointer;
-  padding-right: 36px;
-}
-
-.custom-datepicker-wrap.date-input::after {
-  display: none;
-}
-
-.custom-datepicker-wrap .custom-cal-icon {
-  position: absolute;
-  right: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #e3530f;
-  font-size: 18px;
-  pointer-events: none;
-}
-
-.custom-calendar-popup {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  z-index: 9999;
-  background: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  width: 360px;
-  min-width: 360px;
-  padding: 20px 12px 12px 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  user-select: none;
-  font-family: "Mulish", sans-serif;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-/* Nav dropdown: Oct ▾  2002 ▾ */
-.custom-calendar-popup .nav-dropdown {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0;
-}
-.custom-calendar-popup .dd {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #282828;
-  cursor: pointer;
-  user-select: none;
-}
-.custom-calendar-popup .dd .caret {
-  font-size: 9px;
-  color: #999;
-}
-.custom-calendar-popup .dd.active {
-  color: #e3530f;
-}
-
-/* Weekday headers */
-.custom-calendar-popup .weekdays {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  text-align: center;
-  color: #9a9a9a;
-  font-size: 11px;
-  margin-bottom: 0;
-}
-
-/* Day grid */
-.custom-calendar-popup .days {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  row-gap: 6px;
-}
-.custom-calendar-popup .day {
-  aspect-ratio: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12.5px;
-  color: #282828;
-  cursor: pointer;
-  border-radius: 50%;
-}
-.custom-calendar-popup .day.empty {
-  cursor: default;
-}
-.custom-calendar-popup .day.disabled {
-  color: #d8d8d8;
-  cursor: not-allowed;
-}
-.custom-calendar-popup .day.today {
-  border: 1px solid #e3530f;
-  color: #e3530f;
-}
-.custom-calendar-popup .day:not(.empty):not(.disabled):hover {
-  background: #f4f4f4;
-}
-.custom-calendar-popup .day.selected {
-  background: #e3530f;
-  color: #fff;
-  font-weight: 600;
-}
-
-/* Month grid */
-.custom-calendar-popup .months {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-}
-.custom-calendar-popup .month-item {
-  text-align: center;
-  padding: 8px 0;
-  border-radius: 16px;
-  font-size: 12.5px;
-  color: #282828;
-  cursor: pointer;
-  background: #f6f6f6;
-}
-.custom-calendar-popup .month-item.disabled {
-  color: #d8d8d8;
-  cursor: not-allowed;
-  background: #fafafa;
-}
-.custom-calendar-popup .month-item:not(.disabled):hover {
-  background: #eee;
-}
-.custom-calendar-popup .month-item.current {
-  border: 1.5px solid #e3530f;
-  background: transparent;
-  color: #e3530f;
-}
-.custom-calendar-popup .month-item.selected {
-  background: #e3530f;
-  color: #fff;
-  font-weight: 600;
-  border: none;
-}
-
-/* Year grid */
-.custom-calendar-popup .years {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  max-height: 190px;
-  overflow-y: auto;
-  padding-right: 2px;
-}
-.custom-calendar-popup .years::-webkit-scrollbar {
-  width: 4px;
-}
-.custom-calendar-popup .years::-webkit-scrollbar-thumb {
-  background: #ccc;
-  border-radius: 4px;
-}
-.custom-calendar-popup .year-item {
-  text-align: center;
-  padding: 8px 0;
-  border-radius: 16px;
-  font-size: 12.5px;
-  color: #282828;
-  cursor: pointer;
-  background: #f6f6f6;
-}
-.custom-calendar-popup .year-item.faded {
-  color: #ddd;
-  background: transparent;
-  cursor: default;
-}
-.custom-calendar-popup .year-item:not(.faded):hover {
-  background: #eee;
-}
-.custom-calendar-popup .year-item.current {
-  border: 1.5px solid #e3530f;
-  background: transparent;
-  color: #e3530f;
-}
-.custom-calendar-popup .year-item.selected {
-  background: #e3530f;
-  color: #fff;
-  font-weight: 600;
-  border: none;
 }
 
 /* ── Range Date Picker (Bank Statement / ITR start-end dates) ──────────── */
@@ -2175,9 +2039,11 @@ header {
   gap: 8px;
   transition: background 0.15s ease;
 }
+
 .btn-primary:hover {
   background: var(--orange-dark);
 }
+
 .btn-primary [data-lucide] {
   width: 16px;
   height: 16px;
@@ -2187,14 +2053,17 @@ header {
   display: none;
   position: absolute;
   background: #fff;
-  border-radius: var(--radius-sm);
-  box-shadow: 0 10px 32px rgba(20, 26, 41, 0.16);
+  border-radius: 4px;
+  box-shadow: 0px 4px 16px 0px #00000014;
+  width: 100% !important;
   overflow: hidden;
   z-index: 30;
 }
+
 .add-dealer-menu.open {
   display: block;
 }
+
 .menu-item {
   padding: 12px 16px;
   font-size: 13px;
@@ -2601,14 +2470,14 @@ header {
   display: none;
 }
 
-.page-top-right .orange-btn {
+.addDealerBtn {
   max-width: 152px !important;
   font-size: 16px !important;
   font-weight: 700 !important;
   min-width: 152px !important;
 }
 
-.page-top-right .orange-btn svg {
+.addDealerBtn svg {
   width: 20px;
   height: 20px;
   margin-left: 10px;
@@ -2917,7 +2786,7 @@ td {
 }
 
 .rep-input {
-  width: 100%;
+  width: 100% !important;
   padding: 6px 8px !important;
   border: 1px solid #2f2f2f !important;
   border-radius: 4px !important;
@@ -2957,7 +2826,14 @@ td {
   font-size: 12px;
   margin-top: 4px;
   display: block;
+}
+
+.lead-table-modal .error-msg {
   max-width: 200px;
+}
+
+.step-Modal .month-item .error-msg {
+  margin: 0px 0px 12px 16px !important;
 }
 
 .rep-input.input-error {
@@ -3528,6 +3404,1072 @@ td {
   margin-left: auto;
 }
 
+.sanction-header-div {
+  position: sticky;
+  top: 0;
+}
+
+.review-header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 24px 32px;
+}
+
+.review-modal .modal-footer label {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.right-section-review p {
+  font-size: 24px;
+  font-weight: 700;
+  color: #2f2f2f;
+}
+
+/* --- Form Grid Layout --- */
+.form-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px 24px;
+  margin-bottom: 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 400;
+  color: #2f2f2f;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  height: 44px;
+  padding: 0 16px;
+  background: #f1f1f1;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #4f4f4f;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.form-group input::placeholder {
+  color: #4f4f4f;
+  font-weight: 400;
+}
+
+.form-group input.input-error,
+.form-group select.input-error {
+  border-color: #da1e28;
+  background-color: #fbe9ea;
+}
+
+.form-group .error-msg,
+.month-item .error-msg {
+  color: #da1e28;
+  font-size: 12px;
+  font-weight: 400;
+  display: none;
+  margin-top: 4px;
+  line-height: 1.3;
+}
+
+.form-group .error-msg.show,
+.month-item .error-msg.show {
+  display: block;
+}
+
+.form-group .helper-text {
+  font-size: 12px;
+  color: #6f6f6f;
+  margin-top: 4px;
+}
+
+.info-step-icon {
+  font-size: 20px !important;
+  color: #2f2f2f;
+  cursor: pointer;
+}
+
+.optionsl-text {
+  color: #6f6f6f;
+}
+
+.date-range-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.date-input-wrap {
+  position: relative;
+  flex: 1;
+}
+
+.date-input-wrap input {
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+.date-input-wrap .cal-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #e3530f;
+  font-size: 20px;
+  pointer-events: none;
+}
+
+.range-separator {
+  font-size: 14px;
+  color: #6f6f6f;
+  font-weight: 400;
+}
+
+.add-btn-group {
+  justify-content: flex-end;
+  height: 66px;
+}
+
+.add-btn-group .outline-orange-btn {
+  width: 25%;
+  min-width: 35% !important;
+  height: 32px;
+  margin-top: 24px;
+}
+
+.input-with-icon {
+  position: relative;
+}
+
+.input-with-icon .currency-symbol,
+.input-wrapper .currency-symbol {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  font-weight: 600;
+  color: #2f2f2f;
+}
+
+.input-wrapper .currency-symbol {
+  left: 24px;
+}
+
+.input-with-icon input {
+  padding-left: 36px;
+}
+
+.input-wrapper input {
+  padding-left: 20px !important;
+}
+
+/* --- Monthly Sales Table --- */
+.monthly-sales-container {
+  background: #fff;
+  border: 1px solid #d2d2d2;
+  border-radius: 8px;
+  padding: 16px 24px;
+  margin-top: 16px;
+}
+
+.monthly-sales-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.monthly-sales-header h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2f2f2f;
+  margin: 0;
+}
+
+.header-actions .edit-action {
+  font-size: 12px;
+  color: #e3530f;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.monthly-sales-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px 0px;
+  border: 1px solid #f1f1f1;
+  border-radius: 8px;
+}
+
+.monthly-sales-grid .month-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.monthly-sales-grid .month-item label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2f2f2f;
+  background: #f1f1f1;
+  padding: 8px 16px;
+}
+
+.monthly-sales-grid .month-item .monthly-sales-input {
+  height: 32px;
+  padding: 6px 8px;
+  font-size: 14px;
+  font-weight: 600;
+  background: #ffffff;
+  border: 1px solid #d2d2d2;
+  width: 82%;
+  margin: 8px 16px;
+  border-radius: 4px;
+}
+
+.monthly-sales-grid .month-item .monthly-sales-input.submitted {
+  border: none;
+  color: #6f6f6f;
+  cursor: not-allowed;
+  padding: 0px 0px;
+}
+
+.monthly-sales-grid .month-item input.input-error {
+  border-color: #da1e28;
+  background-color: #fbe9ea;
+}
+
+.monthly-sales-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.monthly-sales-footer .reset-action {
+  font-size: 13px;
+  font-weight: 700;
+  color: #e3530f;
+  cursor: pointer;
+  align-self: center;
+}
+
+.monthly-sales-footer .outline-orange-btn {
+  height: 36px;
+  padding: 0 24px;
+  font-size: 14px;
+  min-width: 140px !important;
+}
+
+.monthly-sales-footer .outline-orange-btn.btn-disabled {
+  border: 1px solid #d2d2d2;
+  color: #6f6f6f;
+  cursor: not-allowed;
+}
+
+.monthly-sales-footer .reset-action.btn-disabled {
+  color: #6f6f6f;
+  cursor: not-allowed;
+}
+
+.monthly-sales-summary {
+  display: flex;
+  flex-direction: column;
+  margin-top: 16px;
+  background: #fef9f6;
+  padding: 16px 24px;
+  border-radius: 4px;
+  width: 32%;
+}
+
+.monthly-sales-summary .summary-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #e3530f;
+}
+
+.monthly-sales-summary .summary-label {
+  font-size: 12px;
+  color: #6f6f6f;
+}
+
+/* --- Modal Footer --- */
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0 0 0;
+  border-top: 1px solid #e0e0e0;
+  margin-top: 24px;
+}
+
+.save-exit-btn {
+  background: transparent;
+  border: none;
+  color: #e3530f;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 8px 0;
+}
+
+.footer-actions {
+  display: flex;
+  gap: 16px;
+}
+
+.form-section .section-title,
+.section-container .section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2f2f2f;
+  margin-bottom: 8px !important;
+}
+
+.footer-actions .orange-btn:disabled {
+  background: #d2d2d2;
+  color: #8c8c8c;
+  cursor: not-allowed;
+}
+
+/* --- Sections --- */
+.section-container {
+  padding: 16px 0;
+}
+
+.section-container.no-border {
+  border-bottom: none;
+}
+
+.section-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 16px 0;
+}
+
+/* --- Details Grid --- */
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px 24px;
+}
+
+.sales-top-grid {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.detail-label {
+  font-size: 12px;
+  color: #6f6f6f;
+}
+
+.detail-value,
+.detail-value.bold {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2f2f2f;
+}
+
+/* --- Monthly Sales Box --- */
+.monthly-sales-box {
+  border: 1px solid #bdbdbd;
+  border-radius: 8px;
+  padding: 8px 16px;
+  margin-top: 8px;
+}
+
+.box-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 8px 0 !important;
+  color: #2f2f2f;
+}
+
+.monthly-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px 24px;
+}
+
+.month-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.month-label {
+  font-size: 12px;
+  color: #6f6f6f;
+}
+
+.month-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2f2f2f;
+}
+
+.total-sales {
+  margin-top: 16px;
+}
+
+.review-wrapper {
+  background-color: #f4f4f4;
+  border-radius: 12px;
+  padding: 0px 16px;
+  margin: 0px 32px;
+}
+
+.review-modal .custom-modal {
+  padding: 0px 0px !important;
+  scrollbar-width: none !important;
+}
+
+.eligibility-header .alert-icon-container {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  flex-shrink: 0;
+}
+
+.eligibility-header .alert-icon-outer {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #d2dff9;
+  top: 0px;
+  opacity: 70%;
+  left: 4px;
+}
+
+.eligibility-header .alert-icon-custom {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background-color: #0b46b4;
+  border-radius: 50%;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  top: 9px;
+  left: 15px;
+  z-index: 2;
+}
+
+.eligibility-header .alert-icon-middle {
+  position: absolute;
+  width: 41px;
+  height: 41px;
+  border-radius: 50%;
+  background-color: #5e96fe;
+  top: 4px;
+  left: 9px;
+}
+
+.check-eligibility-modal .alert-icon-container .material-icons {
+  font-size: 16px;
+}
+
+.modal-body {
+  padding: 24px;
+}
+
+.details-container {
+  background-color: #fdf7f4;
+  border-radius: 8px;
+  padding: 32px 76px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 32px;
+}
+
+.details-container .detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.details-container .detail-label {
+  color: #656565;
+  font-size: 14px;
+}
+
+.details-container .detail-value {
+  color: #2f2f2f;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: right;
+}
+
+/* Status Badge */
+.status-badge {
+  background-color: #e8f2eb;
+  color: #198038;
+  padding: 4px !important;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.not-eligible .status-badge {
+  background-color: #fbe9ea;
+  color: #da1e28;
+}
+
+.check-icon {
+  font-size: 14px !important;
+  font-weight: bold;
+}
+
+.decimal-point-value {
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.check-eligibility-modal .orange-btn .disabled-btn {
+  background-color: #d2d2d2;
+}
+
+.lead-success-wrapper {
+  padding: 0px 32px;
+}
+
+.dealer-card {
+  background-color: #fef9f6;
+  border-radius: 8px;
+  padding: 24px 76px;
+  margin-bottom: 24px;
+}
+
+.dealer-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.lead-success-wrapper .label {
+  font-size: 12px;
+  color: #6f6f6f;
+  margin: 0 0 6px 0;
+}
+
+.lead-success-wrapper .value-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #2f2f2f;
+  margin: 0;
+}
+
+.firm-title {
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  color: #2f2f2f;
+  margin: 0;
+}
+
+.pq-info {
+  text-align: right;
+}
+
+.card-divider {
+  height: 1px;
+  background-color: #d2d2d2;
+  margin: 24px 0;
+}
+
+.dealer-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 56px;
+}
+
+.contact-person {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar-circle {
+  width: 50px;
+  height: 50px;
+  background-color: #fceee7;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.person-details .value-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.sub-text {
+  font-size: 14px;
+  color: #6f6f6f;
+  margin: 0;
+}
+
+.contact-info-grid {
+  display: flex;
+  gap: 56px;
+  flex: 1.5;
+  justify-content: flex-start;
+}
+
+.info-block .value-text {
+  font-size: 14px;
+  font-weight: 400;
+  color: #2f2f2f;
+  margin: 0;
+}
+
+.add-another-btn {
+  background: none;
+  border: none;
+  color: #e3530f;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  font-family: inherit;
+}
+
+.plus-icon {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.lead-success-modal .alert-icon-container {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  flex-shrink: 0;
+}
+
+.lead-success-modal .alert-icon-outer {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: rgb(167, 212, 181);
+  top: 0px;
+  opacity: 70%;
+  left: 4px;
+}
+
+.lead-success-modal .alert-icon-custom {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background-color: #0e6027;
+  border-radius: 50%;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  top: 9px;
+  left: 15px;
+  z-index: 2;
+}
+
+.lead-success-modal .alert-icon-middle {
+  position: absolute;
+  width: 41px;
+  height: 41px;
+  border-radius: 50%;
+  background-color: #55b471;
+  top: 4px;
+  left: 9px;
+}
+
+.avatar-circle .material-icons {
+  color: #e3530f;
+}
+
+.dealer-code-value {
+  color: #2f2f2f;
+}
+
+/* ── Custom Calendar Picker ─────────────────────────────────────────────── */
+.custom-datepicker-wrap {
+  position: relative;
+  cursor: pointer;
+}
+
+.custom-datepicker-wrap .incorporationDate {
+  cursor: pointer;
+  padding-right: 36px;
+}
+
+.custom-datepicker-wrap.date-input::after {
+  display: none;
+}
+
+.custom-datepicker-wrap .custom-cal-icon,
+.end-date-calendar .custom-cal-icon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #e3530f;
+  font-size: 18px;
+  pointer-events: none;
+}
+
+.custom-calendar-popup {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 9999;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  width: 360px;
+  min-width: 360px;
+  padding: 20px 12px 12px 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  user-select: none;
+  font-family: "Mulish", sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Nav dropdown: Oct ▾  2002 ▾ */
+.custom-calendar-popup .nav-dropdown {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0;
+}
+.custom-calendar-popup .dd {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #282828;
+  cursor: pointer;
+  user-select: none;
+}
+.custom-calendar-popup .dd .caret {
+  font-size: 9px;
+  color: #999;
+}
+.custom-calendar-popup .dd.active {
+  color: #e3530f;
+}
+
+/* Weekday headers */
+.custom-calendar-popup .weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  color: #9a9a9a;
+  font-size: 11px;
+  margin-bottom: 0;
+}
+
+/* Day grid */
+.custom-calendar-popup .days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  row-gap: 6px;
+}
+.custom-calendar-popup .day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12.5px;
+  color: #282828;
+  cursor: pointer;
+  border-radius: 50%;
+}
+.custom-calendar-popup .day.empty {
+  cursor: default;
+}
+.custom-calendar-popup .day.disabled {
+  color: #d8d8d8;
+  cursor: not-allowed;
+}
+.custom-calendar-popup .day.today {
+  border: 1px solid #e3530f;
+  color: #e3530f;
+}
+.custom-calendar-popup .day:not(.empty):not(.disabled):hover {
+  background: #f4f4f4;
+}
+.custom-calendar-popup .day.selected {
+  background: #e3530f;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Month grid */
+.custom-calendar-popup .months {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.custom-calendar-popup .month-item {
+  text-align: center;
+  padding: 8px 0;
+  border-radius: 16px;
+  font-size: 12.5px;
+  color: #282828;
+  cursor: pointer;
+  background: #f6f6f6;
+}
+.custom-calendar-popup .month-item.disabled {
+  color: #d8d8d8;
+  cursor: not-allowed;
+  background: #fafafa;
+}
+.custom-calendar-popup .month-item:not(.disabled):hover {
+  background: #eee;
+}
+.custom-calendar-popup .month-item.current {
+  border: 1.5px solid #e3530f;
+  background: transparent;
+  color: #e3530f;
+}
+.custom-calendar-popup .month-item.selected {
+  background: #e3530f;
+  color: #fff;
+  font-weight: 600;
+  border: none;
+}
+
+/* Year grid */
+.custom-calendar-popup .years {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  max-height: 190px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+.custom-calendar-popup .years::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-calendar-popup .years::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+.custom-calendar-popup .year-item {
+  text-align: center;
+  padding: 8px 0;
+  border-radius: 16px;
+  font-size: 12.5px;
+  color: #282828;
+  cursor: pointer;
+  background: #f6f6f6;
+}
+.custom-calendar-popup .year-item.faded {
+  color: #ddd;
+  background: transparent;
+  cursor: default;
+}
+.custom-calendar-popup .year-item:not(.faded):hover {
+  background: #eee;
+}
+.custom-calendar-popup .year-item.current {
+  border: 1.5px solid #e3530f;
+  background: transparent;
+  color: #e3530f;
+}
+.custom-calendar-popup .year-item.selected {
+  background: #e3530f;
+  color: #fff;
+  font-weight: 600;
+  border: none;
+}
+
+/* Custom dropdown */
+.custom-select-wrapper {
+  position: relative;
+  width: 100%;
+  cursor: pointer;
+}
+
+.custom-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-radius: 4px;
+  background: #f1f1f1;
+  color: #f2f2f2;
+  min-height: 44px;
+  transition: border-color 0.2s ease;
+}
+
+.custom-select-trigger:hover {
+  border-color: #b0b0b0;
+}
+
+.custom-select-trigger.active {
+  border-color: #e3530f;
+  border-bottom-color: #d2d2d2;
+  border-radius: 4px 4px 0 0;
+}
+
+.custom-select-trigger .selected-option {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: #2f2f2f;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.custom-select-trigger .selected-option.placeholder {
+  color: #8c8c8c;
+}
+
+.custom-select-trigger .select-right {
+  display: flex;
+  align-items: center;
+  margin-left: 8px;
+}
+
+.custom-select-trigger .select-right .material-icons {
+  transition: transform 0.3s ease;
+}
+
+.custom-select-trigger.active .select-right .material-icons {
+  transform: rotate(180deg);
+}
+
+.custom-select-options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.custom-select-options .option-item {
+  padding: 10px 12px;
+  font-size: 14px;
+  color: #2f2f2f;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+}
+
+.custom-select-options .option-item:hover {
+  background-color: #fceee7;
+}
+
+.custom-select-options .option-item.selected {
+  background-color: #fceee7;
+}
+
+.custom-select-trigger .select-right .material-icons {
+  font-size: 24px;
+  color: #2f2f2f;
+  margin-right: 0px;
+}
+
+.date-input-wrap {
+  background: #fef9f6;
+  padding: 8px;
+  border-radius: 4px;
+  height: 44px;
+}
+
+.end-date-input span {
+  font-size: 12px;
+  font-weight: 600;
+  color: #e9753f;
+}
+
+.end-date-input {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #e9753f;
+}
+
+.date-input-wrap.add-end-date {
+  background: #f1f1f1;
+}
+
+.add-btn-group .outline-orange-btn.btn-disabled {
+  color: #6f6f6f;
+  border: 1px solid #d2d2d2;
+  cursor: not-allowed;
+}
+
+.state-display {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.edit-block {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.edit-block .material-icons {
+  font-size: 14px;
+  color: #e3530f;
+}
+
+@media (min-width: 1441px) {
+  .custom-modal {
+    width: 1300px;
+  }
+}
+
 @media (max-width: 1328px) {
   .renewal-body,
   .two-col-row .donut-wrap,
@@ -3846,6 +4788,31 @@ td {
   .view-end-common {
     justify-content: end !important;
   }
+
+  .grid-section {
+    max-width: 45%;
+  }
+
+  .form-grid-3 {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .form-group.empty-group {
+    display: none;
+  }
+
+  .monthly-sales-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .add-btn-group {
+    justify-content: flex-end;
+    height: 32px;
+  }
+
+  .monthly-sales-summary {
+    width: 48%;
+  }
 }
 
 @media (max-width: 980px) {
@@ -3887,6 +4854,22 @@ td {
   .toggle-box.active::before {
     background: linear-gradient(to bottom, #e3530f, #ffffff);
     border-radius: 8px 8px 0px 8px;
+  }
+
+  .apply-modal .orange-btn,
+  .apply-modal .outline-orange-btn {
+    width: 120px;
+    min-width: 120px !important;
+    height: 48px !important;
+  }
+
+  .details-grid,
+  .monthly-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dealer-card {
+    padding: 24px 24px;
   }
 }
 
@@ -4020,7 +5003,6 @@ td {
     text-align: center;
   }
 
-  .apply-modal .custom-modal,
   .step-Modal .custom-modal,
   .review-modal .custom-modal {
     max-height: 95vh !important;
@@ -4037,7 +5019,6 @@ td {
     height: 48px !important;
   }
 
-  .apply-modal .modal-footer-right,
   .step-Modal .modal-footer-right,
   .review-modal .modal-footer-right {
     position: sticky;
@@ -4050,11 +5031,14 @@ td {
 
   .apply-modal .modal-footer-right {
     background: #fff4ec;
+    display: flex;
+    gap: 12px;
+    padding: 0px 0px;
   }
 
   .apply-modal .modal-close-btn {
-    right: 0px;
-    top: 20px;
+    right: 16px;
+    top: 16px;
   }
 
   .review-modal .custom-modal {
@@ -4075,14 +5059,14 @@ td {
     min-width: 160px;
   }
 
-  .step-Modal .modal-footer,
-  .review-modal .modal-footer {
+  .step-Modal .modal-footer {
     padding: 16px;
+    gap: 12px;
   }
 
   .step-Modal .outline-orange-btn,
   .review-modal .outline-orange-btn {
-    min-width: 160px !important;
+    min-width: 150px !important;
   }
 
   .custom-toast {
@@ -4442,7 +5426,7 @@ td {
   }
 
   .modal-footer-right {
-    display: none;
+    right: 16px;
   }
 
   .profile-edit-modal .modal-footer-right {
@@ -4510,6 +5494,93 @@ td {
     padding: 0px 16px 16px;
     width: 100%;
   }
+
+  .side-center-image {
+    display: none;
+  }
+
+  .form-modal form {
+    padding: 0px 16px;
+  }
+
+  .step-Modal .custom-modal h2 {
+    padding: 16px 16px !important;
+  }
+
+  .add-btn-group .outline-orange-btn {
+    margin-top: 0px;
+  }
+
+  .step-Modal .stepScroll {
+    height: calc(100% - 170px);
+    max-height: calc(100% - 170px);
+  }
+
+  .review-header {
+    padding: 16px 16px;
+  }
+
+  .review-wrapper {
+    margin: 0px 16px;
+  }
+
+  .review-modal .stepScroll {
+    height: calc(100% - 190px);
+    max-height: calc(100% - 190px);
+  }
+
+  .check-eligibility-modal {
+    padding: 0px 0px !important;
+  }
+
+  .eligibility-header {
+    padding: 24px 16px;
+  }
+
+  .details-container {
+    margin: 16px;
+  }
+
+  .check-eligibility-modal .modal-footer {
+    right: 16px;
+  }
+
+  .dealer-card-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+  }
+
+  .firm-title {
+    font-size: 14px !important;
+  }
+
+  .avatar-circle {
+    width: 40px;
+    height: 40px;
+  }
+
+  .person-details .value-title {
+    font-size: 14px;
+  }
+
+  .sub-text {
+    font-size: 12px;
+    color: #6f6f6f;
+    margin: 0;
+  }
+
+  .lead-success-wrapper {
+    padding: 0px 16px;
+  }
+
+  .lead-success-wrapper .value-title {
+    font-size: 14px;
+  }
+
+  .add-another-btn {
+    font-size: 14px;
+  }
 }
 
 @media (max-width: 680px) {
@@ -4517,38 +5588,19 @@ td {
     padding: 28px 24px 32px 24px;
   }
 
-  .corner-image {
-    right: 70px;
-    top: 24px;
-    width: 48px;
-    height: 48px;
-  }
   .corner-image img {
-    width: 36px;
-    height: 36px;
+    width: 300px;
+    height: 300px;
   }
 
-  .side-center-image {
-    width: 64px;
-    height: 64px;
-    right: -18px;
-  }
-  .side-center-image img {
-    width: 48px;
-    height: 48px;
+  .apply-modal .orange-btn {
+    width: 250px;
+    height: 48px !important;
   }
 
   .modal-close-btn {
     right: 20px;
     top: 20px;
-  }
-
-  .sanction-step span {
-    width: 20px;
-    height: 20px;
-    font-size: 14px;
-    color: #6f6f6f;
-    z-index: 1;
   }
 
   .sanction-step h6 {
@@ -4561,14 +5613,42 @@ td {
     bottom: 394px;
   }
 
-  .grid-section-part {
-    flex-direction: column;
-    align-items: flex-start !important;
-    font-size: 13px !important;
-  }
-
   .grid-section {
     gap: 16px 16px;
+  }
+
+  .form-grid-3 {
+    grid-template-columns: 1fr !important;
+  }
+
+  .monthly-sales-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .modal-footer {
+    gap: 16px;
+    margin-top: 0px;
+  }
+
+  .footer-actions {
+    width: 100%;
+  }
+
+  .footer-actions button {
+    width: 100% !important;
+  }
+
+  .step-Modal .stepScroll {
+    height: calc(100% - 180px);
+  }
+
+  .review-modal .modal-footer {
+    padding: 16px 16px;
+  }
+
+  .review-modal .stepScroll {
+    height: calc(100% - 182px);
+    max-height: calc(100% - 182px);
   }
 }
 
@@ -4581,8 +5661,115 @@ td {
     display: none;
   }
 
-  .corner-image {
-    right: 60px;
+  .grid-section {
+    max-width: 80%;
+  }
+
+  .skip-block {
+    bottom: 90px;
+  }
+
+  .apply-modal .orange-btn {
+    width: 100%;
+  }
+
+  .apply-modal .modal-footer-right {
+    width: 91%;
+  }
+
+  .step-Modal .footer-actions {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+  }
+
+  .step-Modal .outline-orange-btn,
+  .step-Modal .orange-btn {
+    width: 100%;
+  }
+
+  .footer-actions {
+    width: 100%;
+  }
+
+  .outline-orange-btn,
+  .orange-btn {
+    width: 100%;
+  }
+
+  .detail-value,
+  .detail-value.bold {
+    font-size: 12px;
+  }
+
+  .form-section .section-title,
+  .section-container .section-title {
+    font-size: 14px;
+  }
+
+  .custom-modal h2,
+  .right-section-review p {
+    font-size: 16px;
+  }
+
+  .details-container {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 16px;
+    margin: 16px;
+    gap: 16px 8px;
+    flex-direction: row;
+  }
+
+  .detail-row {
+    flex: 0 0 48%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 4px;
+    justify-content: flex-start !important;
+  }
+
+  .detail-row:nth-child(1) {
+    order: 1;
+  }
+
+  .detail-row:nth-child(5) {
+    order: 2;
+  }
+
+  .detail-row:nth-child(2) {
+    order: 3;
+  }
+
+  .detail-row:nth-child(3) {
+    order: 4;
+  }
+
+  .detail-row:nth-child(4) {
+    order: 5;
+  }
+
+  .detail-label {
+    font-size: 12px !important;
+  }
+
+  .detail-value {
+    font-size: 12px !important;
+    text-align: left !important;
+  }
+
+  .decimal-point-value {
+    font-size: 10px;
+    font-weight: 500;
+  }
+
+  .check-eligibility-modal .orange-btn {
+    min-width: 328px;
+  }
+
+  .check-eligibility-modal {
+    max-height: 70vh;
   }
 }
 
@@ -4596,6 +5783,28 @@ td {
 
   .custom-modal {
     position: absolute;
+  }
+
+  .contact-info-grid,
+  .dealer-card-top {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .pq-info {
+    text-align: left;
+  }
+
+  .monthly-sales-container {
+    padding: 16px 16px;
+  }
+
+  .monthly-sales-footer .outline-orange-btn {
+    width: 45%;
+  }
+
+  .monthly-sales-summary {
+    width: 100%;
   }
 }
 
