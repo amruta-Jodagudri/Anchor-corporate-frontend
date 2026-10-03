@@ -784,7 +784,6 @@ header {
 .eligibility-header {
   padding: 24px 32px;
   background: #fef9f6;
-  display: flex;
   align-items: center;
   gap: 12px;
   box-shadow: 0px 8px 20px 0px #00000014;
@@ -3963,11 +3962,22 @@ td {
   padding: 0px 32px;
 }
 
+.lead-success-wrapper-eligibility {
+  padding: 0px 0px;
+}
+
 .dealer-card {
   background-color: #fef9f6;
   border-radius: 8px;
   padding: 24px 76px;
   margin-bottom: 24px;
+}
+
+.dealer-card-eligible {
+  background-color: #fef9f6;
+  border-radius: 8px;
+  padding: 0px 0px;
+  margin-top: 24px;
 }
 
 .dealer-card-top {
@@ -3992,8 +4002,14 @@ td {
 .firm-title {
   font-size: 20px !important;
   font-weight: 700 !important;
-  color: #2f2f2f;
+  color: #2f2f2f !important;
   margin: 0;
+}
+
+.eligibility-pq-value {
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  color: #4f4f4f !important;
 }
 
 .pq-info {
@@ -4643,6 +4659,102 @@ td {
   margin-top: 16px;
 }
 
+.elibility-header-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+/* Bulk upload eligibility table */
+.bulk-eligibility-table-wrap {
+  max-height: 420px;
+  overflow: auto;
+  border: 1px solid #d2d2d2;
+  border-radius: 8px;
+  margin: 16px 32px 16px;
+  scrollbar-width: none;
+}
+
+.bulk-eligibility-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.bulk-eligibility-table thead th {
+  position: sticky;
+  top: 0;
+  color: #2f2f2f;
+  font-weight: 600;
+  font-size: 14px;
+  text-align: left;
+  white-space: nowrap;
+  z-index: 2;
+  background: #fff;
+}
+
+.bulk-eligibility-table tbody td {
+  color: #2f2f2f;
+  white-space: nowrap;
+}
+
+.bulk-eligibility-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.bulk-eligibility-table .amount-cell {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.bulk-eligibility-table .status-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  padding: 0px 4px !important;
+  border-radius: 4px;
+}
+
+.bulk-eligibility-table .status-cell .status-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.bulk-eligibility-table .status-cell.status-accepted {
+  color: #198038;
+  background-color: #e8f2eb;
+}
+
+.bulk-eligibility-table .status-cell.status-rejected {
+  color: #da1e28;
+  background-color: #fbe9ea;
+}
+
+.bulk-eligibility-table .file-size-text {
+  color: #6b6b6b;
+  font-weight: 400;
+  font-size: 12px;
+  margin-left: 6px;
+}
+
+.bulk-eligibility-table tbody tr:nth-child(even) {
+  background-color: #f1f1f1;
+}
+
+/* Document overview modal */
+.document-overview-summary {
+  margin: 12px 0;
+  font-size: 14px;
+  color: #262626;
+}
+
+.document-overview-summary .error-count {
+  color: #da1e28;
+  font-weight: 700;
+}
+
 @media (max-width: 1328px) {
   .renewal-body,
   .two-col-row .donut-wrap,
@@ -5043,6 +5155,10 @@ td {
 
   .dealer-card {
     padding: 24px 24px;
+  }
+
+  .dealer-card-eligible {
+    padding: 0px 0px;
   }
 }
 
@@ -5745,6 +5861,10 @@ td {
 
   .lead-success-wrapper {
     padding: 0px 16px;
+  }
+
+  .lead-success-wrapper-eligibility {
+    padding: 0px 0px;
   }
 
   .lead-success-wrapper .value-title {

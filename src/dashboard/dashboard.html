@@ -4341,21 +4341,14 @@
 
             <div class="upload-content">
               <div class="upload-title">Upload / Drag & Drop file</div>
-              <div class="upload-info">
-                (Max size: 2MB | Format: CSV)
-              </div>
+              <div class="upload-info">(Max size: 2MB | Format: CSV)</div>
             </div>
 
             <div class="upload-right-icon">
               <i data-lucide="upload"></i>
             </div>
 
-            <input
-              type="file"
-              class="upload-file-input"
-              accept=".xls,.xlsx"
-              hidden
-            />
+            <input type="file" class="upload-file-input" accept=".csv" hidden />
           </div>
           <div class="download-link" id="downloadCORLink">
             Download COR format
@@ -4370,12 +4363,7 @@
         <div class="modal-footer-right">
           <div class="footer-actions">
             <button class="outline-orange-btn" data-close-modal>Cancel</button>
-            <button
-              id="bulkUploadBtn"
-              class="orange-btn btn-disabled"
-              data-close-modal
-              disabled
-            >
+            <button id="bulkUploadBtn" class="orange-btn btn-disabled" disabled>
               Proceed
             </button>
           </div>
@@ -4407,24 +4395,55 @@
     <div id="bulkUploadEligibilityModal" class="custom-modal-overlay">
       <div class="custom-modal check-eligibility-modal">
         <div class="eligibility-header">
-          <button class="modal-close-btn" data-close-modal id="bulkUploadEligibilityCloseBtn">
-            <span class="material-icons">close</span>
-          </button>
+          <div class="elibility-header-container">
+            <button
+              class="modal-close-btn"
+              data-close-modal
+              id="bulkUploadEligibilityCloseBtn"
+            >
+              <span class="material-icons">close</span>
+            </button>
 
-          <div class="alert-icon-container">
-            <div class="alert-icon-outer"></div>
-            <div class="alert-icon-middle"></div>
-            <div class="alert-icon-custom">
-              <span class="material-icons">account_balance</span>
+            <div class="alert-icon-container">
+              <div class="alert-icon-outer"></div>
+              <div class="alert-icon-middle"></div>
+              <div class="alert-icon-custom">
+                <span class="material-icons">account_balance</span>
+              </div>
+            </div>
+            <div>
+              <h2 class="modal-title">Dealer's eligibility status</h2>
+              <p>Verify the dealer’s eligibility status from the bank</p>
             </div>
           </div>
-          <div>
-            <h2 class="modal-title">Dealer's eligibility status</h2>
-            <p>Verify the dealer’s eligibility status from the bank</p>
+          <div class="lead-success-wrapper-eligibility">
+            <div class="dealer-card-eligible">
+              <div class="dealer-card-top">
+                <div class="firm-info">
+                  <p class="label">File name</p>
+                  <p class="value-title firm-title">
+                    <span class="fileUploaded">Dealergroup.csv</span>
+                    <span class="file-size"> Image</span>
+                  </p>
+                  <p class="label">(File size: 500KB)</p>
+                </div>
+                <div class="pq-info">
+                  <p class="label">
+                    PQ offer generated for
+                    <span class="dealerCount">10</span> dealers
+                  </p>
+                  <p class="value-title eligibility-pq-value">
+                    <span>₹</span><span class="totalPQOffer">3,00,00,000</span
+                    ><span class="decimal-point-value">.00</span>
+                  </p>
+                  <p class="label rupeesText">Rupees three crore</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="modal-body"></div>
+        <div class="stepScroll modal-table-body"></div>
 
         <div class="modal-footer">
           <div class="footer-actions">
@@ -4458,15 +4477,23 @@
             <div class="dealer-card">
               <div class="dealer-card-top">
                 <div class="firm-info">
-                  <p class="label">Firm</p>
-                  <p class="value-title firm-title">SunDesh Solar Systems</p>
+                  <p class="label">File name</p>
+                  <p class="value-title firm-title">
+                    <span class="fileUploaded">Dealergroup.csv</span>
+                    <span class="file-size"> Image</span>
+                  </p>
+                  <p class="label">(File size: 500KB)</p>
                 </div>
                 <div class="pq-info">
-                  <p class="label">PQ offer</p>
+                  <p class="label">
+                    PQ offer generated for
+                    <span class="dealerCount">10</span> dealers
+                  </p>
                   <p class="value-title">
-                    <span>₹</span><span>3,00,00,000</span
+                    <span>₹</span><span class="totalPQOffer">3,00,00,000</span
                     ><span class="decimal-point-value">.00</span>
                   </p>
+                  <p class="label rupeesText">Rupees three crore</p>
                 </div>
               </div>
             </div>
@@ -4573,6 +4600,8 @@
     <!-- jQuery -->
     <script src="./dashboard.js"></script>
     <script src="./new-dealer.js"></script>
+    <!-- Need to be changed -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="../assets/js/d3.min.js"></script>
   </body>
 </html>

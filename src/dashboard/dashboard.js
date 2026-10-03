@@ -2256,23 +2256,455 @@ $(document).on("click", "#saveAndCloseBtn", function (e) {
 });
 
 // Bulk upload
+var bulkParsedRows = [];
+
+var BULK_HEADER_MAP = {
+  firmName: ["Name of the firm", "Firm Name", "Firm"],
+  constitution: [
+    "Constitution",
+    "Constitution (Enter: 1 for Proprietorship Firm, 2 for Partnership Firm, 3 for Pvt. Ltd. Company, 4 for Public Ltd. Company)",
+  ],
+  dealerCode: ["Dealer Code", "Dealer code"],
+  firstName: ["First Name of Dealer (Optional)", "First Name"],
+  lastName: ["Last Name of Dealer (Optional)", "Last Name"],
+  pan: ["PAN Card of firm", "PAN", "PAN Card"],
+  mobile: ["Mobile Number", "Mobile number"],
+  email: ["Email ID", "Email"],
+  address1: ["Address Line 1", "Address"],
+  pinCode: ["Pin Code", "Pin code", "Pincode"],
+  salesType: ["Sales Type (Enter: 1 for Past, 2 for Projected)", "Sales Type"],
+  fromDate: ["From Date (Last 12 Month Sales) (MM-YYYY)", "From Date"],
+  toDate: ["To Date (Last 12 Month Sales) (MM-YYYY)", "To Date"],
+  month1: ["Month1 Sales (in Rupees) (ToDate)", "Month1 Sales", "Month1"],
+  month2: ["Month2 Sales (in Rupees)", "Month2 Sales", "Month2"],
+  month3: ["Month3 Sales (in Rupees)", "Month3 Sales", "Month3"],
+  month4: ["Month4 Sales (in Rupees)", "Month4 Sales", "Month4"],
+  month5: ["Month5 Sales (in Rupees)", "Month5 Sales", "Month5"],
+  month6: ["Month6 Sales (in Rupees)", "Month6 Sales", "Month6"],
+  month7: ["Month7 Sales (in Rupees)", "Month7 Sales", "Month7"],
+  month8: ["Month8 Sales (in Rupees)", "Month8 Sales", "Month8"],
+  month9: ["Month9 Sales (in Rupees)", "Month9 Sales", "Month9"],
+  month10: ["Month10 Sales (in Rupees)", "Month10 Sales", "Month10"],
+  month11: ["Month11 Sales (in Rupees)", "Month11 Sales", "Month11"],
+  month12: ["Month12 Sales (in Rupees)", "Month12 Sales", "Month12"],
+  associationYears: [
+    "No of Years of Association (FromDate)",
+    "No of Years of Association",
+    "Association",
+  ],
+  chequeReturns: [
+    "Cheque Returns in Last Available 12 months (Optional)",
+    "Cheque Returns",
+  ],
+  recommendation: [
+    "Recommendation Limit (in Million) (Optional)",
+    "Recommendation Limit",
+    "Recommendation limit",
+  ],
+  instancesOverdue: [
+    "Instances of Overdue More Than 7 Days in Last Available 12 Months",
+    "Instances of Overdue",
+  ],
+  businessVintage: [
+    "Business Vintage (fill mandatory if no. of years of association is less than or equal to 1) (fill 0 if not required)",
+    "Business Vintage",
+  ],
+  corpRep: ["Corporate Representative (Optional)", "Corporate Representative"],
+  corpRepMobile: [
+    "Corporate Representative Mobile number (Optional)",
+    "Corporate Representative Mobile",
+  ],
+  corpRepEmail: [
+    "Corporate Representative Email ID (Optional)",
+    "Corporate Representative Email",
+  ],
+};
+
+function mapBulkRow(rawRow) {
+  var normalized = {};
+  var rawKeys = Object.keys(rawRow);
+
+  function pickValue(aliases) {
+    for (var i = 0; i < aliases.length; i++) {
+      var alias = aliases[i];
+      if (rawKeys.indexOf(alias) !== -1) return rawRow[alias];
+      var found = rawKeys.find(function (k) {
+        return (
+          String(k).trim().toLowerCase() === String(alias).trim().toLowerCase()
+        );
+      });
+      if (found) return rawRow[found];
+    }
+    return "";
+  }
+
+  Object.keys(BULK_HEADER_MAP).forEach(function (key) {
+    normalized[key] = pickValue(BULK_HEADER_MAP[key]);
+  });
+
+  return normalized;
+}
+
+function validateBulkRow(row, rowIndex) {
+  var errors = [];
+  var rowNum = rowIndex + 2;
+
+  if (!row.firmName || String(row.firmName).trim().length < 2) {
+    errors.push("Row " + rowNum + ": Firm name is missing or invalid.");
+  }
+
+  var pan = String(row.pan || "")
+    .trim()
+    .toUpperCase();
+  if (!/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(pan)) {
+    errors.push(
+      "Row " + rowNum + ": PAN '" + (row.pan || "") + "' is invalid.",
+    );
+  }
+
+  var mobile = String(row.mobile || "")
+    .replace(/\D/g, "")
+    .slice(-10);
+  if (mobile.length !== 10) {
+    errors.push(
+      "Row " +
+        rowNum +
+        ": Mobile number '" +
+        (row.mobile || "") +
+        "' is invalid.",
+    );
+  }
+
+  var email = String(row.email || "").trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    errors.push(
+      "Row " + rowNum + ": Email ID '" + (row.email || "") + "' is invalid.",
+    );
+  }
+
+  var pin = String(row.pinCode || "").trim();
+  if (!/^\d{6}$/.test(pin)) {
+    errors.push(
+      "Row " + rowNum + ": Pin code '" + (row.pinCode || "") + "' is invalid.",
+    );
+  }
+
+  var constitution = String(row.constitution || "").trim();
+  if (!constitution || !/^[1-4]$/.test(constitution)) {
+    errors.push("Row " + rowNum + ": Constitution must be 1–4.");
+  }
+
+  var salesType = String(row.salesType || "").trim();
+  if (!salesType || !/^[1-2]$/.test(salesType)) {
+    errors.push("Row " + rowNum + ": Sales Type must be 1 or 2.");
+  }
+
+  var assoc = String(row.associationYears || "").trim();
+  if (!/^\d+$/.test(assoc)) {
+    errors.push("Row " + rowNum + ": No. of Years of Association is invalid.");
+  }
+
+  if (assoc !== "" && Number(assoc) <= 1) {
+    var bv = String(row.businessVintage || "").trim();
+    if (bv === "" || !/^\d+$/.test(bv)) {
+      errors.push(
+        "Row " +
+          rowNum +
+          ": Business Vintage is required when association ≤ 1 year.",
+      );
+    }
+  }
+
+  var monthKeys = [
+    "month1",
+    "month2",
+    "month3",
+    "month4",
+    "month5",
+    "month6",
+    "month7",
+    "month8",
+    "month9",
+    "month10",
+    "month11",
+    "month12",
+  ];
+  monthKeys.forEach(function (mk, i) {
+    var v = String(row[mk] || "").trim();
+    if (v !== "" && isNaN(Number(String(v).replace(/,/g, "")))) {
+      errors.push(
+        "Row " + rowNum + ": Month" + (i + 1) + " sales value is invalid.",
+      );
+    }
+  });
+
+  return { valid: errors.length === 0, errors: errors, rowNum: rowNum };
+}
+
+function formatBulkAmount(val) {
+  var num = Number(String(val == null ? "" : val).replace(/[^0-9.-]/g, ""));
+  if (isNaN(num) || num === 0) return "₹0.00";
+  return (
+    "₹" +
+    num.toLocaleString("en-IN", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })
+  );
+}
+
+// shorten long firm names in the table
+function shortenFirmName(name, max) {
+  name = String(name || "").trim();
+  max = max || 28;
+  return name.length > max ? name.substring(0, max - 1).trim() + "…" : name;
+}
+
+// Parse the uploaded file → array of normalized rows
+function parseBulkFile(file, callback) {
+  var reader = new FileReader();
+
+  reader.onload = function (e) {
+    try {
+      var data = new Uint8Array(e.target.result);
+      var workbook = XLSX.read(data, { type: "array" });
+      var firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+      var jsonRows = XLSX.utils.sheet_to_json(firstSheet, { defval: "" });
+
+      if (!jsonRows.length) {
+        callback({ success: false, message: "Uploaded file has no records." });
+        return;
+      }
+
+      var normalized = jsonRows.map(mapBulkRow);
+      callback({ success: true, rows: normalized });
+    } catch (err) {
+      callback({
+        success: false,
+        message: "Unable to read the file. Please check the format.",
+      });
+    }
+  };
+
+  reader.onerror = function () {
+    callback({ success: false, message: "File read error. Please try again." });
+  };
+
+  reader.readAsArrayBuffer(file);
+}
+
+// format a number into Indian-words (e.g. "Rupees three crore")
+function numberToIndianWords(num) {
+  num = Number(num) || 0;
+  if (num === 0) return "Rupees zero";
+
+  var ones = [
+    "",
+    "one",
+    "two",
+    "three",
+    "four",
+    "five",
+    "six",
+    "seven",
+    "eight",
+    "nine",
+    "ten",
+    "eleven",
+    "twelve",
+    "thirteen",
+    "fourteen",
+    "fifteen",
+    "sixteen",
+    "seventeen",
+    "eighteen",
+    "nineteen",
+  ];
+  var tens = [
+    "",
+    "",
+    "twenty",
+    "thirty",
+    "forty",
+    "fifty",
+    "sixty",
+    "seventy",
+    "eighty",
+    "ninety",
+  ];
+
+  function twoDigits(n) {
+    if (n < 20) return ones[n];
+    return tens[Math.floor(n / 10)] + (n % 10 ? " " + ones[n % 10] : "");
+  }
+
+  function threeDigits(n) {
+    var out = "";
+    if (n > 99) {
+      out += ones[Math.floor(n / 100)] + " hundred";
+      n = n % 100;
+      if (n) out += " ";
+    }
+    if (n) out += twoDigits(n);
+    return out;
+  }
+
+  var crore = Math.floor(num / 10000000);
+  var lakh = Math.floor((num % 10000000) / 100000);
+  var thou = Math.floor((num % 100000) / 1000);
+  var rest = Math.floor(num % 1000);
+
+  var parts = [];
+  if (crore) parts.push(threeDigits(crore) + " crore");
+  if (lakh) parts.push(threeDigits(lakh) + " lakh");
+  if (thou) parts.push(threeDigits(thou) + " thousand");
+  if (rest) parts.push(threeDigits(rest));
+
+  var words = parts.join(" ").trim();
+  return "Rupees " + (words || "zero");
+}
+
+// Render the parsed + validated rows into the eligibility modal table
+function renderBulkEligibilityTable(rows) {
+  var $body = $("#bulkUploadEligibilityModal .modal-table-body");
+  $body.empty();
+
+  var totalPQ = 0;
+  var acceptedCount = 0;
+
+  var tableHtml =
+    '<div class="bulk-eligibility-table-wrap">' +
+    '<table class="bulk-eligibility-table">' +
+    "<thead><tr>" +
+    "<th>Firm</th>" +
+    '<th class="amount-cell">PQ offer</th>' +
+    '<th class="amount-cell">Recommendation limit</th>' +
+    "<th>Tenor</th>" +
+    "<th>Status</th>" +
+    "</tr></thead><tbody>";
+
+  rows.forEach(function (row) {
+    var recLimitMillion =
+      Number(String(row.recommendation || "0").replace(/[^0-9.]/g, "")) || 0;
+    var recLimitRupees = recLimitMillion;
+
+    var pan = String(row.pan || "")
+      .trim()
+      .toUpperCase();
+    var mobile = String(row.mobile || "")
+      .replace(/\D/g, "")
+      .slice(-10);
+    var email = String(row.email || "").trim();
+
+    var isAccepted =
+      /^[A-Z]{5}[0-9]{4}[A-Z]$/.test(pan) &&
+      mobile.length === 10 &&
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) &&
+      recLimitRupees > 0;
+
+    var pqOffer = isAccepted ? recLimitRupees : 0;
+    var tenor = isAccepted ? "60 days" : "0 days";
+
+    if (isAccepted) {
+      acceptedCount++;
+      totalPQ += pqOffer;
+    }
+
+    var statusText = isAccepted ? "Accepted" : "Rejected";
+    var statusClass = isAccepted ? "status-accepted" : "status-rejected";
+    var statusIcon = isAccepted ? "check" : "close";
+
+    tableHtml +=
+      "<tr>" +
+      '<td class="firm-name-cell" title="' +
+      String(row.firmName || "").replace(/"/g, "&quot;") +
+      '">' +
+      shortenFirmName(row.firmName) +
+      "</td>" +
+      '<td class="amount-cell">' +
+      formatBulkAmount(pqOffer) +
+      "</td>" +
+      '<td class="amount-cell">' +
+      formatBulkAmount(recLimitRupees) +
+      "</td>" +
+      "<td>" +
+      tenor +
+      "</td>" +
+      "<td>" +
+      '<span class="status-cell ' +
+      statusClass +
+      '">' +
+      '<span class="material-icons status-icon">' +
+      statusIcon +
+      "</span>" +
+      statusText +
+      "</span>" +
+      "</td>" +
+      "</tr>";
+  });
+
+  tableHtml += "</tbody></table></div>";
+  $body.html(tableHtml);
+
+  var fileName =
+    $("#bulkUploadDropZone").data("selected-file-name") || "Uploaded file";
+
+  $(".fileUploaded").text(fileName);
+  $(".dealerCount").text(rows.length);
+  var totalPQFormatted = totalPQ.toLocaleString("en-IN", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+  var totalParts = totalPQFormatted.split(".");
+  $(".totalPQOffer").text(totalParts[0]);
+  $(".decimal-point-value").text("." + (totalParts[1] || "00"));
+
+  // Rupees in words
+  $(".rupeesText").text(numberToIndianWords(totalPQ));
+}
+
+function renderDocumentOverview(errors, totalRecords, fileName) {
+  var $modal = $("#documentOverviewModal");
+
+  $modal
+    .find(".overview-text")
+    .html(
+      '<span class="material-symbols-outlined">close</span>' +
+        (fileName || "uploaded file"),
+    );
+
+  $modal
+    .find(".error-summary")
+    .html(
+      '<span class="error-text"><span class="error-count">' +
+        errors.length +
+        "</span> errors found</span> in " +
+        totalRecords +
+        " records",
+    );
+}
+
+// File selected → parse + validate (but do NOT close modal yet)
 $(document).on("change", "#bulkUploadDropZone .upload-file-input", function () {
-  const file = this.files[0];
+  var input = this;
+  var file = input.files && input.files[0];
   if (!file) return;
 
-  const zone = $(this).closest("#bulkUploadDropZone");
-  const leftIcon = zone.find(".upload-left-icon");
-  const rightIcon = zone.find(".upload-right-icon");
-  const title = zone.find(".upload-title");
-  const loader = zone.find(".upload-loader");
+  var zone = $(this).closest("#bulkUploadDropZone");
+  var leftIcon = zone.find(".upload-left-icon");
+  var rightIcon = zone.find(".upload-right-icon");
+  var title = zone.find(".upload-title");
+  var loader = zone.find(".upload-loader");
 
   leftIcon.hide();
   loader.show();
 
   rightIcon.html('<i data-lucide="x"></i>').addClass("right-icon-color").show();
-  lucide.createIcons();
+  if (window.lucide) lucide.createIcons();
 
-  const uploadTimer = setTimeout(() => {
+  zone.data("selected-file-name", file.name);
+
+  var uploadTimer = setTimeout(function () {
     loader.hide();
 
     zone.addClass("uploaded");
@@ -2282,10 +2714,39 @@ $(document).on("change", "#bulkUploadDropZone .upload-file-input", function () {
       .addClass("file-name");
     title.text(file.name).addClass("file-name");
 
-    lucide.createIcons();
+    if (window.lucide) lucide.createIcons();
+
+    parseBulkFile(file, function (result) {
+      if (!result.success) {
+        zone.data("parse-error", result.message || "Unable to parse the file.");
+        $("#bulkUploadBtn").addClass("btn-disabled").prop("disabled", true);
+        return;
+      }
+
+      var rows = result.rows;
+      var allErrors = [];
+      var validRows = [];
+
+      rows.forEach(function (row, idx) {
+        var check = validateBulkRow(row, idx);
+        if (check.valid) {
+          validRows.push(row);
+        } else {
+          allErrors = allErrors.concat(check.errors);
+        }
+      });
+
+      bulkParsedRows = validRows;
+
+      zone.data("valid-rows", validRows);
+      zone.data("errors", allErrors);
+      zone.data("total-records", rows.length);
+
+      $("#bulkUploadBtn").removeClass("btn-disabled").prop("disabled", false);
+    });
+
     clearTimeout(uploadTimer);
-    $("#bulkUploadBtn").removeClass("btn-disabled").prop("disabled", false);
-  }, 3000);
+  }, 1200);
 });
 
 $(document).on("click", "#bulkUploadDropZone", function (e) {
@@ -2294,13 +2755,42 @@ $(document).on("click", "#bulkUploadDropZone", function (e) {
 });
 
 $(document).on("click", "#bulkUploadBtn", function (e) {
+  e.preventDefault();
+
+  var zone = $("#bulkUploadDropZone");
+  var errors = zone.data("errors") || [];
+  var validRows = zone.data("valid-rows") || [];
+  var totalRecords = zone.data("total-records") || 0;
+  var fileName = zone.data("selected-file-name") || "uploaded file";
+  var parseError = zone.data("parse-error");
+
   closeModal("#bulkUploadModal");
   openModal("#bulkUploadLoaderModal");
-  const uploadTimer = setTimeout(() => {
+
+  setTimeout(function () {
     closeModal("#bulkUploadLoaderModal");
+
+    // 1. Parse error → Document overview
+    if (parseError) {
+      renderDocumentOverview([parseError], 0, fileName);
+      openModal("#documentOverviewModal");
+      if (window.lucide) lucide.createIcons();
+      return;
+    }
+
+    // 2. Validation errors → Document overview
+    if (errors.length > 0) {
+      renderDocumentOverview(errors, totalRecords, fileName);
+      openModal("#documentOverviewModal");
+      if (window.lucide) lucide.createIcons();
+      return;
+    }
+
+    // 3. No errors → Eligibility modal
+    renderBulkEligibilityTable(validRows);
     openModal("#bulkUploadEligibilityModal");
-    clearTimeout(uploadTimer);
-  }, 3000);
+    if (window.lucide) lucide.createIcons();
+  }, 1200);
 });
 
 $(document).on("click", "#submitBulkUploadBtn", function (e) {
@@ -2320,6 +2810,56 @@ $(document).on(
     openModal("#uploadExitModal");
   },
 );
+
+$(document).on("click", "#reuploadBtn", function () {
+  var zone = $("#bulkUploadDropZone");
+  zone.removeClass("uploaded");
+  zone
+    .find(".upload-left-icon")
+    .show()
+    .html('<span class="material-symbols-outlined">draft</span>')
+    .removeClass("file-name");
+  zone.find(".upload-right-icon").hide();
+  zone
+    .find(".upload-title")
+    .text("Upload / Drag & Drop file")
+    .removeClass("file-name");
+  zone.find(".upload-loader").hide();
+  zone.find(".upload-file-input").val("");
+  zone.removeData(
+    "valid-rows errors total-records selected-file-name parse-error",
+  );
+
+  bulkParsedRows = [];
+  $("#bulkUploadBtn").addClass("btn-disabled").prop("disabled", true);
+
+  closeModal("#documentOverviewModal");
+  openModal("#bulkUploadModal");
+  if (window.lucide) lucide.createIcons();
+});
+
+$(document).on("click", "#bulkUploadModal [data-close-modal]", function () {
+  var zone = $("#bulkUploadDropZone");
+  zone.removeClass("uploaded");
+  zone
+    .find(".upload-left-icon")
+    .show()
+    .html('<span class="material-symbols-outlined">draft</span>')
+    .removeClass("file-name");
+  zone.find(".upload-right-icon").hide();
+  zone
+    .find(".upload-title")
+    .text("Upload / Drag & Drop file")
+    .removeClass("file-name");
+  zone.find(".upload-loader").hide();
+  zone.find(".upload-file-input").val("");
+  zone.removeData(
+    "valid-rows errors total-records selected-file-name parse-error",
+  );
+
+  bulkParsedRows = [];
+  $("#bulkUploadBtn").addClass("btn-disabled").prop("disabled", true);
+});
 
 // Common functions
 function lucideIconCommonCode() {
