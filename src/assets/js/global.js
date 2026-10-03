@@ -231,30 +231,27 @@ function applyAccessibilitySettings() {
     letterSpacing = defaultLetterSpacing + 1;
   }
 
-  /* accessibility fix by Ankit  */
-  $("html, body").css({
-    "overflow-x": "hidden",
-    "max-width": "100%"
-  });
-
-  /* accessibility fix by Ankit */
+  /* accessibility fix by Ankit - keep original zoom handling */
   if (typeof document.body.style.zoom !== "undefined") {
     $("body").css("zoom", `${zoomLevel}%`);
     $("body").css({
       transform: "",
       transformOrigin: "",
-      width: zoomLevel === 100 ? "" : `${10000 / zoomLevel}%`,
-      "max-width": zoomLevel === 100 ? "" : `${10000 / zoomLevel}%`,
-      "overflow-x": "hidden"
+      width: "",
     });
   } else {
     $("body").css({
       transform: zoomLevel === 100 ? "" : `scale(${zoomLevel / 100})`,
       transformOrigin: "top left",
       width: zoomLevel === 100 ? "" : `${10000 / zoomLevel}%`,
-      "max-width": zoomLevel === 100 ? "" : `${10000 / zoomLevel}%`,
-      "overflow-x": "hidden"
     });
+  }
+
+  /* accessibility fix by Ankit - prevent mobile horizontal shaking/scroll only when accessibility features are active on mobile */
+  if ($(window).width() < 768 && (zoomState !== 1 || lineHeightState !== 1 || letterSpacingState !== 1)) {
+    $("html, body").css("overflow-x", "hidden");
+  } else {
+    $("html, body").css("overflow-x", "");
   }
 
   $("body").css({
@@ -390,12 +387,11 @@ $("#resetAccessibility").on("click", function () {
     transform: "",
     transformOrigin: "",
     width: "",
-    "max-width": "",
-    "overflow-x": "",
     lineHeight: "",
     letterSpacing: "",
   });
 
+  /* accessibility fix by Ankit - reset overflow-x */
   $("html, body").css({
     "overflow-x": "",
     "max-width": "",
