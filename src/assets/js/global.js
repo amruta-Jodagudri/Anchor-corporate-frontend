@@ -247,11 +247,11 @@ function applyAccessibilitySettings() {
     });
   }
 
-  /* accessibility fix by Ankit - prevent mobile horizontal shaking/scroll only when accessibility features are active on mobile */
+  /* accessibility fix by Ankit - prevent mobile horizontal shaking/scroll while preserving sticky header */
   if ($(window).width() < 768 && (zoomState !== 1 || lineHeightState !== 1 || letterSpacingState !== 1)) {
-    $("html, body").css("overflow-x", "hidden");
+    $("main, .login-page, .max-content-area").css("overflow-x", "hidden");
   } else {
-    $("html, body").css("overflow-x", "");
+    $("main, .login-page, .max-content-area").css("overflow-x", "");
   }
 
   $("body").css({
@@ -393,7 +393,7 @@ $("#resetAccessibility").on("click", function () {
 
   
   /* accessibility fix by Ankit - reset overflow-x */
-  $("html, body").css({
+  $("main, .login-page, .max-content-area").css({
     "overflow-x": "",
     "max-width": "",
   });

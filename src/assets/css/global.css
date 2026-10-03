@@ -17,12 +17,15 @@
 }
 
 /* accessibility fix by Ankit */
-
-html,
 body {
-  max-width: 100%;
-  overflow-x: hidden;
   font-family: "Mulish", sans-serif;
+}
+
+header {
+  position: -webkit-sticky !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 9999 !important;
 }
 
 .max-content-area {
