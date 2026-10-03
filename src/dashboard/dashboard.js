@@ -340,9 +340,10 @@ $(function () {
   renderLegendList($("#renewalLegend"), renewalData);
 });
 
-$("#addDealerBtn").on("click", function (e) {
+$(document).on("click", ".addDealerBtn", function (e) {
   e.stopPropagation();
-  $("#addDealerMenu").toggleClass("open");
+  $(".addDealerMenu").removeClass("open");
+  $(this).siblings(".addDealerMenu").toggleClass("open");
 });
 
 $("#dateSelect").on("click", function (e) {
@@ -1648,17 +1649,20 @@ $(document).on("click", "#successSubmitBtn", function (e) {
   closeModal("#leadSuccessModal");
 });
 
-$(document).on("click", "#addDealerMenu .menu-item", function (e) {
+$(document).on("click", ".addDealerMenu .menu-item", function (e) {
   e.stopPropagation();
   var action = $(this).data("action");
-
-  $("#addDealerMenu").removeClass("open");
+  $(".addDealerMenu").removeClass("open");
 
   if (action === "single-lead") {
     openModal("#addDelarLeadModal");
   } else if (action === "bulk-upload") {
     // openModal("#bulkUploadModal");
   }
+});
+
+$(document).on("click", function () {
+  $(".addDealerMenu").removeClass("open");
 });
 
 // constitution select options
@@ -2692,4 +2696,29 @@ $(document).on("click", function (e) {
     $(".custom-select-options").hide();
     $(".custom-select-trigger").removeClass("active");
   }
+});
+
+// Shared "Add dealer" dropdown template
+var addDealerTemplate = `
+  <button class="orange-btn addDealerBtn">
+    Add dealer
+    <i data-lucide="chevron-down"></i>
+  </button>
+  <div class="add-dealer-menu addDealerMenu">
+    <div class="menu-item" data-action="bulk-upload">Bulk leads upload</div>
+    <div class="menu-item" data-action="single-lead">Add a single lead</div>
+  </div>
+`;
+
+function renderAddDealerDropdowns() {
+  $("[data-add-dealer]").each(function () {
+    if (!$(this).children().length) {
+      $(this).html(addDealerTemplate);
+    }
+  });
+  lucideIconCommonCode();
+}
+
+$(function () {
+  renderAddDealerDropdowns();
 });

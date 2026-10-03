@@ -2470,14 +2470,14 @@ header {
   display: none;
 }
 
-.page-top-right .orange-btn {
+.addDealerBtn {
   max-width: 152px !important;
   font-size: 16px !important;
   font-weight: 700 !important;
   min-width: 152px !important;
 }
 
-.page-top-right .orange-btn svg {
+.addDealerBtn svg {
   width: 20px;
   height: 20px;
   margin-left: 10px;
@@ -3383,7 +3383,7 @@ td {
   align-items: flex-start;
 }
 
-.view-more-wrap {
+.right-col .view-more-wrap {
   display: flex;
   justify-content: flex-end;
   width: 100%;
@@ -4743,7 +4743,7 @@ td {
     align-items: flex-start;
   }
 
-  .view-more-wrap {
+  .right-col .view-more-wrap {
     display: flex;
     justify-content: flex-end;
     width: 100%;
