@@ -189,6 +189,7 @@ body.nd-scroll-lock {
   font-weight: 700;
   white-space: nowrap;
   box-sizing: border-box;
+  padding-right: 16px;
 }
 
 .new-dealer-chevron {
@@ -323,6 +324,8 @@ body.nd-scroll-lock {
   position: relative;
   flex: 0 0 auto;
   overflow: visible;
+  padding-top: 10px;
+  padding-bottom: 8px;
 }
 
 .dealer-filter-btn {
@@ -465,6 +468,7 @@ body.nd-scroll-lock {
   align-items: center;
   justify-content: flex-end;
   flex: 0 1 auto;
+  padding-top: 10px;
 }
 
 .hide-details-btn {
@@ -696,8 +700,13 @@ body.nd-scroll-lock {
   box-sizing: border-box;
 }
 
-.new-dealer-table th:nth-child(1) {
+.new-dealer-table th:nth-child(1) .dealer-th-inner {
+  padding-left: 20px;
+}
+
+/* .new-dealer-table th:nth-child(1) {
   width: 17%;
+  justify-content: center;
 }
 .new-dealer-table th:nth-child(2) {
   width: 15%;
@@ -719,6 +728,43 @@ body.nd-scroll-lock {
 }
 .new-dealer-table th:nth-child(8) {
   width: 9%;
+} */
+
+.dealer-leads-table {
+  --c1: 17%;
+  --c2: 15%;
+  --c3: 14%;
+  --c4: 14%;
+  --c5: 11%;
+  --c6: 8%;
+  --c7: 12%;
+  --c8: 9%;
+  --firm-text-offset: 44px;
+}
+
+.new-dealer-table.dealer-leads-table th:nth-child(1) {
+  width: var(--c1);
+}
+.new-dealer-table.dealer-leads-table th:nth-child(2) {
+  width: var(--c2);
+}
+.new-dealer-table.dealer-leads-table th:nth-child(3) {
+  width: var(--c3);
+}
+.new-dealer-table.dealer-leads-table th:nth-child(4) {
+  width: var(--c4);
+}
+.new-dealer-table.dealer-leads-table th:nth-child(5) {
+  width: var(--c5);
+}
+.new-dealer-table.dealer-leads-table th:nth-child(6) {
+  width: var(--c6);
+}
+.new-dealer-table.dealer-leads-table th:nth-child(7) {
+  width: var(--c7);
+}
+.new-dealer-table.dealer-leads-table th:nth-child(8) {
+  width: var(--c8);
 }
 
 .new-dealer-table th,
@@ -755,6 +801,38 @@ body.nd-scroll-lock {
 
 .new-dealer-table th .dealer-th-inner > div {
   line-height: 16px;
+}
+
+.dealer-th-inner > div {
+  text-align: right;
+}
+
+.new-dealer-table th:nth-child(3) .dealer-th-inner > div {
+  text-align: left;
+}
+.open-transactions-header > div {
+  text-align: left;
+}
+
+.dealer-th-inner-grid {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.dealer-th-inner-grid > div {
+  text-align: left;
+  flex: 1;
+}
+
+.dealer-th-inner-grid .table-sort-icon {
+  flex: 0 0 auto;
+}
+
+.new-dealer-table th:nth-child(8),
+.new-dealer-table td:nth-child(8) {
+  text-align: left;
 }
 
 .txn-table th .dealer-th-inner,
@@ -1231,6 +1309,7 @@ body.nd-scroll-lock {
   height: 12px;
   margin-left: 4px;
   display: inline-block;
+  flex-shrink: 0;
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Ccircle cx='6' cy='3.2' r='2' stroke='%23ED570B' stroke-width='1'/%3E%3Cpath d='M2.7 10c.35-2 1.4-3 3.3-3s2.95 1 3.3 3' stroke='%23ED570B' stroke-width='1' stroke-linecap='round'/%3E%3C/svg%3E")
     center / 12px 12px no-repeat;
 }
@@ -1419,8 +1498,23 @@ body.nd-scroll-lock {
   vertical-align: middle;
 }
 
+.dealer-detail-item--end {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.dealer-detail-item--end > strong {
+  justify-content: flex-end;
+}
+
+.dealer-detail-muted {
+  margin-left: 4px;
+  font-size: 12px;
+  color: #777;
+}
+
 .dealer-table-view {
-  min-width: 1500px;
+  min-width: 1600px;
 }
 
 .dealer-table-view tbody td {
@@ -1472,42 +1566,66 @@ body.nd-scroll-lock {
   width: 90px;
   min-width: 90px;
 }
-.dealer-table-view th:nth-child(3),
-.dealer-table-view td:nth-child(3) {
-  width: 120px;
+/* Lead date -> Sanction status gap */
+.new-dealer-page .dealer-table-view th:nth-child(3),
+.new-dealer-page .dealer-table-view td:nth-child(3) {
+  width: 157px;
+  padding-right: 4px;
+  padding-left: 24px;
 }
-.dealer-table-view th:nth-child(4),
-.dealer-table-view td:nth-child(4) {
-  width: 160px;
+
+/* Sanction status -> Application status gap */
+.new-dealer-page .dealer-table-view th:nth-child(4),
+.new-dealer-page .dealer-table-view td:nth-child(4) {
+  width: 152px;
+  padding-left: 24px;
+  padding-right: 12px;
 }
 .dealer-table-view th:nth-child(5),
 .dealer-table-view td:nth-child(5) {
   width: 200px;
+  padding-left: 24px;
 }
 .dealer-table-view th:nth-child(6),
 .dealer-table-view td:nth-child(6) {
   width: 160px;
+  padding-left: 24px;
 }
 .dealer-table-view th:nth-child(7),
 .dealer-table-view td:nth-child(7) {
   width: 210px;
+  padding-left: 24px;
 }
 .dealer-table-view th:nth-child(8),
 .dealer-table-view td:nth-child(8) {
   width: 150px;
+  padding-left: 24px;
 }
 .dealer-table-view th:nth-child(9),
 .dealer-table-view td:nth-child(9) {
   width: 190px;
+  padding-left: 12px;
+  text-align: right;
 }
+
 .dealer-table-view th:nth-child(10),
 .dealer-table-view td:nth-child(10) {
   width: 80px;
+  padding-left: 24px;
 }
 
 .dealer-table-view td:nth-child(2),
 .dealer-table-view td:nth-child(4) {
   overflow: visible;
+}
+
+.new-dealer-page .dealer-table-view th:nth-child(6),
+.new-dealer-page .dealer-table-view td:nth-child(6) {
+  width: 112px;
+  min-width: 170px;
+  padding-right: 24px;
+  overflow: visible;
+  text-overflow: clip;
 }
 
 .table-firm {
@@ -2052,7 +2170,7 @@ body.nd-scroll-lock {
 .txn-days {
   padding: 1px 4px;
 }
-.txn-table {
+/* .txn-table {
   min-width: 1510px;
 }
 .txn-table th:nth-child(1) {
@@ -2081,7 +2199,7 @@ body.nd-scroll-lock {
 }
 .txn-table th:nth-child(9) {
   width: 90px;
-}
+} */
 
 .txn-table-view th:nth-child(n),
 .txn-table-view td:nth-child(n) {
@@ -2199,7 +2317,7 @@ body.nd-scroll-lock {
 }
 
 .new-dealer-page:not(.txn-dashboard-page) .dealer-table-view-wrapper {
-  --nd-col1: 250px;
+  --nd-col1: 200px;
   --nd-col2: 90px;
 }
 
@@ -2210,7 +2328,6 @@ body.nd-scroll-lock {
 
 .new-dealer-page:not(.txn-dashboard-page) .dealer-table-view th:nth-child(1),
 .new-dealer-page:not(.txn-dashboard-page) .dealer-table-view td:nth-child(1) {
-  left: 0;
   width: var(--nd-col1);
   min-width: var(--nd-col1);
   max-width: var(--nd-col1);
@@ -2220,7 +2337,6 @@ body.nd-scroll-lock {
 
 .new-dealer-page:not(.txn-dashboard-page) .dealer-table-view th:nth-child(2),
 .new-dealer-page:not(.txn-dashboard-page) .dealer-table-view td:nth-child(2) {
-  left: var(--nd-col1);
   width: var(--nd-col2);
   min-width: var(--nd-col2);
   max-width: var(--nd-col2);
@@ -2731,7 +2847,7 @@ body.nd-scroll-lock {
 }
 .renewal-table-view th:nth-child(5),
 .renewal-table-view td:nth-child(5) {
-  width: 210px;
+  width: 180px;
 }
 .renewal-table-view th:nth-child(6),
 .renewal-table-view td:nth-child(6) {
@@ -2741,13 +2857,28 @@ body.nd-scroll-lock {
 .renewal-table-view td:nth-child(7) {
   width: 220px;
 }
-.renewal-table-view th:nth-child(8),
-.renewal-table-view td:nth-child(8) {
-  width: 210px;
+.renewal-dashboard-page .renewal-table-view th:nth-child(8),
+.renewal-dashboard-page .renewal-table-view td:nth-child(8) {
+  width: 206px;
+  min-width: 206px;
+}
+
+.renewal-dashboard-page
+  .renewal-table-view
+  th:nth-child(8)
+  .dealer-th-inner
+  > div {
+  white-space: nowrap;
+}
+
+.renewal-table-view th:nth-child(8) .dealer-th-inner > span {
+  flex: 0 0 12px;
+  width: 12px;
+  min-width: 12px;
 }
 .renewal-table-view th:nth-child(9),
 .renewal-table-view td:nth-child(9) {
-  width: 190px;
+  width: 112px;
 }
 
 .app-toast.warning {
@@ -2793,8 +2924,13 @@ body.nd-scroll-lock {
     center / 12px 14px no-repeat;
 }
 
+.renewal-detail-item--end span,
 .renewal-detail-item--end strong {
-  justify-content: flex-end;
+  text-align: left;
+}
+
+.renewal-detail-item--end strong {
+  justify-content: flex-start;
 }
 
 .dealer-filters-modal {
@@ -3481,10 +3617,17 @@ body.nd-scroll-lock {
         display: flex;
     }
 
-    .dealer-leads-table .dealer-detail-item:nth-child(even) {
-        align-items: flex-end;
-        text-align: right;
-    }
+  .dealer-leads-table .dealer-detail-item:nth-child(odd) {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .dealer-leads-table .dealer-detail-item > strong {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
     .dealer-leads-table .dealer-detail-item > strong {
         display: block;
@@ -3627,8 +3770,8 @@ body.nd-scroll-lock {
 
 .app-tooltip {
   position: fixed;
-  top: 0;
-  left: 0;
+  left: var(--tip-left, 0);
+  top: var(--tip-top, 0);
   z-index: 10000;
   display: none;
   padding: 10px 16px;
@@ -3791,17 +3934,6 @@ body.nd-scroll-lock {
   border-collapse: separate;
   border-spacing: 0;
 }
-
-
-.txn-table-view thead th:nth-child(1),
-.txn-table-view tbody td:nth-child(1) {
-  left: 0;
-}
-.txn-table-view thead th:nth-child(2),
-.txn-table-view tbody td:nth-child(2) {
-  left: var(--txn-col1);
-}
-
 
 .txn-table-view tbody tr:nth-child(even) td {
   background: #f2f2f2;
@@ -4135,7 +4267,8 @@ body.nd-scroll-lock {
   top: 0;
   z-index: 3;
   background: #fff;
-  box-shadow: inset 0 -1px 0 #eee;
+  /* box-shadow: inset 0 -1px 0 #eee; */
+  padding-top: 0px;
 }
 
 .new-dealer-page .dealer-table-view-wrapper thead th:nth-child(-n + 2) {
@@ -4153,17 +4286,6 @@ body.nd-scroll-lock {
   }
 }
 
-
-
-.new-dealer-page .new-dealer-table-wrapper thead th,
-.new-dealer-page .dealer-table-view-wrapper thead th {
-  position: sticky;
-  top: 0;
-  z-index: 3;
-  background: #fff;
-  box-shadow: inset 0 -1px 0 #eee;
-}
-
 .new-dealer-page .dealer-table-view-wrapper thead th:nth-child(-n + 2) {
   z-index: 5 !important;
 }
@@ -4172,7 +4294,12 @@ body.nd-scroll-lock {
   .new-dealer-page .new-dealer-table-wrapper,
   .new-dealer-page .dealer-table-view-wrapper {
     max-height: none !important;
-    overflow-y: visible;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    overscroll-behavior-y: auto;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y;
   }
   .new-dealer-page .new-dealer-table-wrapper thead th {
     position: static;
@@ -4223,46 +4350,7 @@ body.nd-scroll-lock {
     min-height: 560px;
   }
 
-    .new-dealer-page:not(.txn-dashboard-page)
-    .dealer-table-view
-    thead
-    th:nth-child(-n + 2),
-  .new-dealer-page:not(.txn-dashboard-page)
-    .dealer-table-view
-    tbody
-    td:nth-child(-n + 2) {
-    position: sticky;
-    z-index: 1;
-    background: #fff;
-  }
-
-  .new-dealer-page:not(.txn-dashboard-page)
-    .dealer-table-view
-    thead
-    th:nth-child(-n + 2) {
-    z-index: 2;
-  }
-
-  .new-dealer-page:not(.txn-dashboard-page) .dealer-table-view th:nth-child(2),
-  .new-dealer-page:not(.txn-dashboard-page) .dealer-table-view td:nth-child(2) {
-    box-shadow: 6px 0 6px -6px rgba(0, 0, 0, 0.25);
-  }
-
-    .txn-table-view thead th:nth-child(-n + 2),
-  .txn-table-view tbody td:nth-child(-n + 2) {
-    position: sticky;
-    z-index: 1;
-    background: #fff;
-  }
-  .txn-table-view thead th:nth-child(-n + 2) {
-    z-index: 2;
-  }
-  .txn-table-view thead th:nth-child(2),
-  .txn-table-view tbody td:nth-child(2) {
-    box-shadow: 6px 0 6px -6px rgba(0, 0, 0, 0.25);
-  }
-
-    .renewal-dashboard-page .new-dealer-toolbar {
+  .renewal-dashboard-page .new-dealer-toolbar {
     margin-top: 12px;
   }
 
@@ -4404,6 +4492,10 @@ body.nd-scroll-lock {
     flex: 0 0 152px;
     min-width: 152px;
   }
+
+  .txn-dashboard-page .txn-table .txn-details-row > td:first-child {
+    padding-left: 44px;
+  }
 }
 
 @media (min-width: 1200px) {
@@ -4411,25 +4503,36 @@ body.nd-scroll-lock {
     width: 240px;
   }
   .new-dealer-table th:nth-child(2) {
-    width: 230px;
+    width: 152px;
   }
   .new-dealer-table th:nth-child(3) {
-    width: 200px;
+    width: 152px;
   }
   .new-dealer-table th:nth-child(4) {
     width: 200px;
   }
   .new-dealer-table th:nth-child(5) {
     width: 170px;
+    padding-right: 24px;
   }
   .new-dealer-table th:nth-child(6) {
     width: 120px;
   }
   .new-dealer-table th:nth-child(7) {
-    width: 150px;
+    width: 124px;
   }
   .new-dealer-table th:nth-child(8) {
     width: 130px;
+  }
+  .dealer-leads-table {
+    --c1: 18.3%;
+    --c2: 11.6%;
+    --c3: 11.6%;
+    --c4: 15.2%;
+    --c5: 12.9%;
+    --c6: 9.1%;
+    --c7: 11.4%;
+    --c8: 9.9%;
   }
 }
 
@@ -4451,7 +4554,9 @@ body.nd-scroll-lock {
   }
 
   .new-dealer-page {
-    height: calc(100vh - var(--nd-top-offset, 80px) - var(--app-footer-height, 72px));
+    height: calc(
+      100vh - var(--nd-top-offset, 80px) - var(--app-footer-height, 72px)
+    );
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -4550,6 +4655,24 @@ body.nd-scroll-lock {
     gap: 16px;
   }
 
+  .new-dealer-page--leads .new-dealer-tabs .add-dealer-wrapper {
+    order: 2;
+    flex: 0 0 auto;
+    margin-left: auto;
+  }
+
+  .txn-dashboard-page .new-dealer-tabs .add-dealer-wrapper,
+  .renewal-dashboard-page .new-dealer-tabs .add-dealer-wrapper {
+    order: 1;
+    flex: 0 0 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .new-dealer-page .new-dealer-tabs .add-dealer-wrapper .orange-btn {
+    height: 40px;
+    font-size: 14px;
+  }
   .dealer-filters-row .dealer-filter-field {
     flex: 0 0 auto;
   }
@@ -4622,7 +4745,7 @@ body.nd-scroll-lock {
   .new-dealer-page {
     padding-left: 14px;
     padding-right: 14px;
-    overflow-x: hidden;
+    overflow-x: visible;
   }
 
   .new-dealer-page-header {
@@ -5830,3 +5953,238 @@ body.nd-scroll-lock {
   }
 }
 
+html.nd-page-active {
+  scrollbar-width: none;
+}
+
+html.nd-page-active::-webkit-scrollbar {
+  display: none;
+}
+
+.new-dealer-page .new-dealer-table-wrapper,
+.new-dealer-page .dealer-table-view-wrapper {
+  overflow-anchor: none;
+}
+
+
+@media (min-width: 768px) {
+  .txn-dashboard-page .txn-table th:nth-child(3),
+  .txn-dashboard-page .txn-table th:nth-child(4),
+  .txn-dashboard-page .txn-table th:nth-child(5),
+  .txn-dashboard-page .txn-table th:nth-child(7),
+  .txn-dashboard-page .txn-table td:nth-child(3),
+  .txn-dashboard-page .txn-table td:nth-child(4),
+  .txn-dashboard-page .txn-table td:nth-child(5),
+  .txn-dashboard-page .txn-table td:nth-child(7) {
+    text-align: right;
+  }
+
+  .txn-dashboard-page .txn-table th:nth-child(3) .dealer-th-inner,
+  .txn-dashboard-page .txn-table th:nth-child(4) .dealer-th-inner,
+  .txn-dashboard-page .txn-table th:nth-child(5) .dealer-th-inner,
+  .txn-dashboard-page .txn-table th:nth-child(7) .dealer-th-inner {
+    justify-content: flex-end;
+  }
+
+  .txn-dashboard-page .txn-table th:nth-child(3) .dealer-th-inner > div,
+  .txn-dashboard-page .txn-table th:nth-child(4) .dealer-th-inner > div,
+  .txn-dashboard-page .txn-table th:nth-child(5) .dealer-th-inner > div,
+  .txn-dashboard-page .txn-table th:nth-child(7) .dealer-th-inner > div {
+    text-align: right;
+  }
+}
+
+.txn-dashboard-page .txn-table-view th:nth-child(5),
+.txn-dashboard-page .txn-table-view th:nth-child(6),
+.txn-dashboard-page .txn-table-view th:nth-child(7),
+.txn-dashboard-page .txn-table-view th:nth-child(9),
+.txn-dashboard-page .txn-table-view td:nth-child(5),
+.txn-dashboard-page .txn-table-view td:nth-child(6),
+.txn-dashboard-page .txn-table-view td:nth-child(7),
+.txn-dashboard-page .txn-table-view td:nth-child(9) {
+  text-align: right;
+}
+
+.txn-dashboard-page .txn-table-view th:nth-child(5) .dealer-th-inner,
+.txn-dashboard-page .txn-table-view th:nth-child(6) .dealer-th-inner,
+.txn-dashboard-page .txn-table-view th:nth-child(7) .dealer-th-inner,
+.txn-dashboard-page .txn-table-view th:nth-child(9) .dealer-th-inner {
+  justify-content: flex-end;
+}
+
+.txn-dashboard-page .txn-table-view th:nth-child(5) .dealer-th-inner > div,
+.txn-dashboard-page .txn-table-view th:nth-child(6) .dealer-th-inner > div,
+.txn-dashboard-page .txn-table-view th:nth-child(7) .dealer-th-inner > div,
+.txn-dashboard-page .txn-table-view th:nth-child(9) .dealer-th-inner > div {
+  text-align: right;
+}
+
+@media (min-width: 768px) {
+  .txn-dashboard-page .txn-table {
+    width: 100%;
+    min-width: 1100px;
+    table-layout: auto;
+  }
+
+  .txn-dashboard-page .txn-table th:nth-child(n),
+  .txn-dashboard-page .txn-table td:nth-child(n) {
+    width: 1%;
+    min-width: 0;
+    padding-left: 12px;
+    padding-right: 12px;
+    white-space: nowrap;
+  }
+
+  .txn-dashboard-page .txn-table th:nth-child(1),
+  .txn-dashboard-page .txn-table td:nth-child(1) {
+    width: 100%;
+    min-width: 230px;
+  }
+
+  .txn-dashboard-page .txn-table td.txn-cell--actions,
+  .txn-dashboard-page .txn-table th:last-child {
+    padding-right: 24px;
+  }
+}
+
+.txn-dashboard-page .txn-table-view {
+  width: auto;
+  min-width: 0;
+  table-layout: auto;
+}
+
+.txn-dashboard-page .txn-table-view th:nth-child(n),
+.txn-dashboard-page .txn-table-view td:nth-child(n) {
+  width: auto;
+  min-width: 0;
+  max-width: none;
+  padding-left: 12px;
+  padding-right: 12px;
+  white-space: nowrap;
+}
+
+.txn-dashboard-page .txn-table-view th:first-child,
+.txn-dashboard-page .txn-table-view td:first-child {
+  width: 200px;
+  min-width: 200px;
+  max-width: 200px;
+  padding-left: 24px;
+}
+
+.txn-dashboard-page .txn-table-view th:last-child,
+.txn-dashboard-page .txn-table-view td:last-child {
+  padding-right: 24px;
+}
+
+
+@media (min-width: 768px) {
+  .renewal-dashboard-page .renewal-table th:nth-child(4),
+  .renewal-dashboard-page .renewal-table th:nth-child(5),
+  .renewal-dashboard-page .renewal-table td:nth-child(4),
+  .renewal-dashboard-page .renewal-table td:nth-child(5) {
+    text-align: right;
+  }
+
+  .renewal-dashboard-page .renewal-table th:nth-child(4) .dealer-th-inner,
+  .renewal-dashboard-page .renewal-table th:nth-child(5) .dealer-th-inner {
+    justify-content: flex-end;
+  }
+
+  .renewal-dashboard-page .renewal-table th:nth-child(4) .dealer-th-inner > div,
+  .renewal-dashboard-page
+    .renewal-table
+    th:nth-child(5)
+    .dealer-th-inner
+    > div {
+    text-align: right;
+  }
+}
+
+.renewal-dashboard-page .renewal-table-view th:nth-child(7),
+.renewal-dashboard-page .renewal-table-view th:nth-child(9),
+.renewal-dashboard-page .renewal-table-view td:nth-child(7),
+.renewal-dashboard-page .renewal-table-view td:nth-child(9) {
+  text-align: right;
+}
+
+.renewal-dashboard-page .renewal-table-view th:nth-child(7) .dealer-th-inner,
+.renewal-dashboard-page .renewal-table-view th:nth-child(9) .dealer-th-inner {
+  justify-content: flex-end;
+}
+
+.renewal-dashboard-page
+  .renewal-table-view
+  th:nth-child(7)
+  .dealer-th-inner
+  > div,
+.renewal-dashboard-page
+  .renewal-table-view
+  th:nth-child(9)
+  .dealer-th-inner
+  > div {
+  text-align: right;
+}
+
+@media (min-width: 992px) {
+  .new-dealer-page > .new-dealer-table-wrapper,
+  .new-dealer-page > .dealer-table-view-wrapper {
+    padding-bottom: 24px;
+  }
+
+  .dealer-leads-table .dealer-detail-panel {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .dealer-leads-table .dealer-detail-info {
+    grid-template-columns:
+      var(--c1) var(--c2) var(--c3) var(--c4)
+      var(--c5) var(--c6) var(--c7) var(--c8);
+    column-gap: 0;
+  }
+
+  .dealer-leads-table .dealer-detail-item {
+    padding: 0 12px;
+  }
+
+  .dealer-leads-table .dealer-detail-item--end {
+    padding-right: 24px;
+  }
+
+  .dealer-leads-table .dealer-detail-item:nth-child(7) > strong {
+    white-space: normal;
+    display: block;
+  }
+
+  .dealer-leads-table .dealer-progress {
+    width: auto;
+    margin-left: var(--firm-text-offset);
+    margin-right: 24px;
+  }
+
+  .dealer-leads-table th:nth-child(4),
+  .dealer-leads-table th:nth-child(5),
+  .dealer-leads-table td:nth-child(4),
+  .dealer-leads-table td:nth-child(5) {
+    text-align: right;
+    padding-right: 24px;
+  }
+
+  .dealer-leads-table .dealer-detail-item:nth-child(2) {
+    padding-left: var(--firm-text-offset);
+  }
+
+  .dealer-leads-table th:nth-child(4) .dealer-th-inner {
+    justify-content: flex-end;
+  }
+}
+
+.dealer-detail-muted {
+  margin-left: 4px;
+}
+
+@media (max-width: 991.98px) {
+  .new-dealer-page {
+    padding-bottom: calc(var(--app-footer-height, 72px) + 80px);
+  }
+}
