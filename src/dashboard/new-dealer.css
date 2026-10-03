@@ -25,7 +25,7 @@ body.nd-scroll-lock {
   background: #fff;
   box-sizing: border-box;
   padding-bottom: 24px;
-  padding-top: 24px;
+  margin-top: 24px;
 }
 
 .new-dealer-page-header {
@@ -3632,14 +3632,16 @@ body.nd-scroll-lock {
     display: flex;
   }
 
-  .dealer-leads-table .dealer-detail-item:nth-child(even) {
-    align-items: flex-end;
-    text-align: right;
-  }
-
   .dealer-leads-table .dealer-detail-item:nth-child(odd) {
     align-items: flex-start;
     text-align: left;
+  }
+
+  .dealer-leads-table .dealer-detail-item > strong {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .dealer-leads-table .dealer-detail-item > strong {
