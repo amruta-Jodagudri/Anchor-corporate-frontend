@@ -391,6 +391,7 @@ $("#resetAccessibility").on("click", function () {
     letterSpacing: "",
   });
 
+  
   /* accessibility fix by Ankit - reset overflow-x */
   $("html, body").css({
     "overflow-x": "",
