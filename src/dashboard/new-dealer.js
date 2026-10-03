@@ -1,7 +1,6 @@
 "use strict";
 
 jQuery(function ($) {
-
   const TOAST_DURATION_MS = 2500;
   const PIN_STORAGE_KEY = "dealerPinnedState";
   const PAGE_STORAGE_KEY = "activeDashboardPage";
@@ -257,6 +256,177 @@ jQuery(function ($) {
 
   /* TODO(backend): replace with API data */
   const transactionData = [
+    //adding some json to check the scrolling
+    {
+      firm: "BluePeak Distributors",
+      code: "T1H2E3M66",
+      scfAccount: "2145 2145 2145",
+      status: "freeze",
+      sanction: "₹95,00,000.00",
+      utilized: "₹65,00,000.00",
+      utilizedPct: "68.42%",
+      available: "₹30,00,000.00",
+      availablePct: "31.58%",
+      openTxns: 7,
+      overdueAmount: "₹40,000.00",
+      days: "overdue",
+      caseType: "Digital",
+      acExpiry: "01 Jul '26",
+      tranches: generateDummyTranches(7, 0),
+    },
+    {
+      firm: "SunDesh Systems Pvt. Ltd",
+      code: "T1H2E3M66",
+      scfAccount: "2145 2145 2145",
+      status: "unfreeze",
+      sanction: "₹78,60,000.00",
+      utilized: "₹56,40,000.00",
+      utilizedPct: "71.76%",
+      available: "₹22,20,000.00",
+      availablePct: "28.24%",
+      openTxns: 4,
+      overdueAmount: "-",
+      days: "4 days",
+      caseType: "Digital",
+      acExpiry: "01 Jul '26",
+      tranches: generateDummyTranches(4, 1),
+    },
+    {
+      firm: "Chauhan Traders",
+      code: "T1H2E3M66",
+      scfAccount: "2145 2145 2145",
+      status: "unfreeze",
+      sanction: "₹86,00,000.00",
+      utilized: "₹62,00,000.00",
+      utilizedPct: "72.09%",
+      available: "₹24,00,000.00",
+      availablePct: "27.91%",
+      openTxns: 3,
+      overdueAmount: "-",
+      days: "6 days",
+      caseType: "Digital",
+      acExpiry: "01 Jul '26",
+      tranches: generateDummyTranches(3, 3),
+    },
+    {
+      firm: "Polychem Global",
+      code: "T1H2E3M66",
+      scfAccount: "2145 2145 2145",
+      status: "freeze",
+      sanction: "₹93,00,000.00",
+      utilized: "₹65,00,000.00",
+      utilizedPct: "69.89%",
+      available: "₹28,00,000.00",
+      availablePct: "30.11%",
+      openTxns: 5,
+      overdueAmount: "₹40,000.00",
+      days: "overdue",
+      caseType: "Digital",
+      acExpiry: "01 Jul '26",
+      tranches: generateDummyTranches(5, 4),
+    },
+    {
+      firm: "Kartikey Corporationsutio...",
+      code: "T1H2E3M66",
+      scfAccount: "2145 2145 2145",
+      status: "freeze",
+      sanction: "₹85,50,000.00",
+      utilized: "₹63,50,000.00",
+      utilizedPct: "74.71%",
+      available: "₹22,00,000.00",
+      availablePct: "25.88%",
+      openTxns: 3,
+      overdueAmount: "₹40,000.00",
+      days: "overdue",
+      caseType: "Digital",
+      acExpiry: "01 Jul '26",
+      tranches: generateDummyTranches(3, 5),
+    },
+    {
+      firm: "BluePeak Distributors",
+      code: "T1H2E3M66",
+      scfAccount: "2145 2145 2145",
+      status: "freeze",
+      sanction: "₹95,00,000.00",
+      utilized: "₹65,00,000.00",
+      utilizedPct: "68.42%",
+      available: "₹30,00,000.00",
+      availablePct: "31.58%",
+      openTxns: 7,
+      overdueAmount: "₹40,000.00",
+      days: "overdue",
+      caseType: "Digital",
+      acExpiry: "01 Jul '26",
+      tranches: generateDummyTranches(7, 0),
+    },
+    {
+      firm: "SunDesh Systems Pvt. Ltd",
+      code: "T1H2E3M66",
+      scfAccount: "2145 2145 2145",
+      status: "unfreeze",
+      sanction: "₹78,60,000.00",
+      utilized: "₹56,40,000.00",
+      utilizedPct: "71.76%",
+      available: "₹22,20,000.00",
+      availablePct: "28.24%",
+      openTxns: 4,
+      overdueAmount: "-",
+      days: "4 days",
+      caseType: "Digital",
+      acExpiry: "01 Jul '26",
+      tranches: generateDummyTranches(4, 1),
+    },
+    {
+      firm: "Chauhan Traders",
+      code: "T1H2E3M66",
+      scfAccount: "2145 2145 2145",
+      status: "unfreeze",
+      sanction: "₹86,00,000.00",
+      utilized: "₹62,00,000.00",
+      utilizedPct: "72.09%",
+      available: "₹24,00,000.00",
+      availablePct: "27.91%",
+      openTxns: 3,
+      overdueAmount: "-",
+      days: "6 days",
+      caseType: "Digital",
+      acExpiry: "01 Jul '26",
+      tranches: generateDummyTranches(3, 3),
+    },
+    {
+      firm: "Polychem Global",
+      code: "T1H2E3M66",
+      scfAccount: "2145 2145 2145",
+      status: "freeze",
+      sanction: "₹93,00,000.00",
+      utilized: "₹65,00,000.00",
+      utilizedPct: "69.89%",
+      available: "₹28,00,000.00",
+      availablePct: "30.11%",
+      openTxns: 5,
+      overdueAmount: "₹40,000.00",
+      days: "overdue",
+      caseType: "Digital",
+      acExpiry: "01 Jul '26",
+      tranches: generateDummyTranches(5, 4),
+    },
+    {
+      firm: "Kartikey Corporationsutio...",
+      code: "T1H2E3M66",
+      scfAccount: "2145 2145 2145",
+      status: "freeze",
+      sanction: "₹85,50,000.00",
+      utilized: "₹63,50,000.00",
+      utilizedPct: "74.71%",
+      available: "₹22,00,000.00",
+      availablePct: "25.88%",
+      openTxns: 3,
+      overdueAmount: "₹40,000.00",
+      days: "overdue",
+      caseType: "Digital",
+      acExpiry: "01 Jul '26",
+      tranches: generateDummyTranches(3, 5),
+    },
     {
       firm: "BluePeak Distributors",
       code: "T1H2E3M66",
@@ -344,8 +514,7 @@ jQuery(function ($) {
     },
   ];
 
-
-    //  NEW DEALER LEADS - STATE & LOOKUPS
+  //  NEW DEALER LEADS - STATE & LOOKUPS
 
   const $newDealerPage = $("#newDealerPage");
   const $hideDetailsBtn = $("#hideDetailsBtn");
@@ -435,7 +604,6 @@ jQuery(function ($) {
       $el.attr("data-value", $el.text().trim().replace("✉", "").trim());
     });
   }
-
 
   function maskPhone(value) {
     const v = value.trim();
@@ -708,11 +876,18 @@ jQuery(function ($) {
 
   function getDetailItemMarkup(label, valueHtml, extraClass) {
     return `
-      <div class="dealer-detail-item ${extraClass || ""}">
+      <div class="dealer-detail-item  ${extraClass || ""}">
         <span>${label}</span>
         <strong>${valueHtml}</strong>
       </div>
     `;
+  }
+
+  function formatDetailValue(value) {
+    return escapeHtml(value).replace(
+      /\s*\((.*?)\)/,
+      '<span class="dealer-detail-muted">($1)</span>',
+    );
   }
 
   function createDealerDetailRow($row) {
@@ -734,10 +909,10 @@ jQuery(function ($) {
           <div class="dealer-detail-info">
             ${getDetailItemMarkup("Lead type", escapeHtml(leadType), "dealer-detail-item--mobile-only")}
             ${getDetailItemMarkup("Dealer ID", escapeHtml(details.dealerId))}
-            ${getDetailItemMarkup("Cheque returns", escapeHtml(details.chequeReturns))}
+            ${getDetailItemMarkup("Cheque returns", formatDetailValue(details.chequeReturns))}
             ${getDetailItemMarkup("Business vintage", escapeHtml(details.vintage))}
-            ${getDetailItemMarkup("Instances of overdue", escapeHtml(details.overdue))}
-            ${getDetailItemMarkup("Recommendation limit", escapeHtml(details.recommendation))}
+            ${getDetailItemMarkup("Instances of overdue", formatDetailValue(details.overdue), "dealer-detail-item--end")}
+            ${getDetailItemMarkup("Recommendation limit", formatAmountMarkup(details.recommendation), "dealer-detail-item--end")}
             ${getDetailItemMarkup("Uploaded by", escapeHtml(details.uploadedBy) + " " + getUploadIconMarkup(dealerName, details.uploadedBy))}
             ${getDetailItemMarkup("Lead date", escapeHtml(details.leadDate))}
           </div>
@@ -1032,9 +1207,7 @@ jQuery(function ($) {
       const query = ($input.val() || "").trim().toLowerCase();
       $panel.find("label").each(function () {
         const $label = $(this);
-        $label.toggle(
-          !query || $label.text().toLowerCase().includes(query),
-        );
+        $label.toggle(!query || $label.text().toLowerCase().includes(query));
       });
     });
   }
@@ -1187,7 +1360,6 @@ jQuery(function ($) {
     );
   }
 
-
   function matchesFilterValue(filter, status, leadType, stage) {
     switch (filter) {
       case "actioned":
@@ -1249,7 +1421,9 @@ jQuery(function ($) {
         .replace(/[^a-z]/g, "");
       const filterKey = String(filter).replace(/-/g, "");
 
-      return !$status.hasClass("rejected") && stageText.indexOf(filterKey) === 0;
+      return (
+        !$status.hasClass("rejected") && stageText.indexOf(filterKey) === 0
+      );
     }
 
     return matchesFilterByName(getGridFirmName($tRow), filter);
@@ -1273,7 +1447,8 @@ jQuery(function ($) {
       $detailRow.toggleClass("hidden-by-filter", !visible);
 
       const progressStage =
-        activeFilter === "sanctioned" && $row.attr("data-status") === "sanctioned"
+        activeFilter === "sanctioned" &&
+        $row.attr("data-status") === "sanctioned"
           ? "limit-setup"
           : getDealerStage($row);
       $detailRow
@@ -1349,7 +1524,8 @@ jQuery(function ($) {
       const count = match ? match[2] : "";
       const badge = count ? " <span>" + count + "</span>" : "";
 
-      const isCompact = $toBeActionedBtn.length && $toBeActionedBtn.is(":hidden");
+      const isCompact =
+        $toBeActionedBtn.length && $toBeActionedBtn.is(":hidden");
 
       setActive($filterButtons, null);
 
@@ -1514,7 +1690,6 @@ jQuery(function ($) {
       applySavedPins();
     });
   }
-
 
   function sendShareMail(payload) {
     /* TODO(backend): call the share-via-mail API here; resolve on success, reject on failure */
@@ -1850,7 +2025,9 @@ jQuery(function ($) {
 
   function getVisibleLeadNames() {
     if ($newDealerPage.hasClass("table-view")) {
-      return $("#newDealerPage .dealer-table-view tbody tr:not(.hidden-by-filter)")
+      return $(
+        "#newDealerPage .dealer-table-view tbody tr:not(.hidden-by-filter)",
+      )
         .map(function () {
           return getGridFirmName($(this));
         })
@@ -2496,8 +2673,7 @@ jQuery(function ($) {
     opts.$toBtn.on("click", open);
   }
 
-
-    //  TRANSACTION DASHBOARD
+  //  TRANSACTION DASHBOARD
 
   const txnState = {
     tab: "all",
@@ -3068,8 +3244,7 @@ jQuery(function ($) {
     initTxnFiltersModal();
   }
 
-
-    //  RENEWAL DETAILS
+  //  RENEWAL DETAILS
 
   const renewalActions = {
     enhance: "Enhance limit",
@@ -3774,7 +3949,7 @@ jQuery(function ($) {
     });
 
     initDropdownMenu($("#renewalAddDealerBtn"), $("#renewalAddDealerMenu"));
-    
+
     $listBody.on("click", ".renewal-expand-btn", function () {
       const $row = $(this).closest(".renewal-row");
       const $detailRow = $row.next();
@@ -3802,8 +3977,7 @@ jQuery(function ($) {
     initRenewalFiltersModal();
   }
 
-
-    //  UPLOADED DETAILS MODAL (shared: new dealer + renewal)
+  //  UPLOADED DETAILS MODAL (shared: new dealer + renewal)
 
   const UPLOAD_ROLES = {
     icici: {
@@ -4151,7 +4325,7 @@ jQuery(function ($) {
     });
   }
 
-    //  NAVIGATION
+  //  NAVIGATION
 
   function centerActiveTab($page) {
     const $activeTab = $page.find(".new-dealer-tab.active").first();
@@ -4165,9 +4339,7 @@ jQuery(function ($) {
 
   function getMenuRoute($item) {
     const $title = $item.find(".menu-title").first();
-    return $title.length
-      ? MENU_ROUTES[$title.text().trim().toLowerCase()]
-      : "";
+    return $title.length ? MENU_ROUTES[$title.text().trim().toLowerCase()] : "";
   }
 
   function syncMenuActive(which) {
@@ -4194,6 +4366,19 @@ jQuery(function ($) {
     }
   }
 
+  function setNdOffsets() {
+    const $page = $(".new-dealer-page:visible").first();
+    if (!$page.length) return;
+
+    const root = document.documentElement.style;
+    root.setProperty("--nd-top-offset", $page.offset().top + "px");
+
+    const footer = document.getElementById("dashboardFooter");
+    if (footer) {
+      root.setProperty("--app-footer-height", footer.offsetHeight + "px");
+    }
+  }
+
   function showPage(which) {
     const pages = {
       newdealer: $("#newDealerPage"),
@@ -4210,6 +4395,17 @@ jQuery(function ($) {
     if (!$target || !$target.length) return;
 
     $target.show();
+    if (
+      which === "newdealer" ||
+      which === "transaction" ||
+      which === "renewal"
+    ) {
+      $(".dashboard-wrapper").hide();
+    } else {
+      $(".dashboard-wrapper").show();
+    }
+    $("html").toggleClass("nd-page-active", which !== "dashboard");
+    setNdOffsets();
     centerActiveTab($target);
     syncMenuActive(which);
     savePage(which);
@@ -4249,8 +4445,26 @@ jQuery(function ($) {
         window.scrollTo(0, 0);
       },
     );
-  }
 
+    function initHeaderCollapse() {
+      $(".new-dealer-table-wrapper, .dealer-table-view-wrapper").on(
+        "wheel",
+        function (e) {
+          var ev = e.originalEvent;
+          if (Math.abs(ev.deltaY) <= Math.abs(ev.deltaX)) return;
+
+          var $page = $(this).closest(".new-dealer-page");
+          if (ev.deltaY > 0) {
+            $page.addClass("header-collapsed");
+          } else if (this.scrollTop === 0) {
+            $page.removeClass("header-collapsed");
+          }
+        },
+      );
+    }
+
+    initHeaderCollapse();
+  }
 
   applyDealerCellLabels();
   initDealerAmounts();
@@ -4293,4 +4507,6 @@ jQuery(function ($) {
   const savedPage = getSavedPage();
   if (savedPage && savedPage !== "dashboard") showPage(savedPage);
   $(".Dashboard-page-section").addClass("page-ready");
+
+  $(window).on("resize load", setNdOffsets);
 });

@@ -203,7 +203,7 @@ $(document).on("click", "#proceedBtn", function () {
   lucide.createIcons();
 });
 
-/* fix accessibility */
+/* accessibility fix by Ankit */
 var zoomState = 1;
 function applyAccessibilitySettings() {
   let zoomLevel = 100;
@@ -231,7 +231,7 @@ function applyAccessibilitySettings() {
     letterSpacing = defaultLetterSpacing + 1;
   }
 
-  /* fix accessibility - use zoom or CSS scaling on body safely without breaking fixed modals on UAT/Prod */
+  /* accessibility fix by Ankit - keep original zoom handling */
   if (typeof document.body.style.zoom !== "undefined") {
     $("body").css("zoom", `${zoomLevel}%`);
     $("body").css({
@@ -245,6 +245,13 @@ function applyAccessibilitySettings() {
       transformOrigin: "top left",
       width: zoomLevel === 100 ? "" : `${10000 / zoomLevel}%`,
     });
+  }
+
+  /* accessibility fix by Ankit - prevent mobile horizontal shaking/scroll while preserving sticky header */
+  if ($(window).width() < 768 && (zoomState !== 1 || lineHeightState !== 1 || letterSpacingState !== 1)) {
+    $("main, .login-page, .max-content-area").css("overflow-x", "hidden");
+  } else {
+    $("main, .login-page, .max-content-area").css("overflow-x", "");
   }
 
   $("body").css({
@@ -360,7 +367,7 @@ $(document).on("change", "#highContrastToggle", function () {
   enableAccessibilityButtons();
 });
 
-/* fix accessibility - reset functionality */
+/* accessibility fix by Ankit - reset functionality */
 $("#resetAccessibility").on("click", function () {
   zoomState = 1;
   lineHeightState = 1;
@@ -382,6 +389,13 @@ $("#resetAccessibility").on("click", function () {
     width: "",
     lineHeight: "",
     letterSpacing: "",
+  });
+
+  
+  /* accessibility fix by Ankit - reset overflow-x */
+  $("main, .login-page, .max-content-area").css({
+    "overflow-x": "",
+    "max-width": "",
   });
 
   $("body, body *").css({

@@ -16,6 +16,7 @@
   --error-msg: #da1e28;
 }
 
+/* accessibility fix by Ankit */
 body {
   font-family: "Mulish", sans-serif;
 }
@@ -599,6 +600,7 @@ input[type="number"] {
   text-align: center;
   border-radius: 4px;
   width: 378px;
+  max-width: 100%; /* accessibility fix by Ankit */
 }
 
 .chat-input button {

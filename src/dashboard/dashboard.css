@@ -5028,7 +5028,7 @@ td {
     align-items: flex-start;
   }
 
-  .view-more-wrap {
+  .right-col .view-more-wrap {
     display: flex;
     justify-content: flex-end;
     width: 100%;

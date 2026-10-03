@@ -583,7 +583,7 @@
       <!-- NEW DEALER LEADS PAGE -->
       <div class="max-content-area">
         <section
-          class="new-dealer-page"
+          class="new-dealer-page new-dealer-page--leads"
           id="newDealerPage"
           style="display: none"
         >
@@ -773,7 +773,7 @@
                   <th>
                     <div class="dealer-th-inner">
                       <div>Firm details</div>
-                      <span>↕</span>
+                      <span class="material-icons table-sort-icon">import_export</span>
                     </div>
                   </th>
 
@@ -782,20 +782,20 @@
                   <th>
                     <div class="dealer-th-inner">
                       <div>Association<br />with corporate</div>
-                      <span>↕</span>
+                      <span class="material-icons table-sort-icon">import_export</span>
                     </div>
                   </th>
 
                   <th>
                     <div class="dealer-th-inner">
                       <div>Sales to dealer<br />(last 12M)</div>
-                      <span>↕</span>
+                      <span class="material-icons table-sort-icon">import_export</span>
                     </div>
                   </th>
 
                   <th>
                     Loan offer
-                    <span>↕</span>
+                    <span class="material-icons table-sort-icon">import_export</span>
                   </th>
 
                   <th>Lead type</th>
@@ -807,6 +807,574 @@
               </thead>
 
               <tbody id="dealerTableBody">
+                <tr
+                  class="dealer-row"
+                  data-status="actioned"
+                  data-lead-type="fresh"
+                >
+                  <td>
+                    <div class="dealer-firm">
+                      <span
+                        class="material-symbols-outlined dealer-pin"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Pin dealer"
+                      >
+                        push_pin
+                      </span>
+
+                      <div>
+                        <strong> Zenith Steel Traders </strong>
+
+                        <small> Code: T1H2E3M66 </small>
+                      </div>
+                    </div>
+                  </td>
+
+                  <!-- add some more data to check the scrolling issue -->
+                  <td>
+                    <div class="dealer-contact">
+                      <span> +91 9836273854 </span>
+
+                      <small> harish@zenith.com </small>
+                    </div>
+                  </td>
+
+                  <td>
+                    <div class="dealer-association">
+                      <strong>3 years</strong>
+
+                      <small> PAN: CFSG34527F </small>
+                    </div>
+                  </td>
+
+                  <td>₹3,15,00,000.00</td>
+
+                  <td>₹70,00,000.00</td>
+
+                  <td>Fresh</td>
+
+                  <td>
+                    <span class="dealer-status actioned">
+                      To be actioned
+                      <small>ⓘ</small>
+                    </span>
+                  </td>
+
+                  <td>
+                    <div class="dealer-row-actions">
+                      <button type="button" title="Edit">✎</button>
+
+                      <button type="button" title="Delete">♧</button>
+
+                      <button type="button" class="dealer-expand-btn">⌄</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr
+                  class="dealer-row"
+                  data-status="actioned"
+                  data-lead-type="fresh"
+                >
+                  <td>
+                    <div class="dealer-firm">
+                      <span
+                        class="material-symbols-outlined dealer-pin"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Pin dealer"
+                      >
+                        push_pin
+                      </span>
+
+                      <div>
+                        <strong> Zenith Steel Traders </strong>
+
+                        <small> Code: T1H2E3M66 </small>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td>
+                    <div class="dealer-contact">
+                      <span> +91 9836273854 </span>
+
+                      <small> harish@zenith.com </small>
+                    </div>
+                  </td>
+
+                  <td>
+                    <div class="dealer-association">
+                      <strong>3 years</strong>
+
+                      <small> PAN: CFSG34527F </small>
+                    </div>
+                  </td>
+
+                  <td>₹3,15,00,000.00</td>
+
+                  <td>₹70,00,000.00</td>
+
+                  <td>Fresh</td>
+
+                  <td>
+                    <span class="dealer-status actioned">
+                      To be actioned
+                      <small>ⓘ</small>
+                    </span>
+                  </td>
+
+                  <td>
+                    <div class="dealer-row-actions">
+                      <button type="button" title="Edit">✎</button>
+
+                      <button type="button" title="Delete">♧</button>
+
+                      <button type="button" class="dealer-expand-btn">⌄</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr
+                  class="dealer-row"
+                  data-status="actioned"
+                  data-lead-type="fresh"
+                >
+                  <td>
+                    <div class="dealer-firm">
+                      <span
+                        class="material-symbols-outlined dealer-pin"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Pin dealer"
+                      >
+                        push_pin
+                      </span>
+
+                      <div>
+                        <strong> Zenith Steel Traders </strong>
+
+                        <small> Code: T1H2E3M66 </small>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td>
+                    <div class="dealer-contact">
+                      <span> +91 9836273854 </span>
+
+                      <small> harish@zenith.com </small>
+                    </div>
+                  </td>
+
+                  <td>
+                    <div class="dealer-association">
+                      <strong>3 years</strong>
+
+                      <small> PAN: CFSG34527F </small>
+                    </div>
+                  </td>
+
+                  <td>₹3,15,00,000.00</td>
+
+                  <td>₹70,00,000.00</td>
+
+                  <td>Fresh</td>
+
+                  <td>
+                    <span class="dealer-status actioned">
+                      To be actioned
+                      <small>ⓘ</small>
+                    </span>
+                  </td>
+
+                  <td>
+                    <div class="dealer-row-actions">
+                      <button type="button" title="Edit">✎</button>
+
+                      <button type="button" title="Delete">♧</button>
+
+                      <button type="button" class="dealer-expand-btn">⌄</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr
+                  class="dealer-row"
+                  data-status="actioned"
+                  data-lead-type="fresh"
+                >
+                  <td>
+                    <div class="dealer-firm">
+                      <span
+                        class="material-symbols-outlined dealer-pin"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Pin dealer"
+                      >
+                        push_pin
+                      </span>
+
+                      <div>
+                        <strong> Zenith Steel Traders </strong>
+
+                        <small> Code: T1H2E3M66 </small>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td>
+                    <div class="dealer-contact">
+                      <span> +91 9836273854 </span>
+
+                      <small> harish@zenith.com </small>
+                    </div>
+                  </td>
+
+                  <td>
+                    <div class="dealer-association">
+                      <strong>3 years</strong>
+
+                      <small> PAN: CFSG34527F </small>
+                    </div>
+                  </td>
+
+                  <td>₹3,15,00,000.00</td>
+
+                  <td>₹70,00,000.00</td>
+
+                  <td>Fresh</td>
+
+                  <td>
+                    <span class="dealer-status actioned">
+                      To be actioned
+                      <small>ⓘ</small>
+                    </span>
+                  </td>
+
+                  <td>
+                    <div class="dealer-row-actions">
+                      <button type="button" title="Edit">✎</button>
+
+                      <button type="button" title="Delete">♧</button>
+
+                      <button type="button" class="dealer-expand-btn">⌄</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr
+                  class="dealer-row"
+                  data-status="actioned"
+                  data-lead-type="fresh"
+                >
+                  <td>
+                    <div class="dealer-firm">
+                      <span
+                        class="material-symbols-outlined dealer-pin"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Pin dealer"
+                      >
+                        push_pin
+                      </span>
+
+                      <div>
+                        <strong> Zenith Steel Traders </strong>
+
+                        <small> Code: T1H2E3M66 </small>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td>
+                    <div class="dealer-contact">
+                      <span> +91 9836273854 </span>
+
+                      <small> harish@zenith.com </small>
+                    </div>
+                  </td>
+
+                  <td>
+                    <div class="dealer-association">
+                      <strong>3 years</strong>
+
+                      <small> PAN: CFSG34527F </small>
+                    </div>
+                  </td>
+
+                  <td>₹3,15,00,000.00</td>
+
+                  <td>₹70,00,000.00</td>
+
+                  <td>Fresh</td>
+
+                  <td>
+                    <span class="dealer-status actioned">
+                      To be actioned
+                      <small>ⓘ</small>
+                    </span>
+                  </td>
+
+                  <td>
+                    <div class="dealer-row-actions">
+                      <button type="button" title="Edit">✎</button>
+
+                      <button type="button" title="Delete">♧</button>
+
+                      <button type="button" class="dealer-expand-btn">⌄</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr
+                  class="dealer-row"
+                  data-status="actioned"
+                  data-lead-type="fresh"
+                >
+                  <td>
+                    <div class="dealer-firm">
+                      <span
+                        class="material-symbols-outlined dealer-pin"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Pin dealer"
+                      >
+                        push_pin
+                      </span>
+
+                      <div>
+                        <strong> Zenith Steel Traders </strong>
+
+                        <small> Code: T1H2E3M66 </small>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td>
+                    <div class="dealer-contact">
+                      <span> +91 9836273854 </span>
+
+                      <small> harish@zenith.com </small>
+                    </div>
+                  </td>
+
+                  <td>
+                    <div class="dealer-association">
+                      <strong>3 years</strong>
+
+                      <small> PAN: CFSG34527F </small>
+                    </div>
+                  </td>
+
+                  <td>₹3,15,00,000.00</td>
+
+                  <td>₹70,00,000.00</td>
+
+                  <td>Fresh</td>
+
+                  <td>
+                    <span class="dealer-status actioned">
+                      To be actioned
+                      <small>ⓘ</small>
+                    </span>
+                  </td>
+
+                  <td>
+                    <div class="dealer-row-actions">
+                      <button type="button" title="Edit">✎</button>
+
+                      <button type="button" title="Delete">♧</button>
+
+                      <button type="button" class="dealer-expand-btn">⌄</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr
+                  class="dealer-row"
+                  data-status="actioned"
+                  data-lead-type="fresh"
+                >
+                  <td>
+                    <div class="dealer-firm">
+                      <span
+                        class="material-symbols-outlined dealer-pin"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Pin dealer"
+                      >
+                        push_pin
+                      </span>
+
+                      <div>
+                        <strong> Zenith Steel Traders </strong>
+
+                        <small> Code: T1H2E3M66 </small>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td>
+                    <div class="dealer-contact">
+                      <span> +91 9836273854 </span>
+
+                      <small> harish@zenith.com </small>
+                    </div>
+                  </td>
+
+                  <td>
+                    <div class="dealer-association">
+                      <strong>3 years</strong>
+
+                      <small> PAN: CFSG34527F </small>
+                    </div>
+                  </td>
+
+                  <td>₹3,15,00,000.00</td>
+
+                  <td>₹70,00,000.00</td>
+
+                  <td>Fresh</td>
+
+                  <td>
+                    <span class="dealer-status actioned">
+                      To be actioned
+                      <small>ⓘ</small>
+                    </span>
+                  </td>
+
+                  <td>
+                    <div class="dealer-row-actions">
+                      <button type="button" title="Edit">✎</button>
+
+                      <button type="button" title="Delete">♧</button>
+
+                      <button type="button" class="dealer-expand-btn">⌄</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr
+                  class="dealer-row"
+                  data-status="actioned"
+                  data-lead-type="fresh"
+                >
+                  <td>
+                    <div class="dealer-firm">
+                      <span
+                        class="material-symbols-outlined dealer-pin"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Pin dealer"
+                      >
+                        push_pin
+                      </span>
+
+                      <div>
+                        <strong> Zenith Steel Traders </strong>
+
+                        <small> Code: T1H2E3M66 </small>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td>
+                    <div class="dealer-contact">
+                      <span> +91 9836273854 </span>
+
+                      <small> harish@zenith.com </small>
+                    </div>
+                  </td>
+
+                  <td>
+                    <div class="dealer-association">
+                      <strong>3 years</strong>
+
+                      <small> PAN: CFSG34527F </small>
+                    </div>
+                  </td>
+
+                  <td>₹3,15,00,000.00</td>
+
+                  <td>₹70,00,000.00</td>
+
+                  <td>Fresh</td>
+
+                  <td>
+                    <span class="dealer-status actioned">
+                      To be actioned
+                      <small>ⓘ</small>
+                    </span>
+                  </td>
+
+                  <td>
+                    <div class="dealer-row-actions">
+                      <button type="button" title="Edit">✎</button>
+
+                      <button type="button" title="Delete">♧</button>
+
+                      <button type="button" class="dealer-expand-btn">⌄</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr
+                  class="dealer-row"
+                  data-status="actioned"
+                  data-lead-type="fresh"
+                >
+                  <td>
+                    <div class="dealer-firm">
+                      <span
+                        class="material-symbols-outlined dealer-pin"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Pin dealer"
+                      >
+                        push_pin
+                      </span>
+
+                      <div>
+                        <strong> Zenith Steel Traders </strong>
+
+                        <small> Code: T1H2E3M66 </small>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td>
+                    <div class="dealer-contact">
+                      <span> +91 9836273854 </span>
+
+                      <small> harish@zenith.com </small>
+                    </div>
+                  </td>
+
+                  <td>
+                    <div class="dealer-association">
+                      <strong>3 years</strong>
+
+                      <small> PAN: CFSG34527F </small>
+                    </div>
+                  </td>
+
+                  <td>₹3,15,00,000.00</td>
+
+                  <td>₹70,00,000.00</td>
+
+                  <td>Fresh</td>
+
+                  <td>
+                    <span class="dealer-status actioned">
+                      To be actioned
+                      <small>ⓘ</small>
+                    </span>
+                  </td>
+
+                  <td>
+                    <div class="dealer-row-actions">
+                      <button type="button" title="Edit">✎</button>
+
+                      <button type="button" title="Delete">♧</button>
+
+                      <button type="button" class="dealer-expand-btn">⌄</button>
+                    </div>
+                  </td>
+                </tr>
                 <tr
                   class="dealer-row"
                   data-status="actioned"
@@ -1189,14 +1757,14 @@
             </table>
           </div>
 
-          <div class="dealer-table-view-wrapper">
+          <div class="dealer-table-view-wrapper dealer-table-view--leads">
             <table class="dealer-table-view new-dealer-table">
               <thead>
                 <tr>
                   <th>
                     <div class="dealer-th-inner">
                       <div>Firm details</div>
-                      <span>↕</span>
+                      <span class="material-icons table-sort-icon">import_export</span>
                     </div>
                   </th>
                   <th>Action</th>
@@ -1205,16 +1773,16 @@
                   <th>
                     <div class="dealer-th-inner">
                       <div>Application status</div>
-                      <span>↕</span>
+                      <span class="material-icons table-sort-icon">import_export</span>
                     </div>
                   </th>
                   <th>Mobile number</th>
                   <th>Email ID</th>
                   <th>PAN</th>
                   <th>
-                    <div class="dealer-th-inner">
-                      <div>Sales to dealer<br />(last 12M)</div>
-                      <span>↕</span>
+                    <div class="dealer-th-inner-grid">
+                      <div>Sales to dealer (last 12M) </div>
+                      <span class="material-icons table-sort-icon">import_export</span>
                     </div>
                   </th>
                   <th>Association</th>
@@ -2002,38 +2570,38 @@
                   <th>
                     <div class="dealer-th-inner">
                       <div>Firm details</div>
-                      <span>↕</span>
+                      <span class="material-icons table-sort-icon">import_export</span>
                     </div>
                   </th>
                   <th>SCF limit account</th>
                   <th>
                     <div class="dealer-th-inner">
                       <div>Sanction limit</div>
-                      <span>↕</span>
+                      <span class="material-icons table-sort-icon">import_export</span>
                     </div>
                   </th>
                   <th>
                     <div class="dealer-th-inner">
                       <div>Utilized limit</div>
-                      <span>↕</span>
+                      <span class="material-icons table-sort-icon">import_export</span>
                     </div>
                   </th>
                   <th>
                     <div class="dealer-th-inner">
                       <div>Available limit</div>
-                      <span>↕</span>
+                      <span class="material-icons table-sort-icon">import_export</span>
                     </div>
                   </th>
                   <th>
-                    <div class="dealer-th-inner">
+                    <div class="dealer-th-inner open-transactions-header">
                       <div>Open<br />transactions</div>
-                      <span>↕</span>
+                      <span class="material-icons table-sort-icon">import_export</span>
                     </div>
                   </th>
                   <th>
                     <div class="dealer-th-inner">
                       <div>Overdue<br />amount</div>
-                      <span>↕</span>
+                      <span class="material-icons table-sort-icon">import_export</span>
                     </div>
                   </th>
                   <th>
@@ -2059,7 +2627,7 @@
                   <th>
                     <div class="dealer-th-inner">
                       <div>Firm details</div>
-                      <span>↕</span>
+                      <span class="material-icons table-sort-icon">import_export</span>
                     </div>
                   </th>
                   <th></th>
@@ -2076,31 +2644,31 @@
                   <th>
                     <div class="dealer-th-inner">
                       <div>Sanction limit</div>
-                      <span>↕</span>
+                      <span class="material-icons table-sort-icon">import_export</span>
                     </div>
                   </th>
                   <th>
                     <div class="dealer-th-inner">
                       <div>Utilized limit</div>
-                      <span>↕</span>
+                      <span class="material-icons table-sort-icon">import_export</span>
                     </div>
                   </th>
                   <th>
                     <div class="dealer-th-inner">
                       <div>Available limit</div>
-                      <span>↕</span>
+                      <span class="material-icons table-sort-icon">import_export</span>
                     </div>
                   </th>
                   <th>
                     <div class="dealer-th-inner">
                       <div>Open transactions</div>
-                      <span>↕</span>
+                      <span class="material-icons table-sort-icon">import_export</span>
                     </div>
                   </th>
                   <th>
                     <div class="dealer-th-inner">
                       <div>Overdue amount</div>
-                      <span>↕</span>
+                      <span class="material-icons table-sort-icon">import_export</span>
                     </div>
                   </th>
                   <th>Case type</th>
@@ -2431,26 +2999,26 @@
                   <th>
                     <div class="dealer-th-inner">
                       <div>Firm details</div>
-                      <span>↕</span>
+                      <span class="material-icons table-sort-icon">import_export</span>
                     </div>
                   </th>
                   <th>Dealer details</th>
                   <th>
                     <div class="dealer-th-inner">
                       <div>Association<br />with corporate</div>
-                      <span>↕</span>
+                      <span class="material-icons table-sort-icon">import_export</span>
                     </div>
                   </th>
                   <th>
                     <div class="dealer-th-inner">
                       <div>Sales to dealer<br />(last 12M)</div>
-                      <span>↕</span>
+                      <span class="material-icons table-sort-icon">import_export</span>
                     </div>
                   </th>
                   <th>
                     <div class="dealer-th-inner">
                       <div>Sanction limit</div>
-                      <span>↕</span>
+                      <span class="material-icons table-sort-icon">import_export</span>
                     </div>
                   </th>
                   <th>Renewal status</th>
@@ -2469,7 +3037,7 @@
                   <th>
                     <div class="dealer-th-inner">
                       <div>Firm details</div>
-                      <span>↕</span>
+                      <span class="material-icons table-sort-icon">import_export</span>
                     </div>
                   </th>
                   <th>Action</th>
@@ -2479,20 +3047,20 @@
                   <th>PAN</th>
                   <th>
                     <div class="dealer-th-inner">
-                      <div>Sales to dealer<br />(last 12M)</div>
-                      <span>↕</span>
+                      <div>Sales to dealer (last 12M)</div>
+                      <span class="material-icons table-sort-icon">import_export</span>
                     </div>
                   </th>
                   <th>
                     <div class="dealer-th-inner">
                       <div>Association with corporate</div>
-                      <span>↕</span>
+                      <span class="material-icons table-sort-icon">import_export</span>
                     </div>
                   </th>
                   <th>
                     <div class="dealer-th-inner">
                       <div>Sanction limit</div>
-                      <span>↕</span>
+                      <span class="material-icons table-sort-icon">import_export</span>
                     </div>
                   </th>
                 </tr>
@@ -2718,10 +3286,10 @@
               <thead>
                 <tr>
                   <th>Transaction ID</th>
-                  <th>Transaction date <span>↕</span></th>
-                  <th>Transaction type <span>↕</span></th>
-                  <th>Amount <span>↕</span></th>
-                  <th>Due date <span>↕</span></th>
+                  <th>Transaction date <span class="material-icons table-sort-icon">import_export</span></th>
+                  <th>Transaction type <span class="material-icons table-sort-icon">import_export</span></th>
+                  <th>Amount <span class="material-icons table-sort-icon">import_export</span></th>
+                  <th>Due date <span class="material-icons table-sort-icon">import_export</span></th>
                 </tr>
               </thead>
               <tbody id="tranchesTableBody"></tbody>
