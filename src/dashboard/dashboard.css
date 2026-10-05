@@ -790,6 +790,10 @@ header {
   box-shadow: 0px 8px 20px 0px #00000014;
 }
 
+.bulk-upload-eligibility-modal .eligibility-header {
+  display: block;
+}
+
 .step3-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
