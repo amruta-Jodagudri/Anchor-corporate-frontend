@@ -634,17 +634,7 @@
               <span class="new-dealer-chevron">⌄</span>
             </div>
 
-            <div class="new-dealer-add-wrapper add-dealer-wrapper">
-              <button type="button" class="orange-btn" id="newDealerAddBtn">
-                Add dealer
-                <i data-lucide="chevron-down"></i>
-              </button>
-
-              <div class="add-dealer-menu" id="newDealerAddMenu">
-                <div class="menu-item">Add single dealer</div>
-                <div class="menu-item">Bulk upload dealers</div>
-              </div>
-            </div>
+            <div class="new-dealer-add-wrapper add-dealer-wrapper" data-add-dealer></div>
           </div>
 
           <!-- FILTER / TOOLBAR -->
@@ -1866,17 +1856,7 @@
 
             <div class="new-dealer-tab-spacer"></div>
 
-            <div class="new-dealer-add-wrapper add-dealer-wrapper">
-              <button type="button" class="orange-btn" id="txnAddDealerBtn">
-                Add dealer
-                <i data-lucide="chevron-down"></i>
-              </button>
-
-              <div class="add-dealer-menu" id="txnAddDealerMenu">
-                <div class="menu-item">Add single dealer</div>
-                <div class="menu-item">Bulk upload dealers</div>
-              </div>
-            </div>
+            <div class="new-dealer-add-wrapper add-dealer-wrapper" data-add-dealer></div>
           </div>
 
           <!-- TOOLBAR -->
@@ -2069,7 +2049,7 @@
 
           <!-- TRANSACTION FILTERS MODAL -->
           <div class="dealer-filters-overlay" id="txnFiltersOverlay">
-            <div class="dealer-filters-modal">
+            <div class="dealer-filters-modal txn-filters-modal">
               <div class="dealer-filters-header">
                 <h2>Transaction dashboard filters</h2>
                 <button
@@ -2309,17 +2289,7 @@
 
             <div class="new-dealer-tab-spacer"></div>
 
-            <div class="new-dealer-add-wrapper add-dealer-wrapper">
-              <button type="button" class="orange-btn" id="renewalAddDealerBtn">
-                Add dealer
-                <i data-lucide="chevron-down"></i>
-              </button>
-
-              <div class="add-dealer-menu" id="renewalAddDealerMenu">
-                <div class="menu-item">Add single dealer</div>
-                <div class="menu-item">Bulk upload dealers</div>
-              </div>
-            </div>
+            <div class="new-dealer-add-wrapper add-dealer-wrapper" data-add-dealer></div>
           </div>
 
           <div class="new-dealer-toolbar">
@@ -3327,7 +3297,7 @@
             <span class="material-icons">close</span>
           </button>
 
-          <h2>Add dealer lead</h2>
+          <h2 data-renewal-text="Renew limit" data-enhance-text="Enhance limit">Add dealer lead</h2>
 
           <p class="subtitle">Details you need to fill:</p>
         </div>
@@ -3357,7 +3327,7 @@
                 <span class="material-symbols-outlined"> cards_stack </span>
               </div>
               <div>
-                PAN card
+                <span data-renewal-text="PAN number">PAN card</span>
                 <span class="firm">(firm)</span>
               </div>
             </span>
@@ -3390,15 +3360,48 @@
           <button class="modal-close-btn" id="modalStep3CloseBtn">
             <span class="material-icons">close</span>
           </button>
-          <h2>Add dealer lead</h2>
+          <h2 data-renewal-text="Renew limit" data-enhance-text="Enhance limit">Add dealer lead</h2>
         </div>
 
         <div class="stepScroll">
           <form id="addDealerLeadForm" novalidate>
+            <div class="form-section renewal-only">
+            <div class="renewal-summary-grid">
+              <div class="form-group">
+                <small class="renewal-summary-label">Dealer's firm name</small>
+                <span class="renewal-summary-value" data-renewal-field="firm"></span>
+              </div>
+              <div class="form-group">
+                <small class="renewal-summary-label">Dealer code</small>
+                <span class="renewal-summary-value" data-renewal-field="dealerCode"></span>
+              </div>
+              <div class="form-group empty-group"></div>
+
+              <div class="form-group">
+                <small class="renewal-summary-label">PAN</small>
+                <span class="renewal-summary-value" data-renewal-field="pan"></span>
+              </div>
+              <div class="form-group">
+                <small class="renewal-summary-label">Constitution</small>
+                <span class="renewal-summary-value" data-renewal-field="constitution"></span>
+              </div>
+              <div class="form-group empty-group"></div>
+
+              <div class="form-group">
+                <small class="renewal-summary-label">Address</small>
+                <span class="renewal-summary-value" data-renewal-field="address"></span>
+              </div>
+              <div class="form-group">
+                <small class="renewal-summary-label">Account number</small>
+                <span class="renewal-summary-value" data-renewal-field="accountNumber"></span>
+              </div>
+              <div class="form-group empty-group"></div>
+            </div>
+          </div>
             <div class="form-section">
               <h3 class="section-title">Dealer details</h3>
               <div class="form-grid-3">
-                <div class="form-group">
+                <div class="form-group lead-only">
                   <label>Dealer's firm name</label>
                   <input type="text" id="firmName" placeholder="Enter name" />
                   <span class="error-msg" id="firmNameError"
@@ -3407,7 +3410,7 @@
                     name.</span
                   >
                 </div>
-                <div class="form-group">
+                <div class="form-group lead-only">
                   <label>Dealer code</label>
                   <input type="text" id="dealerCode" placeholder="Enter code" />
                   <span class="error-msg" id="dealerCodeError"
@@ -3415,9 +3418,9 @@
                     dealer code is invalid.</span
                   >
                 </div>
-                <div class="form-group empty-group"></div>
+                <div class="form-group empty-group lead-only"></div>
 
-                <div class="form-group">
+                <div class="form-group lead-only">
                   <label
                     >PAN
                     <span class="info-step-icon material-icons"
@@ -3436,7 +3439,7 @@
                     10-character alphanumeric identifier.</span
                   >
                 </div>
-                <div class="form-group">
+                <div class="form-group lead-only">
                   <label>Constitution</label>
                   <div
                     class="custom-select-wrapper"
@@ -3461,7 +3464,7 @@
                     select a constitution.
                   </span>
                 </div>
-                <div class="form-group empty-group"></div>
+                <div class="form-group empty-group lead-only"></div>
 
                 <div class="form-group">
                   <label>Mobile number</label>
@@ -3492,7 +3495,7 @@
                 </div>
                 <div class="form-group empty-group"></div>
 
-                <div class="form-group">
+                <div class="form-group lead-only">
                   <label>Address line 1</label>
                   <input
                     type="text"
@@ -3504,7 +3507,7 @@
                     enter a valid address.</span
                   >
                 </div>
-                <div class="form-group">
+                <div class="form-group lead-only">
                   <label
                     >Address line 2
                     <span class="optionsl-text">(Optional)</span></label
@@ -3515,9 +3518,9 @@
                     placeholder="Enter address"
                   />
                 </div>
-                <div class="form-group empty-group"></div>
+                <div class="form-group empty-group lead-only"></div>
 
-                <div class="form-group">
+                <div class="form-group lead-only">
                   <label
                     >Address line 3
                     <span class="optionsl-text">(Optional)</span></label
@@ -3528,7 +3531,7 @@
                     placeholder="Enter address"
                   />
                 </div>
-                <div class="form-group">
+                <div class="form-group lead-only">
                   <label>Pin code</label>
                   <input
                     type="text"
@@ -3542,9 +3545,9 @@
                     pin code.</span
                   >
                 </div>
-                <div class="form-group empty-group"></div>
+                <div class="form-group empty-group lead-only"></div>
 
-                <div class="form-group">
+                <div class="form-group lead-only">
                   <label>City</label>
                   <div class="custom-select-wrapper" id="cityCustomSelect">
                     <div class="custom-select-trigger">
@@ -3585,7 +3588,7 @@
                     name.</span
                   >
                 </div>
-                <div class="form-group empty-group"></div>
+                <div class="form-group empty-group lead-only"></div>
 
                 <div class="form-group">
                   <label
@@ -3594,15 +3597,15 @@
                   >
                   <input type="text" id="lastName" placeholder="Enter name" />
                 </div>
-                <div class="form-group empty-group"></div>
-                <div class="form-group empty-group"></div>
+                <div class="form-group empty-group lead-only"></div>
+                <div class="form-group empty-group lead-only"></div>
               </div>
             </div>
 
             <div class="form-section">
               <h3 class="section-title">Sales details</h3>
               <div class="form-grid-3">
-                <div class="form-group">
+                <div class="form-group lead-only">
                   <label>Sales type</label>
                   <div class="custom-select-wrapper" id="saleTypeCustomSelect">
                     <div class="custom-select-trigger">
@@ -3778,7 +3781,7 @@
                 </div>
                 <div class="form-group empty-group"></div>
 
-                <div class="form-group">
+                <div class="form-group lead-only">
                   <label>Instances of overdue (7D+)</label>
                   <input
                     type="text"
@@ -3791,7 +3794,7 @@
                     valid number of instances.</span
                   >
                 </div>
-                <div class="form-group">
+                <div class="form-group lead-only">
                   <label>Cheque returns (last 12M)</label>
                   <input
                     type="text"
@@ -3804,14 +3807,14 @@
                     number of cheque returns.</span
                   >
                 </div>
-                <div class="form-group empty-group"></div>
+                <div class="form-group empty-group lead-only"></div>
               </div>
             </div>
           </form>
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="saveExitBtn active">Save & exit</button>
+          <button type="button" class="saveExitBtn active lead-only">Save & exit</button>
           <div class="footer-actions">
             <button class="outline-orange-btn" id="cancelStepBtn">Back</button>
             <button class="orange-btn" id="stepNextBtn">Proceed</button>
@@ -3881,7 +3884,7 @@
             <div class="section-container">
               <h3 class="section-title">Sales details</h3>
               <div class="details-grid sales-top-grid">
-                <div class="detail-item">
+                <div class="detail-item lead-only">
                   <span class="detail-label">Sales type</span>
                   <span class="detail-value">Post</span>
                 </div>
@@ -4000,11 +4003,11 @@
                     ><span>₹</span><span>3,00,00,000.00</span></span
                   >
                 </div>
-                <div class="detail-item">
+                <div class="detail-item lead-only">
                   <span class="detail-label">Instances of overdue (7D+)</span>
                   <span class="detail-value bold">0</span>
                 </div>
-                <div class="detail-item">
+                <div class="detail-item lead-only">
                   <span class="detail-label">Cheque returns (last 12M)</span>
                   <span class="detail-value bold">1</span>
                 </div>
@@ -4042,8 +4045,8 @@
             </div>
           </div>
           <div>
-            <h2 class="modal-title">Dealer's eligibility status</h2>
-            <p>Verify the dealer’s eligibility status from the bank</p>
+            <h2 class="modal-title" data-renewal-text="Dealer renewal's eligibility status" data-enhance-text="Dealer's enhancement eligibility status">Dealer's eligibility status</h2>
+            <p data-renewal-text="Verify the dealer renewal's eligibility status from the bank" data-enhance-text="Verify the dealer's enhancement eligibility status from the bank">Verify the dealer’s eligibility status from the bank</p>
           </div>
         </div>
 
@@ -4127,7 +4130,7 @@
             </div>
           </div>
           <div class="right-section-review">
-            <p class="review-title2">Successfully added dealer</p>
+            <p class="review-title2" data-renewal-text="Successfully renewed" data-enhance-text="Successfully enhanced">Successfully added dealer</p>
           </div>
         </div>
 
@@ -4182,7 +4185,7 @@
               </div>
             </div>
 
-            <button class="add-another-btn" id="addAnotherBtn">
+            <button class="add-another-btn lead-only" id="addAnotherBtn">
               <span class="plus-icon material-icons">add</span> Add another
               dealer
             </button>
