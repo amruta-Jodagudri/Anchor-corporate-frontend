@@ -782,6 +782,7 @@ header {
 }
 
 .eligibility-header {
+  display: flex;
   padding: 24px 32px;
   background: #fef9f6;
   align-items: center;

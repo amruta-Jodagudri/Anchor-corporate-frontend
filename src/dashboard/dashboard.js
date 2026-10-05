@@ -2079,6 +2079,7 @@ function validateForm() {
 
   requiredFields.forEach(function (id) {
     const $el = $("#" + id);
+    if ($el.closest(".lead-only").length) return;
     if (!$el.val() || $el.hasClass("input-error")) {
       isFormValid = false;
     }

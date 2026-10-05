@@ -2918,44 +2918,45 @@ jQuery(function ($) {
       $tip.toggleClass("below", below);
     }
 
-    $(document).on("mouseover", ".info-dot[data-tooltip]", function () {
-      if (!canHover.matches) return;
-      show(this, $(this).attr("data-tooltip"));
+   const TIP_SEL =
+  ".info-dot[data-tooltip], .dealer-status small[data-tooltip], .table-status small[data-tooltip]";
+
+$(document).on("mouseover", TIP_SEL, function () {
+  if (!canHover.matches) return;
+  show(this, $(this).attr("data-tooltip"));
+});
+
+$(document).on("mouseout", TIP_SEL, hide);
+
+$(document).on("click", function (event) {
+  const $target = $(event.target);
+  const dot = canHover.matches ? null : $target.closest(TIP_SEL)[0] || null;
+  const cell = mobileMq.matches
+    ? $target.closest(".txn-cell--days")[0] || null
+    : null;
+  const el = dot || cell;
+
+  if (!el) {
+    hide();
+    return;
+  }
+  if (source === el) {
+    hide();
+    return;
+  }
+
+  if (cell) {
+    const r = cell.getBoundingClientRect();
+    show(cell, "Excluding cure days", {
+      left: r.right - 13,
+      width: 13,
+      top: r.top,
+      bottom: r.top + 16,
     });
-
-    $(document).on("mouseout", ".info-dot[data-tooltip]", hide);
-
-    $(document).on("click", function (event) {
-      const $target = $(event.target);
-      const dot = canHover.matches
-        ? null
-        : $target.closest(".info-dot[data-tooltip]")[0] || null;
-      const cell = mobileMq.matches
-        ? $target.closest(".txn-cell--days")[0] || null
-        : null;
-      const el = dot || cell;
-
-      if (!el) {
-        hide();
-        return;
-      }
-      if (source === el) {
-        hide();
-        return;
-      }
-
-      if (cell) {
-        const r = cell.getBoundingClientRect();
-        show(cell, "Excluding cure days", {
-          left: r.right - 13,
-          width: 13,
-          top: r.top,
-          bottom: r.top + 16,
-        });
-      } else {
-        show(dot, $(dot).attr("data-tooltip"));
-      }
-    });
+  } else {
+    show(dot, $(dot).attr("data-tooltip"));
+  }
+});
 
     window.addEventListener("scroll", hide, true);
     $(window).on("resize", hide);
@@ -3046,7 +3047,6 @@ jQuery(function ($) {
       setDetailsHidden(!detailsHidden);
     });
 
-    initDropdownMenu($("#txnAddDealerBtn"), $("#txnAddDealerMenu"));
   }
 
   function initTxnFiltersModal() {
@@ -3256,6 +3256,11 @@ jQuery(function ($) {
     id: "CLB-000203606-PRO",
     phone: "+91 9836273854",
     uploadedBy: "ICICI Bank",
+    /* TODO(backend): replace with API data */
+    dealerCode: "T1H2E3M66",
+    constitution: "Proprietorship",
+    address: "132P, BKC, Mumbai, Maharashtra, 400001",
+    accountNumber: "0102 0502 4537",
   };
 
   /* TODO(backend): replace with API data */
@@ -3909,6 +3914,185 @@ jQuery(function ($) {
     });
   }
 
+  //  RENEW / ENHANCE LIMIT FLOW (reuses the add dealer lead modals)
+  const LIMIT_FLOW_TEXT_ATTR = {
+    renew: "data-renewal-text",
+    enhance: "data-enhance-text",
+  };
+
+  let activeLimitFlow = "";
+
+  function isLimitFlow() {
+    return activeLimitFlow !== "";
+  }
+
+  function setLimitFlow(flow) {
+    if (flow === activeLimitFlow) return;
+
+    const on = flow !== "";
+    $(".lead-only").toggle(!on);
+    $(".renewal-only").toggle(on);
+
+    $("[data-renewal-text]").each(function () {
+      const $el = $(this);
+      if (!isLimitFlow()) $el.attr("data-lead-text", $el.text());
+
+      $el.text(
+        on
+          ? $el.attr(LIMIT_FLOW_TEXT_ATTR[flow]) ||
+              $el.attr("data-renewal-text")
+          : $el.attr("data-lead-text"),
+      );
+    });
+
+    activeLimitFlow = flow;
+  }
+
+  function resetStepForm() {
+    const $form = $("#addDealerLeadForm");
+
+    $form[0].reset();
+    $form.find(".input-error").removeClass("input-error");
+    $form.find(".error-msg").removeClass("show");
+    $form.find(".input-with-icon").removeClass("has-view");
+
+    $form.find(".custom-select-wrapper").each(function () {
+      const $wrap = $(this);
+      const placeholder = $wrap
+        .siblings("select")
+        .find("option")
+        .first()
+        .text()
+        .trim();
+      $wrap.find(".selected-option").text(placeholder);
+      $wrap.find(".option-item").removeClass("selected");
+    });
+
+    $(".custom-calendar-popup").each(function () {
+      this._calState = null;
+    });
+
+    $("#monthlySalesGrid").empty();
+    $(
+      "#monthlySalesContainer, #monthlySalesSummary, #editMonthlySales, #endDateWrap, #limitHelper, #cityStateDisplay",
+    ).hide();
+    $("#endDateTrigger").closest(".date-input-wrap").show();
+    $("#addMonthlySalesBtn").addClass("btn-disabled").prop("disabled", true);
+
+    validateForm();
+  }
+
+  function startLimitFlow(flow, item) {
+    setLimitFlow(flow);
+    resetStepForm();
+
+    $("[data-renewal-field]").each(function () {
+      $(this).text(item[$(this).attr("data-renewal-field")] || "-");
+    });
+
+    $("#mobileNumber").val(String(item.phone || "").replace(/^\+91\s*/, ""));
+    $("#emailId").val(item.email || "");
+    $("#associationYears").val(parseInt(item.years, 10) || "");
+    $("#recommendationLimit")
+      .val(item.recommendation ? cleanAmount(item.recommendation) : "")
+      .trigger("blur");
+
+    validateForm();
+
+    openModal("#addDelarLeadModal");
+  }
+
+  function endLimitFlow() {
+    if (!isLimitFlow()) return;
+    setLimitFlow("");
+    resetStepForm();
+  }
+
+  function amountToWords(amount) {
+    const ones = [
+      "", "one", "two", "three", "four", "five", "six", "seven", "eight",
+      "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen",
+      "sixteen", "seventeen", "eighteen", "nineteen",
+    ];
+    const tens = [
+      "", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy",
+      "eighty", "ninety",
+    ];
+    const units = [
+      { value: 10000000, name: "crore" },
+      { value: 100000, name: "lakh" },
+      { value: 1000, name: "thousand" },
+    ];
+
+    function belowHundred(n) {
+      if (n < 20) return ones[n];
+      return tens[Math.floor(n / 10)] + (n % 10 ? " " + ones[n % 10] : "");
+    }
+
+    function belowThousand(n) {
+      const hundreds = Math.floor(n / 100);
+      const rest = n % 100;
+      const head = hundreds ? ones[hundreds] + " hundred" : "";
+      return head + (head && rest ? " " : "") + belowHundred(rest);
+    }
+
+    let remaining = Math.floor(amount);
+    if (remaining === 0) return "Rupees zero";
+
+    const parts = [];
+    units.forEach(function (unit) {
+      const count = Math.floor(remaining / unit.value);
+      if (!count) return;
+      parts.push(belowThousand(count) + " " + unit.name);
+      remaining %= unit.value;
+    });
+    if (remaining) parts.push(belowThousand(remaining));
+
+    return "Rupees " + parts.join(" ");
+  }
+
+  function initLimitFlowAmountField() {
+    const $limit = $("#recommendationLimit");
+    const $helper = $("#limitHelper");
+    if (!$limit.length) return;
+
+    const $wrap = $limit.closest(".input-with-icon");
+    const $view = $("<span>", { class: "renewal-limit-view" }).appendTo($wrap);
+
+    $(document).on("focus", "#recommendationLimit", function () {
+      if (!isLimitFlow()) return;
+      $wrap.removeClass("has-view");
+      $limit.val(cleanAmount($limit.val()));
+    });
+
+    $(document).on("blur", "#recommendationLimit", function () {
+      if (!isLimitFlow()) return;
+
+      const amount = parseAmountInput($limit.val());
+      if (amount === null) {
+        $helper.hide();
+        return;
+      }
+
+      const formatted = formatAmount(amount);
+      $limit.val(formatted);
+      $view.html(formatAmountMarkup(formatted));
+      $wrap.addClass("has-view");
+      $helper.text(amountToWords(amount)).show();
+    });
+  }
+
+  function initRenewalFlow() {
+    $(".renewal-only").hide();
+    initLimitFlowAmountField();
+
+    $(document).on(
+      "click",
+      ".addDealerMenu .menu-item[data-action='single-lead']",
+      endLimitFlow,
+    );
+  }
+
   function initRenewalDashboard() {
     const $page = $("#renewalDetailsPage");
     const $listBody = $("#renewalTableBody");
@@ -3948,8 +4132,6 @@ jQuery(function ($) {
       setDetailsHidden(!detailsHidden);
     });
 
-    initDropdownMenu($("#renewalAddDealerBtn"), $("#renewalAddDealerMenu"));
-
     $listBody.on("click", ".renewal-expand-btn", function () {
       const $row = $(this).closest(".renewal-row");
       const $detailRow = $row.next();
@@ -3971,9 +4153,20 @@ jQuery(function ($) {
           "This lead is expired. Please contact ICICI Bank SM/RM for enhancement.",
         );
       }
-      /* TODO: "Enhance limit" and "Renew limit" flows */
-    });
 
+      const $link = $(this);
+      const flow = Object.keys(LIMIT_FLOW_TEXT_ATTR).find(function (name) {
+        return $link.hasClass(name);
+      });
+
+      if (flow) {
+        startLimitFlow(
+          flow,
+          renewalData[$link.closest("tr").attr("data-renewal-index")],
+        );
+      }
+      /* TODO: "Enhance limit" flow */
+    });
     initRenewalFiltersModal();
   }
 
@@ -4477,7 +4670,6 @@ jQuery(function ($) {
   initScrollLock();
   prepareContactIcons();
 
-  initDropdownMenu($("#newDealerAddBtn"), $("#newDealerAddMenu"));
   initDealerFilterButtons();
   initDealerSearch();
   initRowExpansion();
@@ -4488,6 +4680,7 @@ jQuery(function ($) {
 
   initTransactionDashboard();
   initRenewalDashboard();
+  initRenewalFlow();
   wrapCodeValues();
   initInfoTooltips();
   initUploadedDetails();
