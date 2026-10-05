@@ -2694,7 +2694,38 @@ $(document).on("change", "#bulkUploadDropZone .upload-file-input", function () {
   var leftIcon = zone.find(".upload-left-icon");
   var rightIcon = zone.find(".upload-right-icon");
   var title = zone.find(".upload-title");
+  var info = zone.find(".upload-info");
   var loader = zone.find(".upload-loader");
+
+  var MAX_SIZE = 2 * 1024 * 1024;
+  if (file.size > MAX_SIZE) {
+    zone.removeClass("uploaded");
+    leftIcon
+      .show()
+      .html('<span class="material-symbols-outlined">draft</span>')
+      .removeClass("file-name");
+    rightIcon.hide();
+    loader.hide();
+
+    zone.addClass("error");
+    title.text("Upload failed").addClass("error");
+    info.text("File size larger than 2MB").addClass("error");
+
+    leftIcon.find(".material-symbols-outlined").text("error");
+
+    zone.removeData(
+      "valid-rows errors total-records selected-file-name parse-error",
+    );
+    bulkParsedRows = [];
+    $("#bulkUploadBtn").addClass("btn-disabled").prop("disabled", true);
+
+    return;
+  }
+
+  zone.removeClass("error");
+  title.removeClass("error");
+  info.removeClass("error");
+  info.text("(Max size: 1.8MB | Format: CSV)");
 
   leftIcon.hide();
   loader.show();
@@ -2802,18 +2833,42 @@ $(document).on("click", "#BulkUploadSuccessSubmitBtn", function (e) {
   closeModal("#BulkUploadSuccessModal");
 });
 
+var uploadExitSourceModal = null;
+
 $(document).on(
   "click",
-  "#bulkUploadEligibilityCloseBtn, #modalBulkUploadSuccessCloseBtn",
+  "#bulkUploadEligibilityCloseBtn, #modalBulkUploadSuccessCloseBtn, #bulkUploadLoaderModal [data-close-modal]",
   function (e) {
-    closeModal("#bulkUploadEligibilityModal, #BulkUploadSuccessModal");
+    var $clicked = $(this);
+    if ($clicked.closest("#bulkUploadEligibilityModal").length) {
+      uploadExitSourceModal = "#bulkUploadEligibilityModal";
+    } else if ($clicked.closest("#BulkUploadSuccessModal").length) {
+      uploadExitSourceModal = "#BulkUploadSuccessModal";
+    } else if ($clicked.closest("#bulkUploadLoaderModal").length) {
+      uploadExitSourceModal = "#bulkUploadLoaderModal";
+    }
+
+    closeModal(
+      "#bulkUploadEligibilityModal, #BulkUploadSuccessModal, #bulkUploadLoaderModal",
+    );
     openModal("#uploadExitModal");
   },
 );
 
+$(document).on("click", "#uploadExitBackBtn", function (e) {
+  closeModal("#uploadExitModal");
+
+  if (uploadExitSourceModal) {
+    openModal(uploadExitSourceModal);
+    if (window.lucide) lucide.createIcons();
+  }
+
+  uploadExitSourceModal = null;
+});
+
 $(document).on("click", "#reuploadBtn", function () {
   var zone = $("#bulkUploadDropZone");
-  zone.removeClass("uploaded");
+  zone.removeClass("uploaded error");
   zone
     .find(".upload-left-icon")
     .show()
@@ -2823,7 +2878,11 @@ $(document).on("click", "#reuploadBtn", function () {
   zone
     .find(".upload-title")
     .text("Upload / Drag & Drop file")
-    .removeClass("file-name");
+    .removeClass("file-name error");
+  zone
+    .find(".upload-info")
+    .text("(Max size: 1.8MB | Format: CSV)")
+    .removeClass("error");
   zone.find(".upload-loader").hide();
   zone.find(".upload-file-input").val("");
   zone.removeData(
@@ -2838,28 +2897,168 @@ $(document).on("click", "#reuploadBtn", function () {
   if (window.lucide) lucide.createIcons();
 });
 
-$(document).on("click", "#bulkUploadModal [data-close-modal]", function () {
-  var zone = $("#bulkUploadDropZone");
-  zone.removeClass("uploaded");
-  zone
-    .find(".upload-left-icon")
-    .show()
-    .html('<span class="material-symbols-outlined">draft</span>')
-    .removeClass("file-name");
-  zone.find(".upload-right-icon").hide();
-  zone
-    .find(".upload-title")
-    .text("Upload / Drag & Drop file")
-    .removeClass("file-name");
-  zone.find(".upload-loader").hide();
-  zone.find(".upload-file-input").val("");
-  zone.removeData(
-    "valid-rows errors total-records selected-file-name parse-error",
-  );
+$(document).on(
+  "click",
+  "#bulkUploadModal [data-close-modal], #documentOverviewModal [data-close-modal], #uploadExitBtn",
+  function () {
+    var zone = $("#bulkUploadDropZone");
+    zone.removeClass("uploaded error");
+    zone
+      .find(".upload-left-icon")
+      .show()
+      .html('<span class="material-symbols-outlined">draft</span>')
+      .removeClass("file-name");
+    zone.find(".upload-right-icon").hide();
+    zone
+      .find(".upload-title")
+      .text("Upload / Drag & Drop file")
+      .removeClass("file-name error");
+    zone
+      .find(".upload-info")
+      .text("(Max size: 1.8MB | Format: CSV)")
+      .removeClass("error");
+    zone.find(".upload-loader").hide();
+    zone.find(".upload-file-input").val("");
+    zone.removeData(
+      "valid-rows errors total-records selected-file-name parse-error",
+    );
 
-  bulkParsedRows = [];
-  $("#bulkUploadBtn").addClass("btn-disabled").prop("disabled", true);
+    bulkParsedRows = [];
+    $("#bulkUploadBtn").addClass("btn-disabled").prop("disabled", true);
+    uploadExitSourceModal = null;
+  },
+);
+
+// Download COR format CSV
+var COR_HEADERS = [
+  "Name of the Firm",
+  "Constitution (Enter: 1 for Proprietorship Firm, 2 for Partnership Firm, 3 for Pvt. Ltd. Company, 4 for Public Ltd. Company)",
+  "Dealer Code",
+  "First Name of Dealer (Optional)",
+  "Last Name of Dealer (Optional)",
+  "PAN Card of firm",
+  "Mobile Number",
+  "Email ID",
+  "Address Line 1",
+  "Address Line 2 (Optional)",
+  "Address Line 3 (Optional)",
+  "Pin Code",
+  "Sales Type (Enter: 1 for Past, 2 for Projected)",
+  "From Date (Last 12 Month Sales) (MM-YYYY)",
+  "To Date (Last 12 Month Sales) (MM-YYYY)",
+  "Month1 Sales (in Rupees) (ToDate)",
+  "Month2 Sales (in Rupees)",
+  "Month3 Sales (in Rupees)",
+  "Month4 Sales (in Rupees)",
+  "Month5 Sales (in Rupees)",
+  "Month6 Sales (in Rupees)",
+  "Month7 Sales (in Rupees)",
+  "Month8 Sales (in Rupees)",
+  "Month9 Sales (in Rupees)",
+  "Month10 Sales (in Rupees)",
+  "Month11 Sales (in Rupees)",
+  "Month12 Sales (in Rupees)",
+  "No of Years of Association (FromDate)",
+  "Cheque Returns in Last Available 12 months (Optional)",
+  "Recommendation Limit (in Million) (Optional)",
+  "Instances of Overdue More Than 7 Days in Last Available 12 Months",
+  "Business Vintage (fill mandatory if no. of years of association is less than or equal to 1) (fill 0 if not required)",
+  "Corporate Representative (Optional)",
+  "Corporate Representative Mobile number (Optional)",
+  "Corporate Representative Email ID (Optional)",
+];
+
+function downloadCORFormat() {
+  var csvContent = COR_HEADERS.map(function (header) {
+    return '"' + String(header).replace(/"/g, '""') + '"';
+  }).join(",");
+
+  var blob = new Blob(["\uFEFF" + csvContent], {
+    type: "text/csv;charset=utf-8;",
+  });
+
+  var link = document.createElement("a");
+  var url = URL.createObjectURL(blob);
+
+  link.setAttribute("href", url);
+  link.setAttribute("download", "COR_Format.csv");
+  link.style.display = "none";
+
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  URL.revokeObjectURL(url);
+}
+
+$(document).on("click", "#downloadCORLink", function (e) {
+  e.preventDefault();
+  e.stopPropagation();
+  downloadCORFormat();
 });
+
+// Drag & Drop for bulk upload
+(function () {
+  var $zone = $("#bulkUploadDropZone");
+  var $leftIcon = $zone.find(".upload-left-icon");
+
+  $(document).on("dragover dragenter drop", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  });
+
+  $zone.on("dragenter dragover", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    $zone.addClass("drag");
+    $leftIcon.addClass("drag");
+  });
+
+  $zone.on("dragleave", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!$(e.relatedTarget).closest("#bulkUploadDropZone").length) {
+      $zone.removeClass("drag");
+      $leftIcon.removeClass("drag");
+    }
+  });
+
+  $zone.on("drop", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    $zone.removeClass("drag");
+    $leftIcon.removeClass("drag");
+
+    var files = e.originalEvent.dataTransfer.files;
+    if (!files || !files.length) return;
+
+    var file = files[0];
+
+    if (!/\.csv$/i.test(file.name)) {
+      $zone.addClass("error");
+      $zone.find(".upload-title").text("Upload failed").addClass("error");
+      $zone
+        .find(".upload-info")
+        .text("Only CSV files are allowed")
+        .addClass("error");
+      $zone
+        .find(".upload-left-icon")
+        .show()
+        .html('<span class="material-symbols-outlined">error</span>')
+        .removeClass("file-name");
+      $zone.find(".upload-right-icon").hide();
+      $zone.find(".upload-loader").hide();
+      $("#bulkUploadBtn").addClass("btn-disabled").prop("disabled", true);
+      return;
+    }
+
+    var dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+    $zone.find(".upload-file-input")[0].files = dataTransfer.files;
+    $zone.find(".upload-file-input").trigger("change");
+  });
+})();
 
 // Common functions
 function lucideIconCommonCode() {
