@@ -2236,6 +2236,45 @@ if (eligibleStatus === "Y") {
 // Add another lead
 $(document).on("click", "#addAnotherBtn", function (e) {
   closeModal("#leadSuccessModal");
+  var $form = $("#addDealerLeadForm");
+  $form[0].reset();
+
+  $form.find(".custom-select-trigger .selected-option").each(function () {
+    var $span = $(this);
+    var id = $span.closest(".custom-select-wrapper").attr("id") || "";
+
+    if (id.indexOf("constitution") !== -1) {
+      $span.text("Select constitution");
+    } else if (id.indexOf("city") !== -1) {
+      $span.text("Select city");
+    } else if (id.indexOf("saleType") !== -1) {
+      $span.text("Sales type");
+    } else {
+      $span.text("Select");
+    }
+  });
+  $form.find(".custom-select-options .option-item").removeClass("selected");
+  $form.find(".custom-select-options").hide();
+  $form.find(".custom-select-trigger").removeClass("active");
+  $("#cityStateDisplay").hide().find("#cityStateValue").text("");
+  $form.find(".error-msg").removeClass("show");
+  $form.find(".input-error").removeClass("input-error");
+  $form.find(".startDate").val("");
+  $form.find(".endDate").val("");
+  $("#endDateWrap").hide();
+  $("#endDateTrigger").closest(".date-input-wrap").show();
+  $("#monthlySalesGrid").empty();
+  $("#monthlySalesContainer").hide();
+  $("#monthlySalesSummary").hide();
+  $("#monthlySalesFooter").hide();
+  $("#editMonthlySales").hide();
+  $("#totalSalesValue").text("₹0");
+  $("#addMonthlySalesBtn").addClass("btn-disabled").prop("disabled", true);
+  $("#submitMonthlySalesBtn, #resetMonthlySales")
+    .prop("disabled", true)
+    .addClass("btn-disabled");
+  $("#limitHelper").hide().text("");
+  $("#stepNextBtn").prop("disabled", true);
 
   const isAddLeadTermChecked = $("#skipOverviewCheck").is(":checked");
   if (isAddLeadTermChecked) {
@@ -2243,6 +2282,9 @@ $(document).on("click", "#addAnotherBtn", function (e) {
   } else {
     openModal("#addDelarLeadModal");
   }
+
+  validateForm();
+  lucideIconCommonCode();
 });
 
 // Save and exit modal
