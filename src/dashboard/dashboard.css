@@ -4743,6 +4743,94 @@ td {
   padding: 0px 32px;
 }
 
+/* Bulk Eligibility Cards */
+.bulk-eligibility-cards {
+  display: none;
+  padding: 0px 26px;
+}
+
+.bulk-eligibility-card {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0px 4px 16px 0px #00000014;
+}
+
+.bulk-eligibility-card .card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+
+.bulk-eligibility-card .card-row.single-col {
+  justify-content: flex-start;
+  margin-bottom: 0px;
+}
+
+.bulk-eligibility-card .card-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
+}
+
+.bulk-eligibility-card .card-col.align-right {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.bulk-eligibility-card .card-label {
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.bulk-eligibility-card .card-value {
+  font-size: 14px;
+  color: #111827;
+  font-weight: 500;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.bulk-eligibility-card .card-value.firm-name {
+  font-weight: 600;
+}
+
+.bulk-eligibility-card .card-value.amount {
+  font-weight: 600;
+}
+
+.bulk-eligibility-card .status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.bulk-eligibility-card .status-badge .material-icons {
+  font-size: 14px;
+}
+
+.bulk-eligibility-card .status-badge.eligible {
+  background: #e6f4ea;
+  color: #137333;
+}
+
+.bulk-eligibility-card .status-badge.not-eligible {
+  background: #fce8e6;
+  color: #c5221f;
+}
+
 @media (min-width: 1441px) {
   .custom-modal {
     width: 1300px;
@@ -5101,6 +5189,20 @@ td {
 
   .monthly-sales-summary {
     width: 48%;
+  }
+}
+
+@media (max-width: 1024px) {
+  .bulk-eligibility-table-wrap {
+    display: none !important;
+  }
+
+  .bulk-eligibility-cards {
+    display: block;
+  }
+
+  #bulkUploadEligibilityModal .modal-table-body {
+    padding: 0;
   }
 }
 
@@ -5878,6 +5980,26 @@ td {
   .add-another-btn {
     font-size: 14px;
   }
+
+  .bulk-upload-eligibility-modal .modal-footer {
+    bottom: 16px;
+  }
+
+  .bulk-eligibility-cards {
+    padding: 0px 16px;
+  }
+
+  .bulk-upload-eligibility-modal .stepScroll {
+    height: 50%;
+  }
+
+  .bulk-upload-eligibility-modal {
+    max-height: 92vh !important;
+  }
+
+  .faq-btn {
+    left: 16px;
+  }
 }
 
 @media (max-width: 680px) {
@@ -6102,6 +6224,28 @@ td {
 
   .monthly-sales-summary {
     width: 100%;
+  }
+
+  .bulk-upload-eligibility-modal .stepScroll {
+    height: 38%;
+  }
+
+  .dealer-card-eligible {
+    margin-top: 0px;
+  }
+
+  .bulk-upload-eligibility-modal .dealer-card-top {
+    gap: 16px;
+  }
+
+  .upload-drop-zone {
+    width: 100%;
+  }
+}
+
+@media (max-width: 376px) {
+  .faq-btn {
+    bottom: 70px;
   }
 }
 

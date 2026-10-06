@@ -2584,6 +2584,8 @@ function renderBulkEligibilityTable(rows) {
     "<th>Status</th>" +
     "</tr></thead><tbody>";
 
+  var cardsHtml = '<div class="bulk-eligibility-cards">';
+
   rows.forEach(function (row) {
     var recLimitMillion =
       Number(String(row.recommendation || "0").replace(/[^0-9.]/g, "")) || 0;
@@ -2611,16 +2613,20 @@ function renderBulkEligibilityTable(rows) {
       totalPQ += pqOffer;
     }
 
-    var statusText = isAccepted ? "Accepted" : "Rejected";
-    var statusClass = isAccepted ? "status-accepted" : "status-rejected";
+    var statusText = isAccepted ? "Eligible" : "Not eligible";
+    var statusClass = isAccepted ? "eligible" : "not-eligible";
     var statusIcon = isAccepted ? "check" : "close";
 
+    var firmName = String(row.firmName || "").trim();
+    var shortFirmName = shortenFirmName(firmName);
+
+    // ===== Table Row =====
     tableHtml +=
       "<tr>" +
       '<td class="firm-name-cell" title="' +
-      String(row.firmName || "").replace(/"/g, "&quot;") +
+      firmName.replace(/"/g, "&quot;") +
       '">' +
-      shortenFirmName(row.firmName) +
+      shortFirmName +
       "</td>" +
       '<td class="amount-cell">' +
       formatBulkAmount(pqOffer) +
@@ -2633,7 +2639,7 @@ function renderBulkEligibilityTable(rows) {
       "</td>" +
       "<td>" +
       '<span class="status-cell ' +
-      statusClass +
+      (isAccepted ? "status-accepted" : "status-rejected") +
       '">' +
       '<span class="material-icons status-icon">' +
       statusIcon +
@@ -2642,16 +2648,61 @@ function renderBulkEligibilityTable(rows) {
       "</span>" +
       "</td>" +
       "</tr>";
+
+    // ===== Card =====
+    cardsHtml += `
+      <div class="bulk-eligibility-card">
+        <!-- Row 1: Firm (left) | Status (right) -->
+        <div class="card-row">
+          <div class="card-col">
+            <span class="card-label">Firm</span>
+            <span class="card-value firm-name" title="${firmName.replace(/"/g, "&quot;")}">${shortFirmName}</span>
+          </div>
+          <div class="card-col align-right">
+            <span class="card-label">Status</span>
+            <span class="card-value">
+              <span class="status-badge ${statusClass}">
+                <span class="material-icons">${statusIcon}</span>
+                ${statusText}
+              </span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Row 2: PQ (left) | Recommendation limit (right) -->
+        <div class="card-row">
+          <div class="card-col">
+            <span class="card-label">PQ</span>
+            <span class="card-value amount">${formatBulkAmount(pqOffer)}</span>
+          </div>
+          <div class="card-col align-right">
+            <span class="card-label">Recommendation limit</span>
+            <span class="card-value amount">${formatBulkAmount(recLimitRupees)}</span>
+          </div>
+        </div>
+
+        <!-- Row 3: Tenor (left only) -->
+        <div class="card-row single-col">
+          <div class="card-col">
+            <span class="card-label">Tenor</span>
+            <span class="card-value">${tenor}</span>
+          </div>
+        </div>
+      </div>
+    `;
   });
 
   tableHtml += "</tbody></table></div>";
-  $body.html(tableHtml);
+  cardsHtml += "</div>";
+
+  $body.html(tableHtml + cardsHtml);
 
   var fileName =
     $("#bulkUploadDropZone").data("selected-file-name") || "Uploaded file";
 
   $(".fileUploaded").text(fileName);
   $(".dealerCount").text(rows.length);
+
   var totalPQFormatted = totalPQ.toLocaleString("en-IN", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
@@ -2660,8 +2711,9 @@ function renderBulkEligibilityTable(rows) {
   $(".totalPQOffer").text(totalParts[0]);
   $(".decimal-point-value").text("." + (totalParts[1] || "00"));
 
-  // Rupees in words
   $(".rupeesText").text(numberToIndianWords(totalPQ));
+
+  if (window.lucide) lucide.createIcons();
 }
 
 function renderDocumentOverview(errors, totalRecords, fileName) {
@@ -2834,12 +2886,16 @@ $(document).on("click", "#BulkUploadSuccessSubmitBtn", function (e) {
   closeModal("#BulkUploadSuccessModal");
 });
 
+$(document).on("click", "#saveAndExitModal [data-close-modal]", function () {
+  openModal("#stepModal");
+});
+
 var uploadExitSourceModal = null;
 
 $(document).on(
   "click",
   "#bulkUploadEligibilityCloseBtn, #modalBulkUploadSuccessCloseBtn, #bulkUploadLoaderModal [data-close-modal]",
-  function (e) {
+  function () {
     var $clicked = $(this);
     if ($clicked.closest("#bulkUploadEligibilityModal").length) {
       uploadExitSourceModal = "#bulkUploadEligibilityModal";
