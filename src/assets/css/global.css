@@ -1107,22 +1107,22 @@ body.modal-open {
 }
 
 #applyAccessibility.disabled {
-  background: #d2d2d2;
+  background: #d2d2d2 !important;
   color: #6f6f6f;
   cursor: not-allowed;
   border: 1px solid #d2d2d2;
 }
 
 #resetAccessibility.enabled {
-  color: #e3530f;
+  color: #e3530f !important;
   cursor: pointer;
-  border: 1px solid #e3530f;
+  border: 1px solid #e3530f !important;
 }
 
 #resetAccessibility.disabled {
-  color: #6f6f6f;
+  color: #6f6f6f !important;
   cursor: not-allowed;
-  border: 1px solid #d2d2d2;
+  border: 1px solid #d2d2d2 !important;
 }
 
 /* High Contrast Mode Styles */
@@ -1138,8 +1138,10 @@ body.modal-open {
 
 .high-contrast .bg-primary-gradient,
 .high-contrast .mobile-gradient-header {
-  background-color: inherit !important;
+  background: #121212 !important;
   background-image: none !important;
+  box-shadow: 0px 4px 16px 0px #00000014;
+  border: 1px solid #2a2a2a;
 }
 
 .high-contrast .blur-image {
@@ -1200,7 +1202,7 @@ body.modal-open {
   color: #666 !important;
 }
 
-.high-contrast .orange-btn {
+/* .high-contrast .orange-btn {
   background-color: #e3530f !important;
   color: #fff !important;
 }
@@ -1218,7 +1220,7 @@ body.modal-open {
 .high-contrast .outline-orange-btn:disabled {
   border-color: #9f9f9f !important;
   color: #9f9f9f !important;
-}
+} */
 
 .high-contrast .error-msg {
   color: #da1e28 !important;
@@ -1363,7 +1365,7 @@ body.modal-open {
   color: #fff !important;
 }
 
-.high-contrast .header-action-btn,
+.high-contrast .header-action-btn svg,
 .high-contrast .header-icon-btn svg,
 .high-contrast .chevron-icon,
 .high-contrast .download-link svg,
@@ -1480,7 +1482,8 @@ body.modal-open {
   border-top: 8px solid #e7efff !important;
 }
 
-.high-contrast .view-details-btn {
+.high-contrast .view-details-btn,
+.high-contrast .view-details {
   color: #e3530f !important;
 }
 
@@ -1561,9 +1564,7 @@ body.modal-open {
   background: #b00020 !important;
 }
 
-.high-contrast svg,
-.high-contrast .material-symbols-outlined,
-.high-contrast .pillis-container .material-icons {
+.high-contrast .stat-label .stat-icon {
   color: #e3530f !important;
 }
 
@@ -1758,8 +1759,7 @@ body.modal-open {
 }
 
 .high-contrast .language-selected,
-.high-contrast .language-options,
-.high-contrast .upload-drop-zone {
+.high-contrast .language-options {
   background: #fff !important;
   color: #000 !important;
 }
@@ -1920,6 +1920,81 @@ body.modal-open {
 
 .high-contrast #stepper-card {
   height: 100px;
+}
+
+.high-contrast .two-col-row .saction-part .card,
+.high-contrast .two-col-row .renew-part .card,
+.high-contrast .Dashboard-page-section .card {
+  border: 1px solid #2a2a2a;
+  background: #1f1f1f !important;
+}
+
+.high-contrast .eligibility-header {
+  background: #1f1f1f !important;
+}
+
+.high-contrast .toggle-box.active::before {
+  background: linear-gradient(to right, #e3530f, #1f1f1f);
+}
+
+.high-contrast .donut-center {
+  width: 9%;
+}
+
+.high-contrast .sanction-donut-side {
+  border: 1px solid #5b3e31;
+}
+
+.high-contrast .dashboard-footer {
+  bottom: -3px;
+}
+
+.high-contrast .add-dealer-menu {
+  background: #1f1f1f !important;
+  border: 1px solid #2a2a2a;
+}
+
+.high-contrast .firm-title,
+.high-contrast .eligibility-header p {
+  color: #fff !important;
+}
+
+.high-contrast .bulk-eligibility-table tbody tr:nth-child(even),
+.high-contrast .dealer-card,
+.high-contrast .monthly-sales-box,
+.high-contrast .details-container,
+.high-contrast .review-block,
+.high-contrast .lead-table-body tr.lead-table-row.even-row {
+  background-color: #1f1f1f !important;
+}
+
+.high-contrast .bulk-eligibility-table .status-cell.status-accepted,
+.high-contrast .bulk-eligibility-table .status-cell.status-rejected {
+  background-color: #393939 !important;
+}
+
+.high-contrast .input-with-icon .currency-symbol,
+.high-contrast .input-wrapper .currency-symbol {
+  color: #000 !important;
+  background-color: #fff !important;
+}
+
+.high-contrast .outline-orange-btn {
+  color: #e3530f !important;
+}
+
+.high-contrast .lead-count {
+  color: #121212 !important;
+}
+
+.high-contrast .expanded-row td,
+.high-contrast .lead-table-body tr.lead-table-row.row-expanded {
+  background-color: #1f1f1f !important;
+}
+
+.high-contrast .rep-view-mode,
+.high-contrast .rep-edit-mode {
+  background-color: #2a2a2a !important;
 }
 
 @media (max-width: 767px) {

@@ -28,7 +28,7 @@ header {
 }
 
 .orange-btn {
-  background: #e3530f;
+  background: #e3530f !important;
   border: none;
   color: #fff;
   min-width: 180px;
@@ -517,6 +517,21 @@ header {
   width: 320px;
   height: 320px;
   object-fit: contain;
+}
+
+.side-mobile-image {
+  display: none;
+  position: absolute;
+  right: 98px;
+  top: 38%;
+  transform: translateY(-50%);
+  border-radius: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  pointer-events: none;
+  transition: 0.2s;
 }
 
 .icon-circle {
@@ -2073,7 +2088,7 @@ header {
   display: flex;
   align-items: center;
   gap: 4px;
-  color: var(--orange);
+  color: var(--orange) !important;
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
@@ -2324,6 +2339,7 @@ header {
   background: #fef9f6;
   border-radius: 8px 0px 0px 8px;
   border-right: #fef9f6;
+  width: 101%;
 }
 
 .toggle-box.active::before {
@@ -2332,7 +2348,7 @@ header {
   inset: 0;
   border-radius: 8px 0px 0px 8px;
   padding: 1px;
-  background: linear-gradient(to right, #e3530f, #ffffff);
+  background: linear-gradient(to right, #e3530f, #fef9f6);
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
@@ -2345,7 +2361,7 @@ header {
 }
 
 .toggle-box.active .toggle-value {
-  color: var(--orange);
+  color: var(--orange) !important;
 }
 
 .toggle-box.active .toggle-value .zero-count {
@@ -2353,7 +2369,7 @@ header {
 }
 
 .toggle-box.active [data-lucide] {
-  color: var(--orange);
+  color: var(--orange) !important;
 }
 
 .sanction-donut-side {
@@ -2365,7 +2381,6 @@ header {
   background-color: #fef9f6;
   border-radius: 8px 8px 8px 8px;
   border: 1px solid #ffffff;
-  margin-left: -3px;
   padding: 2px auto !important;
 }
 
@@ -2563,7 +2578,7 @@ header {
 /* end */
 
 .lead-count {
-  background-color: #f1f1f1;
+  background-color: #f1f1f1 !important;
   padding: 4px 8px;
   border-radius: 8px;
   font-size: 14px;
@@ -2799,7 +2814,7 @@ td {
 .reset-rep-btn {
   background: transparent;
   border: 1px solid #e3530f;
-  color: #e3530f;
+  color: #e3530f !important;
   padding: 6px 16px;
   border-radius: 8px;
   font-size: 14px;
@@ -2812,7 +2827,7 @@ td {
 }
 
 .save-rep-btn {
-  color: #e3530f;
+  color: #e3530f !important;
   border: 1px solid #e3530f;
   padding: 6px 16px;
   border-radius: 4px;
@@ -2851,57 +2866,57 @@ td {
 
 /* Graph colors */
 .legend-dot-blue-1 {
-  background-color: #0b46b4;
+  background-color: #0b46b4 !important;
 }
 
 .legend-dot-blue-2 {
-  background-color: #072e75;
+  background-color: #072e75 !important;
 }
 
 .legend-dot-blue-3 {
-  background-color: #0f62fe;
+  background-color: #0f62fe !important;
 }
 
 .legend-dot-blue-4 {
-  background-color: #5e96fe;
+  background-color: #5e96fe !important;
 }
 
 .legend-dot-blue-5 {
-  background-color: #b5ceff;
+  background-color: #b5ceff !important;
 }
 
 .legend-dot-blue-6 {
-  background-color: #b4cdff;
+  background-color: #b4cdff !important;
 }
 
 .legend-dot-blue-7 {
-  background-color: #e7efff;
+  background-color: #e7efff !important;
 }
 
 /* Sanction */
 .legend-dot-orange {
-  background-color: #ffbd61;
+  background-color: #ffbd61 !important;
 }
 
 .legend-dot-red {
-  background-color: #de343d;
+  background-color: #de343d !important;
 }
 
 .legend-dot-green {
-  background-color: #198038;
+  background-color: #198038 !important;
 }
 
 /* Renewal */
 .legend-dot-renewal-orange {
-  background-color: #ffaa33;
+  background-color: #ffaa33 !important;
 }
 
 .legend-dot-renewal-light-orange {
-  background-color: #ffc676;
+  background-color: #ffc676 !important;
 }
 
 .legend-dot-renewal-pale-orange {
-  background-color: #ffe5c0;
+  background-color: #ffe5c0 !important;
 }
 
 .norify svg,
@@ -3060,7 +3075,7 @@ td {
   gap: 4px;
   font-size: 12px;
   font-weight: 700;
-  color: #e3530f;
+  color: #e3530f !important;
 }
 
 .notification-item {
@@ -3208,7 +3223,7 @@ td {
 }
 
 .menu-item.active .menu-icon-box svg {
-  color: #de6e28;
+  color: #de6e28 !important;
 }
 
 .menu-item.active .menu-title {
@@ -3258,7 +3273,7 @@ td {
 .logout-btn {
   display: flex;
   align-items: center;
-  color: #da1e28;
+  color: #da1e28 !important;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -3557,7 +3572,7 @@ td {
 
 .header-actions .edit-action {
   font-size: 12px;
-  color: #e3530f;
+  color: #e3530f !important;
   font-weight: 700;
   cursor: pointer;
 }
@@ -3618,7 +3633,7 @@ td {
 .monthly-sales-footer .reset-action {
   font-size: 13px;
   font-weight: 700;
-  color: #e3530f;
+  color: #e3530f !important;
   cursor: pointer;
   align-self: center;
 }
@@ -3632,12 +3647,12 @@ td {
 
 .monthly-sales-footer .outline-orange-btn.btn-disabled {
   border: 1px solid #d2d2d2;
-  color: #6f6f6f;
+  color: #6f6f6f !important;
   cursor: not-allowed;
 }
 
 .monthly-sales-footer .reset-action.btn-disabled {
-  color: #6f6f6f;
+  color: #6f6f6f !important;
   cursor: not-allowed;
 }
 
@@ -3645,7 +3660,7 @@ td {
   display: flex;
   flex-direction: column;
   margin-top: 16px;
-  background: #fef9f6;
+  background: #fef9f6 !important;
   padding: 16px 24px;
   border-radius: 4px;
   width: 32%;
@@ -3654,12 +3669,12 @@ td {
 .monthly-sales-summary .summary-value {
   font-size: 16px;
   font-weight: 700;
-  color: #e3530f;
+  color: #e3530f !important;
 }
 
 .monthly-sales-summary .summary-label {
   font-size: 12px;
-  color: #6f6f6f;
+  color: #6f6f6f !important;
 }
 
 /* --- Modal Footer --- */
@@ -3696,8 +3711,8 @@ td {
 }
 
 .footer-actions .orange-btn:disabled {
-  background: #d2d2d2;
-  color: #8c8c8c;
+  background: #d2d2d2 !important;
+  color: #8c8c8c !important;
   cursor: not-allowed;
 }
 
@@ -3972,7 +3987,7 @@ td {
 
 .card-divider {
   height: 1px;
-  background-color: #d2d2d2;
+  background-color: #d2d2d2 !important;
   margin: 24px 0;
 }
 
@@ -3992,7 +4007,7 @@ td {
 .avatar-circle {
   width: 50px;
   height: 50px;
-  background-color: #fceee7;
+  background-color: #fceee7 !important;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -4028,7 +4043,7 @@ td {
 .add-another-btn {
   background: none;
   border: none;
-  color: #e3530f;
+  color: #e3530f !important;
   font-size: 16px;
   font-weight: 700;
   cursor: pointer;
@@ -4090,7 +4105,7 @@ td {
 }
 
 .avatar-circle .material-icons {
-  color: #e3530f;
+  color: #e3530f !important;
 }
 
 .dealer-code-value {
@@ -4387,7 +4402,7 @@ td {
 }
 
 .date-input-wrap {
-  background: #fef9f6;
+  background: #fef9f6 !important;
   padding: 8px;
   border-radius: 4px;
   height: 44px;
@@ -4396,14 +4411,14 @@ td {
 .end-date-input span {
   font-size: 12px;
   font-weight: 600;
-  color: #e9753f;
+  color: #e9753f !important;
 }
 
 .end-date-input {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #e9753f;
+  color: #e9753f !important;
 }
 
 .date-input-wrap.add-end-date {
@@ -4411,7 +4426,7 @@ td {
 }
 
 .add-btn-group .outline-orange-btn.btn-disabled {
-  color: #6f6f6f;
+  color: #6f6f6f !important;
   border: 1px solid #d2d2d2;
   cursor: not-allowed;
 }
@@ -4440,7 +4455,7 @@ td {
   left: 32px;
   font-size: 16px;
   font-weight: 700;
-  color: #e3530f;
+  color: #e3530f !important;
   display: flex;
   align-items: center;
 }
@@ -4469,7 +4484,7 @@ td {
 }
 
 .upload-right-icon {
-  color: #e3530f;
+  color: #e3530f !important;
 }
 
 .upload-left-icon .material-symbols-outlined {
@@ -4526,7 +4541,7 @@ td {
   display: flex;
   margin-top: 16px;
   gap: 6px;
-  color: #e3530f;
+  color: #e3530f !important;
   font-size: 16px;
   font-weight: 700;
   cursor: pointer;
@@ -4668,13 +4683,13 @@ td {
 }
 
 .bulk-eligibility-table .status-cell.status-accepted {
-  color: #198038;
-  background-color: #e8f2eb;
+  color: #198038 !important;
+  background-color: #e8f2eb !important;
 }
 
 .bulk-eligibility-table .status-cell.status-rejected {
-  color: #da1e28;
-  background-color: #fbe9ea;
+  color: #da1e28 !important;
+  background-color: #fbe9ea !important;
 }
 
 .bulk-eligibility-table .file-size-text {
