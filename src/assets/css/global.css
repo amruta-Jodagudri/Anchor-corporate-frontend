@@ -2006,3 +2006,10 @@ body.modal-open {
     height: 90px;
   }
 }
+
+/* Raghav's high contrast */
+
+.high-contrast .dealer-filter-btn {
+  background: #f1f1f1 !important;
+  color: #555 !important;
+}
