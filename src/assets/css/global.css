@@ -2008,8 +2008,666 @@ body.modal-open {
 }
 
 /* Raghav's high contrast */
+.high-contrast {
+  --hc-bg: #000;
+  --hc-surface: #1f1f1f;
+  --hc-grey: #2b2b2b;
+  --hc-border: #2a2a2a;
+  --hc-text: #fff;
+  --hc-muted: #c6c6c6;
+  --hc-accent: #e9530f;
+  --hc-chip-bg: #f1f1f1;
+  --hc-chip-text: #555;
+  --hc-input-bg: #fff;
+  --hc-input-text: #000;
+  --hc-disabled-bg: #d2d2d2;
+  --hc-disabled-text: #6f6f6f;
+  --hc-error: #ff8389;
+  --hc-menu-bg: #393939;
+  --hc-menu-hover: #4d4d4d;
+  --hc-menu-border: #5a5a5a;
+  --hc-mdd-bg: #393939;
+  --hc-mdd-text: #fff;
+  --hc-mdd-hover: #4d4d4d;
+  --hc-mdd-sub: #c6c6c6;
+}
+
+.high-contrast .new-dealer-page :focus-visible,
+.high-contrast .dealer-filters-overlay :focus-visible,
+.high-contrast .uploaded-details-overlay :focus-visible {
+  outline: 2px solid #fff !important;
+  outline-offset: 2px;
+}
+.high-contrast .view-more-menu button.is-selected {
+  color: #ffb08a !important;
+}
+
+.high-contrast .new-dealer-table-wrapper,
+.high-contrast .dealer-table-view-wrapper,
+.high-contrast .dealer-filters-body,
+.high-contrast .tranches-scroll,
+.high-contrast .ud-body {
+  scrollbar-color: var(--hc-accent) var(--hc-surface);
+}
+
+.high-contrast .new-dealer-last-login,
+.high-contrast .new-dealer-last-login strong {
+  color: var(--hc-muted) !important;
+}
+.high-contrast .new-dealer-tabs::after {
+  background: var(--hc-menu-border);
+}
+.high-contrast .new-dealer-tab {
+  color: var(--hc-text) !important;
+}
+.high-contrast .new-dealer-tab.active {
+  color: var(--hc-accent) !important;
+  border-bottom-color: var(--hc-accent) !important;
+}
+.high-contrast .new-dealer-count.orange,
+.high-contrast #tranchesCount {
+  background-color: var(--hc-accent) !important;
+  color: #fff !important;
+}
+.high-contrast .new-dealer-count.grey {
+  background-color: #6f6f6f !important;
+  color: #fff !important;
+}
+.high-contrast .new-dealer-date,
+.high-contrast .new-dealer-chevron {
+  color: var(--hc-accent) !important;
+}
+.high-contrast .new-dealer-add-wrapper .orange-btn {
+  background-color: var(--hc-accent) !important;
+  color: #fff !important;
+}
+.high-contrast .add-dealer-menu {
+  background: var(--hc-menu-bg) !important;
+  border: 1px solid var(--hc-menu-border) !important;
+}
+.high-contrast .add-dealer-menu > *:hover,
+.high-contrast .add-dealer-menu li:hover,
+.high-contrast .add-dealer-menu button:hover,
+.high-contrast .add-dealer-menu a:hover {
+  background: var(--hc-menu-hover) !important;
+}
 
 .high-contrast .dealer-filter-btn {
-  background: #f1f1f1 !important;
+  background: var(--hc-chip-bg) !important;
+  color: var(--hc-chip-text) !important;
+}
+.high-contrast .dealer-filter-btn span {
+  background: #555 !important;
+  color: #fff !important;
+}
+.high-contrast .dealer-filter-btn.active {
+  background: var(--hc-accent) !important;
+  color: #fff !important;
+}
+.high-contrast .dealer-filter-btn.active span {
+  background: #fff !important;
+  color: var(--hc-accent) !important;
+}
+.high-contrast .dealer-toolbar-divider {
+  background: var(--hc-menu-border) !important;
+}
+.high-contrast .view-more-menu {
+  background: var(--hc-menu-bg) !important;
+  border: 1px solid var(--hc-menu-border) !important;
+}
+.high-contrast .view-more-menu button {
+  color: var(--hc-text) !important;
+}
+.high-contrast .view-more-menu button:hover {
+  background: var(--hc-menu-hover) !important;
+}
+.high-contrast .hide-details-btn,
+.high-contrast .hide-details-btn span,
+.high-contrast .hide-details-eye.material-symbols-outlined {
+  color: var(--hc-accent) !important;
+}
+.high-contrast .view-switch {
+  background: var(--hc-surface) !important;
+  border: 1px solid var(--hc-menu-border);
+}
+.high-contrast .view-switch-btn {
+  background: transparent !important;
+}
+.high-contrast .view-switch-btn.active {
+  background: var(--hc-accent) !important;
+}
+.high-contrast .dealer-search-box {
+  background: var(--hc-input-bg) !important;
+}
+.high-contrast .dealer-search-box input {
+  background: transparent !important;
+  color: var(--hc-input-text) !important;
+}
+.high-contrast .dealer-action-icon,
+.high-contrast .dealer-share-btn,
+.high-contrast .dealer-filters-btn {
+  color: var(--hc-accent) !important;
+}
+
+.high-contrast .lead-bulk-bar {
+  background: var(--hc-surface) !important;
+  border-top: 1px solid var(--hc-menu-border);
+  box-shadow: none;
+}
+.high-contrast .lead-bulk-count,
+.high-contrast .lead-bulk-count strong {
+  color: var(--hc-text) !important;
+}
+.high-contrast .lead-select:checked,
+.high-contrast .lead-select:indeterminate {
+  background-color: var(--hc-accent) !important;
+  border-color: var(--hc-accent) !important;
+}
+
+.high-contrast .new-dealer-page thead th,
+.high-contrast .tranches-table thead th {
+  background: var(--hc-bg) !important;
+  color: var(--hc-text) !important;
+}
+
+.high-contrast .dealer-table-view tbody tr:nth-child(even),
+.high-contrast .tranches-table tbody tr:nth-child(even) {
+  background: var(--hc-grey) !important;
+}
+.high-contrast .dealer-table-view tbody td,
+.high-contrast .tranches-table td {
+  border-bottom-color: var(--hc-border) !important;
+}
+
+.high-contrast .dealer-row.is-expanded,
+.high-contrast .renewal-row.is-expanded,
+.high-contrast .txn-row.is-expanded,
+.high-contrast .dealer-details-row,
+.high-contrast .renewal-details-row,
+.high-contrast .txn-details-row {
+  background: var(--hc-grey) !important;
+}
+
+.high-contrast .dealer-firm small,
+.high-contrast .dealer-association small,
+.high-contrast .table-firm-code,
+.high-contrast .dealer-detail-item > span,
+.high-contrast .dealer-detail-muted,
+.high-contrast .txn-detail-item span,
+.high-contrast .txn-percent,
+.high-contrast .renewal-detail-item span,
+.high-contrast .renewal-status-sub,
+.high-contrast .renewal-summary-label,
+.high-contrast .tranches-empty {
+  color: var(--hc-muted) !important;
+}
+.high-contrast .dealer-firm small .code-value,
+.high-contrast .table-firm-code .code-value,
+.high-contrast .renewal-firm-id .id-value,
+.high-contrast .dealer-association small .pan-value,
+.high-contrast .renewal-summary-value {
+  color: var(--hc-text) !important;
+}
+
+.high-contrast .view-switch-btn .material-symbols-outlined {
+  color: #fff !important;
+}
+.high-contrast .dealer-search-icon.material-symbols-outlined {
   color: #555 !important;
+}
+.high-contrast .dealer-action-icon .material-symbols-outlined,
+.high-contrast .dealer-share-btn .material-symbols-outlined,
+.high-contrast .dealer-filters-btn .material-symbols-outlined {
+  color: var(--hc-accent) !important;
+}
+.high-contrast .view-more-icon.material-symbols-outlined {
+  color: #555 !important;
+}
+.high-contrast .view-more-btn.active .view-more-icon.material-symbols-outlined {
+  color: #fff !important;
+}
+
+.high-contrast .dealer-contact-item {
+  color: var(--hc-text) !important;
+}
+.high-contrast .dealer-contact-item--email {
+  color: var(--hc-muted) !important;
+}
+.high-contrast .dealer-contact-item .nd-icon {
+  color: var(--hc-muted) !important;
+}
+
+.high-contrast .renewal-action-link {
+  color: var(--hc-accent) !important;
+}
+.high-contrast .tranches-scroll {
+  border-color: var(--hc-border) !important;
+}
+
+.high-contrast .table-sort-icon,
+.high-contrast .dealer-pin.material-symbols-outlined {
+  background: none !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.high-contrast .table-sort-icon {
+  color: #fff !important;
+  font-size: 18px !important;
+  line-height: 18px !important;
+  width: 18px !important;
+  height: 18px !important;
+  flex: 0 0 18px !important;
+  vertical-align: middle;
+}
+.high-contrast .tranches-table th {
+  white-space: nowrap;
+}
+
+.high-contrast .share-email-toggle {
+  background: var(--hc-input-bg) !important;
+  border-radius: 0 6px 6px 0;
+}
+
+.high-contrast .dealer-pin.material-symbols-outlined {
+  color: #a8a8a8 !important;
+  font-size: 16px !important;
+  line-height: 16px !important;
+  width: 16px !important;
+  height: 16px !important;
+}
+.high-contrast .dealer-pin.material-symbols-outlined.is-pinned {
+  color: #fff !important;
+  font-variation-settings:
+    "FILL" 1,
+    "wght" 400,
+    "GRAD" 0,
+    "opsz" 24 !important;
+}
+
+.high-contrast .dealer-upload-user-icon,
+.high-contrast .txn-open-icon,
+.high-contrast .txn-refresh-btn .material-symbols-outlined,
+.high-contrast .renewal-action-link .material-symbols-outlined,
+.high-contrast .renewal-date-input .material-symbols-outlined,
+.high-contrast .renewal-cal-pencil,
+.high-contrast .delete-lead-trash,
+.high-contrast .dealer-row-actions .nd-icon--orange,
+.high-contrast .table-action .nd-icon--orange {
+  color: var(--hc-accent) !important;
+}
+
+.high-contrast .info-dot,
+.high-contrast .renewal-expand-btn .material-symbols-outlined,
+.high-contrast .renewal-cal-nav button .material-symbols-outlined {
+  color: #fff !important;
+}
+
+.high-contrast .filter-error::before {
+  font-family: "Material Symbols Outlined" !important;
+  content: "error" !important;
+  font-size: 14px !important;
+  width: 14px !important;
+  height: 14px !important;
+  flex: 0 0 14px !important;
+  background: none !important;
+  display: inline-flex !important;
+  color: var(--hc-error) !important;
+}
+
+.high-contrast .dealer-status.actioned,
+.high-contrast .table-status.actioned,
+.high-contrast .renewal-status .dealer-status.actioned,
+.high-contrast .renewal-status .table-status.actioned {
+  background: #eee !important;
+  color: #393939 !important;
+}
+.high-contrast .dealer-status.sanctioned,
+.high-contrast .table-status.sanctioned,
+.high-contrast .scf-badge.unfreeze {
+  background: #e8f2eb !important;
+  color: #0e6027 !important;
+}
+.high-contrast .dealer-status.rejected,
+.high-contrast .table-status.rejected,
+.high-contrast .txn-days.overdue {
+  background: #ffe5e7 !important;
+  color: #a2191f !important;
+}
+.high-contrast .scf-badge.freeze {
+  background: #e8f0ff !important;
+  color: #0043ce !important;
+}
+.high-contrast .txn-days.pending {
+  background: #fff2df !important;
+  color: #8a4b00 !important;
+}
+
+.high-contrast .dealer-progress-node,
+.high-contrast .dealer-progress-connector {
+  background: #525252 !important;
+}
+.high-contrast .dealer-progress-number {
+  color: #fff !important;
+}
+.high-contrast .dealer-progress-step.completed .dealer-progress-node,
+.high-contrast .dealer-progress-connector.is-complete {
+  background: #198038 !important;
+}
+.high-contrast .dealer-progress-step.current .dealer-progress-node {
+  background: #b5ceff !important;
+}
+.high-contrast .dealer-progress-step.current .dealer-progress-node::after {
+  background: #0f62fe;
+}
+.high-contrast .dealer-progress-step.rejected .dealer-progress-node,
+.high-contrast .dealer-progress-connector.is-rejected {
+  background: #da1e28 !important;
+}
+.high-contrast .dealer-progress-label {
+  color: var(--hc-muted) !important;
+}
+.high-contrast .dealer-progress-step.completed .dealer-progress-label,
+.high-contrast .dealer-progress-step.current .dealer-progress-label,
+.high-contrast .dealer-progress-step.rejected .dealer-progress-label {
+  color: var(--hc-text) !important;
+}
+
+.high-contrast .app-tooltip,
+.high-contrast .delete-lead-tip-box {
+  background: #e7efff !important;
+  color: #2f2f2f !important;
+}
+
+.high-contrast .new-dealer-page .delete-lead-tip-box thead th {
+  background: transparent !important;
+  color: #2f2f2f !important;
+}
+
+.high-contrast .app-toast {
+  background: #0e6027 !important;
+  color: #fff !important;
+  border: 1px solid #fff;
+}
+.high-contrast .app-toast.error {
+  background: #a2191f !important;
+}
+.high-contrast .app-toast.warning {
+  background: #8a4b00 !important;
+}
+.high-contrast .app-toast-icon {
+  background: rgba(255, 255, 255, 0.3) !important;
+}
+
+.high-contrast .dealer-filters-modal,
+.high-contrast .share-mail-modal,
+.high-contrast .open-tranches-modal,
+.high-contrast .uploaded-details-modal {
+  background: var(--hc-bg) !important;
+  box-shadow: none;
+}
+.high-contrast .dealer-filters-overlay {
+  background: #7f7c7c73 !important;
+}
+.high-contrast .dealer-filters-close {
+  color: #fff !important;
+}
+.high-contrast .dealer-filters-header h2,
+.high-contrast .dealer-filter-field label,
+.high-contrast .ud-title,
+.high-contrast .ud-card-title {
+  color: var(--hc-text) !important;
+}
+.high-contrast .ud-subtitle,
+.high-contrast .delete-lead-header p,
+.high-contrast .ud-label,
+.high-contrast .ud-person-main small,
+.high-contrast .delete-lead-row > span:first-child {
+  color: var(--hc-muted) !important;
+}
+
+.high-contrast .dealer-filter-dropdown-btn,
+.high-contrast .dealer-filter-search-input,
+.high-contrast .dealer-filter-range-input,
+.high-contrast .share-input,
+.high-contrast .share-select-btn,
+.high-contrast .renewal-date-input,
+.high-contrast .ud-input,
+.high-contrast .ud-mobile {
+  background: var(--hc-input-bg) !important;
+  color: var(--hc-input-text) !important;
+}
+.high-contrast .dealer-filter-range-input.is-error,
+.high-contrast .ud-input.is-error,
+.high-contrast .ud-mobile.is-error {
+  background: #ffe9eb !important;
+}
+.high-contrast .range-amount-wrap.has-value:not(.is-focused) input {
+  color: transparent !important;
+}
+
+.high-contrast .dealer-filter-dropdown-panel,
+.high-contrast .share-select-panel {
+  background: var(--hc-mdd-bg) !important;
+  border-color: var(--hc-menu-border) !important;
+}
+.high-contrast .dealer-filter-dropdown-panel label,
+.high-contrast .share-select-panel .share-option {
+  color: var(--hc-mdd-text) !important;
+}
+.high-contrast .dealer-filter-dropdown-panel small {
+  color: var(--hc-mdd-sub) !important;
+}
+.high-contrast .dealer-filter-dropdown-panel label:hover,
+.high-contrast .share-select-panel .share-option:hover,
+.high-contrast .share-select-panel .share-option:focus-visible,
+.high-contrast .share-select-panel .share-option[aria-selected="true"] {
+  background: var(--hc-mdd-hover) !important;
+}
+
+/* pills */
+.high-contrast .dealer-filter-pill {
+  background: var(--hc-chip-bg) !important;
+  color: var(--hc-chip-text) !important;
+}
+.high-contrast .dealer-filter-pill.active {
+  background: var(--hc-accent) !important;
+  color: #fff !important;
+}
+.high-contrast .filter-error,
+.high-contrast .share-error {
+  color: var(--hc-error) !important;
+}
+
+.high-contrast .dealer-filters-reset,
+.high-contrast .share-cancel-btn,
+.high-contrast .ud-save {
+  background: transparent !important;
+  border: 1px solid var(--hc-accent) !important;
+  color: var(--hc-accent) !important;
+}
+.high-contrast .dealer-filters-apply,
+.high-contrast .share-submit-btn {
+  background: var(--hc-accent) !important;
+  color: #fff !important;
+}
+.high-contrast .dealer-filters-apply:disabled,
+.high-contrast .share-submit-btn:disabled {
+  background: var(--hc-disabled-bg) !important;
+  color: var(--hc-disabled-text) !important;
+}
+
+.high-contrast .delete-lead-panel {
+  background: var(--hc-surface) !important;
+}
+.high-contrast .delete-lead-row > strong,
+.high-contrast .delete-lead-selected {
+  color: var(--hc-text) !important;
+}
+.high-contrast .delete-lead-icon {
+  background: #ffaa33 !important;
+  color: #000 !important;
+}
+
+.high-contrast .ud-card {
+  background: var(--hc-surface) !important;
+  border-color: var(--hc-border) !important;
+}
+.high-contrast .ud-card--filled {
+  background: var(--hc-grey) !important;
+}
+.high-contrast .ud-person-main {
+  border-right-color: var(--hc-menu-border) !important;
+}
+.high-contrast .ud-value,
+.high-contrast .ud-contact,
+.high-contrast .ud-person-main strong {
+  color: var(--hc-text) !important;
+}
+.high-contrast .ud-contact-icon {
+  color: var(--hc-muted) !important;
+}
+.high-contrast .ud-edit-link,
+.high-contrast .ud-copy {
+  color: var(--hc-accent) !important;
+}
+.high-contrast .ud-copy.is-copied {
+  color: #42be65 !important;
+}
+
+.high-contrast .renewal-calendar {
+  background: var(--hc-surface) !important;
+  border: 1px solid var(--hc-menu-border);
+  box-shadow: none;
+}
+.high-contrast .renewal-cal-head,
+.high-contrast .renewal-cal-title,
+.high-contrast .renewal-cal-grid b,
+.high-contrast .renewal-cal-day {
+  color: var(--hc-text) !important;
+}
+.high-contrast .renewal-cal-cell.in-band {
+  background: #5b3e31 !important;
+}
+.high-contrast .renewal-cal-day.is-start,
+.high-contrast .renewal-cal-day.is-end {
+  background: var(--hc-accent) !important;
+  color: #fff !important;
+}
+.high-contrast .renewal-cal-day.is-today {
+  box-shadow: inset 0 0 0 1px var(--hc-accent);
+}
+
+.high-contrast .dealer-row-actions .dealer-expand-btn .nd-icon {
+  color: #fff !important;
+}
+
+.high-contrast .renewal-cal-footer button {
+  color: var(--hc-accent) !important;
+}
+
+.high-contrast .input-with-icon.has-view input {
+  color: transparent !important;
+  caret-color: #000;
+}
+.high-contrast .renewal-limit-view {
+  background: transparent !important;
+  color: #000 !important;
+}
+
+@media (max-width: 991.98px) {
+  .high-contrast .dealer-leads-table .dealer-row:not(.hidden-by-filter),
+  .high-contrast .dealer-leads-table .dealer-row.is-expanded,
+  .high-contrast .dealer-leads-table .dealer-details-row {
+    background: var(--hc-surface) !important;
+    border-color: var(--hc-border) !important;
+  }
+  .high-contrast .dealer-leads-table .dealer-detail-panel {
+    border-color: var(--hc-border) !important;
+  }
+  .high-contrast .dealer-leads-table .dealer-expand-btn,
+  .high-contrast .dealer-leads-table .dealer-expand-btn::after,
+  .high-contrast .dealer-leads-table .dealer-collapse-btn {
+    color: var(--hc-accent) !important;
+  }
+  .high-contrast
+    .dealer-leads-table
+    .dealer-row-actions
+    .dealer-expand-btn::before,
+  .high-contrast .dealer-leads-table .dealer-collapse-btn::after {
+    border-color: var(--hc-accent) !important;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .high-contrast .renewal-table .renewal-row:not(.hidden-by-filter),
+  .high-contrast .renewal-table .renewal-row.is-expanded,
+  .high-contrast .txn-table .txn-row:not(.hidden-by-filter),
+  .high-contrast .txn-table .txn-row.is-expanded,
+  .high-contrast .tranches-table tbody tr,
+  .high-contrast .tranches-table tbody tr:nth-child(even) {
+    background: var(--hc-surface) !important;
+    border: 1px solid var(--hc-border);
+  }
+  .high-contrast .renewal-table .renewal-row .renewal-expand-btn,
+  .high-contrast .renewal-table .renewal-row .renewal-expand-btn::after,
+  .high-contrast .txn-row .dealer-row-actions .dealer-expand-btn::after {
+    color: var(--hc-accent) !important;
+  }
+  .high-contrast
+    .renewal-table
+    .renewal-row
+    .renewal-expand-btn
+    .material-symbols-outlined {
+    color: var(--hc-accent) !important;
+  }
+  .high-contrast .txn-row .dealer-row-actions .dealer-expand-btn .nd-icon {
+    color: var(--hc-accent) !important;
+  }
+  .high-contrast .tranches-table td[data-label]::before {
+    color: var(--hc-muted) !important;
+  }
+}
+.high-contrast .share-select-chevron.material-symbols-outlined {
+  color: var(--hc-input-text) !important;
+}
+.high-contrast
+  .dealer-leads-table
+  .dealer-row-actions
+  .dealer-expand-btn
+  .nd-icon {
+  color: var(--hc-accent) !important;
+}
+
+.high-contrast .ud-mobile .ud-input {
+  background: transparent !important;
+}
+
+.high-contrast .uploaded-details-overlay .ud-mobile .ud-input:focus-visible {
+  outline: none !important;
+}
+
+.high-contrast .ud-mobile:focus-within {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+@media (max-width: 767.98px) {
+  .high-contrast .new-dealer-tab-list {
+    border-bottom: 1px solid var(--hc-menu-border);
+  }
+}
+
+@media (min-width: 992px) {
+  .high-contrast
+    .dealer-leads-table
+    .dealer-row-actions
+    .dealer-expand-btn
+    .nd-icon,
+  .high-contrast .dealer-row.is-expanded .dealer-expand-btn .nd-icon,
+  .high-contrast .txn-row .dealer-row-actions .dealer-expand-btn .nd-icon,
+  .high-contrast .renewal-row .renewal-expand-btn .material-symbols-outlined {
+    color: #fff !important;
+  }
 }

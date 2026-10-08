@@ -2,6 +2,8 @@
 
 jQuery(function ($) {
   const TOAST_DURATION_MS = 2500;
+  const VIEW_MORE_ICON =
+    ' <i class="material-symbols-outlined view-more-icon">keyboard_arrow_down</i>';
   const PIN_STORAGE_KEY = "dealerPinnedState";
   const PAGE_STORAGE_KEY = "activeDashboardPage";
 
@@ -130,6 +132,12 @@ jQuery(function ($) {
     });
   }
 
+  const TOAST_ICONS = {
+    success: "check_circle",
+    error: "error",
+    warning: "warning",
+  };
+
   function showAppToast(message, type, subText) {
     const $toast = $("#appToast");
     if (!$toast.length) return;
@@ -138,6 +146,9 @@ jQuery(function ($) {
       .toggleClass("error", type === "error")
       .toggleClass("warning", type === "warning")
       .toggleClass("has-sub", Boolean(subText));
+    $("#appToastIcon .app-toast-glyph").text(
+      TOAST_ICONS[type] || TOAST_ICONS.success,
+    );
     $("#appToastText").text(message);
     $("#appToastSub").text(subText || "");
 
@@ -913,7 +924,7 @@ jQuery(function ($) {
             ${getDetailItemMarkup("Business vintage", escapeHtml(details.vintage))}
             ${getDetailItemMarkup("Instances of overdue", formatDetailValue(details.overdue), "dealer-detail-item--end")}
             ${getDetailItemMarkup("Recommendation limit", formatAmountMarkup(details.recommendation), "dealer-detail-item--end")}
-            ${getDetailItemMarkup("Uploaded by", escapeHtml(details.uploadedBy) + " " + getUploadIconMarkup(dealerName, details.uploadedBy))}
+            ${getDetailItemMarkup("Uploaded by", getUploadedByMarkup(dealerName, details.uploadedBy))}
             ${getDetailItemMarkup("Lead date", escapeHtml(details.leadDate))}
           </div>
 
@@ -1504,6 +1515,7 @@ jQuery(function ($) {
       if (!filter) return;
 
       activeFilter = filter;
+      $viewMoreFilters.removeClass("is-selected");
 
       restoreToBeActionedButton();
       setActive($filterButtons, $button);
@@ -1516,6 +1528,9 @@ jQuery(function ($) {
     $viewMoreFilters.on("click", function () {
       const $button = $(this);
       activeFilter = $button.attr("data-filter") || "all";
+
+      $viewMoreFilters.removeClass("is-selected");
+      $button.addClass("is-selected");
 
       $viewMoreMenu.removeClass("show");
       const fullText = $button.text().trim();
@@ -1530,7 +1545,7 @@ jQuery(function ($) {
       setActive($filterButtons, null);
 
       if (isCompact && $viewMoreBtn.length) {
-        $viewMoreBtn.html(label + badge).addClass("active");
+        $viewMoreBtn.html(label + badge + VIEW_MORE_ICON).addClass("active");
       } else {
         resetViewMoreButton();
         if ($toBeActionedBtn.length) {
@@ -1559,7 +1574,10 @@ jQuery(function ($) {
   }
 
   function initDealerSearch() {
-    $searchInput.on("input", applyCurrentView);
+    $searchInput.on("input", function () {
+      closeAllDealerDetails();
+      applyCurrentView();
+    });
   }
 
   function initDetailsToggle() {
@@ -1781,12 +1799,7 @@ jQuery(function ($) {
         ? "transaction"
         : "leads";
 
-      $emailInput
-        .val("")
-        .attr(
-          "placeholder",
-          desktopMq.matches ? "Select email" : "Enter email",
-        );
+      $emailInput.val("").attr("placeholder", "Select email");
       $emailError.text("");
       setBucket("");
       setOpen($emailWrap, false);
@@ -1961,7 +1974,7 @@ jQuery(function ($) {
     const $codeEl = $row.find(".dealer-firm small .code-value").first();
     const $codeSmall = $row.find(".dealer-firm small").first();
     const $panEl = $row.find(".dealer-association small").first();
-    const $phoneEl = $row.find(".dealer-contact span[data-value]").first();
+    const $phoneEl = $row.find(".dealer-contact-text").first();
     const $cells = $row.children();
 
     return {
@@ -1975,13 +1988,7 @@ jQuery(function ($) {
               .trim()
           : "",
       pan: cellText($panEl).replace(/^\s*PAN:\s*/i, ""),
-      mobile: $phoneEl.length
-        ? (
-            $phoneEl.attr("data-original") ||
-            $phoneEl.attr("data-value") ||
-            ""
-          ).trim()
-        : "",
+      mobile: cellText($phoneEl),
       sales: $cells.eq(3).text().trim(),
       loan: $cells.eq(4).text().trim(),
       status: $row.attr("data-status") || "",
@@ -2194,12 +2201,18 @@ jQuery(function ($) {
     }
 
     function renderSingle(info) {
+      const tooltip = getStatusTooltip(
+        info.status,
+        dealerStages[info.firm] || "apply",
+      );
       const badge =
         '<span class="dealer-status ' +
         escapeHtml(info.status) +
         '">' +
         escapeHtml(info.statusText) +
-        " <small>ⓘ</small></span>";
+        ' <small data-tooltip="' +
+        escapeHtml(tooltip) +
+        '"><span class="material-symbols-outlined">info</span></small></span>';
 
       return (
         panelRow("Firm", escapeHtml(info.firm)) +
@@ -2232,7 +2245,7 @@ jQuery(function ($) {
         '<div class="delete-lead-selected" tabindex="0">' +
         "<span>" +
         infos.length +
-        ' selected</span><i class="delete-lead-trash"></i>' +
+        ' selected</span><i class="delete-lead-trash material-symbols-outlined">delete</i>' +
         '<div class="delete-lead-tip"><div class="delete-lead-tip-box"><table>' +
         "<thead><tr><th>Firm</th><th>Code</th><th>Loan offer</th></tr></thead>" +
         "<tbody>" +
@@ -2600,10 +2613,10 @@ jQuery(function ($) {
       $cal.html(
         '<div class="renewal-cal-head"><span>' +
           headText +
-          '</span><i class="renewal-cal-pencil"></i></div>' +
+          '</span><i class="renewal-cal-pencil material-symbols-outlined">edit</i></div>' +
           '<div class="renewal-cal-body">' +
-          '<div class="renewal-cal-nav"><button type="button" data-nav="-1" aria-label="Previous month"></button>' +
-          '<button type="button" data-nav="1" aria-label="Next month"></button></div>' +
+          '<div class="renewal-cal-nav"><button type="button" data-nav="-1" aria-label="Previous month"><span class="material-symbols-outlined">chevron_left</span></button>' +
+          '<button type="button" data-nav="1" aria-label="Next month"><span class="material-symbols-outlined">chevron_right</span></button></div>' +
           '<div class="renewal-cal-months">' +
           renderMonth(0) +
           renderMonth(1) +
@@ -2713,7 +2726,7 @@ jQuery(function ($) {
   }
 
   function getTxnOpenCountMarkup(item, index) {
-    return `<span class="txn-open-count" data-open-tranches="${index}">${item.openTxns} <span class="txn-open-icon"></span></span>`;
+    return `<span class="txn-open-count" data-open-tranches="${index}">${item.openTxns} <span class="txn-open-icon material-symbols-outlined">assignment</span></span>`;
   }
 
   function getTxnRowAttributes(item, index) {
@@ -2748,8 +2761,8 @@ jQuery(function ($) {
         <td class="txn-cell txn-cell--days" data-label="Days to get in overdue">${getTxnDaysMarkup(item)}</td>
         <td class="txn-cell txn-cell--actions">
           <div class="dealer-row-actions">
-            <button type="button" class="txn-refresh-btn" title="Refresh"></button>
-            <button type="button" class="dealer-expand-btn">⌄</button>
+            <button type="button" class="txn-refresh-btn" title="Refresh"><span class="material-symbols-outlined">refresh</span></button>
+            <button type="button" class="dealer-expand-btn"><span class="material-symbols-outlined nd-icon">keyboard_arrow_down</span></button>
           </div>
         </td>
         <td class="txn-cell txn-cell--extra txn-cell--case txn-mobile-only" data-label="Case type">${escapeHtml(item.caseType || "-")}</td>
@@ -2778,7 +2791,7 @@ jQuery(function ($) {
         </td>
         <td>
           <div class="table-action">
-            <button type="button" class="txn-refresh-btn" title="Refresh"></button>
+            <button type="button" class="txn-refresh-btn" title="Refresh"><span class="material-symbols-outlined">refresh</span></button>
           </div>
         </td>
         <td>${getTxnDaysMarkup(item)}</td>
@@ -2918,45 +2931,45 @@ jQuery(function ($) {
       $tip.toggleClass("below", below);
     }
 
-   const TIP_SEL =
-  ".info-dot[data-tooltip], .dealer-status small[data-tooltip], .table-status small[data-tooltip]";
+    const TIP_SEL =
+      ".info-dot[data-tooltip], .dealer-status small[data-tooltip], .table-status small[data-tooltip]";
 
-$(document).on("mouseover", TIP_SEL, function () {
-  if (!canHover.matches) return;
-  show(this, $(this).attr("data-tooltip"));
-});
-
-$(document).on("mouseout", TIP_SEL, hide);
-
-$(document).on("click", function (event) {
-  const $target = $(event.target);
-  const dot = canHover.matches ? null : $target.closest(TIP_SEL)[0] || null;
-  const cell = mobileMq.matches
-    ? $target.closest(".txn-cell--days")[0] || null
-    : null;
-  const el = dot || cell;
-
-  if (!el) {
-    hide();
-    return;
-  }
-  if (source === el) {
-    hide();
-    return;
-  }
-
-  if (cell) {
-    const r = cell.getBoundingClientRect();
-    show(cell, "Excluding cure days", {
-      left: r.right - 13,
-      width: 13,
-      top: r.top,
-      bottom: r.top + 16,
+    $(document).on("mouseover", TIP_SEL, function () {
+      if (!canHover.matches) return;
+      show(this, $(this).attr("data-tooltip"));
     });
-  } else {
-    show(dot, $(dot).attr("data-tooltip"));
-  }
-});
+
+    $(document).on("mouseout", TIP_SEL, hide);
+
+    $(document).on("click", function (event) {
+      const $target = $(event.target);
+      const dot = canHover.matches ? null : $target.closest(TIP_SEL)[0] || null;
+      const cell = mobileMq.matches
+        ? $target.closest(".txn-cell--days")[0] || null
+        : null;
+      const el = dot || cell;
+
+      if (!el) {
+        hide();
+        return;
+      }
+      if (source === el) {
+        hide();
+        return;
+      }
+
+      if (cell) {
+        const r = cell.getBoundingClientRect();
+        show(cell, "Excluding cure days", {
+          left: r.right - 13,
+          width: 13,
+          top: r.top,
+          bottom: r.top + 16,
+        });
+      } else {
+        show(dot, $(dot).attr("data-tooltip"));
+      }
+    });
 
     window.addEventListener("scroll", hide, true);
     $(window).on("resize", hide);
@@ -3046,7 +3059,6 @@ $(document).on("click", function (event) {
     $txnHideBtn.on("click", function () {
       setDetailsHidden(!detailsHidden);
     });
-
   }
 
   function initTxnFiltersModal() {
@@ -3250,6 +3262,12 @@ $(document).on("click", function (event) {
     enhance: "Enhance limit",
     update: "Update expiry",
     renew: "Renew limit",
+  };
+
+  const renewalActionIcons = {
+    enhance: "arrow_circle_up",
+    update: "update",
+    renew: "autorenew",
   };
 
   const renewalCommon = {
@@ -3582,15 +3600,14 @@ $(document).on("click", function (event) {
   };
 
   function getRenewalStatusMarkup(item, cls) {
-    const info = cls === "dealer-status" ? "ⓘ" : "i";
+    // const info = cls === "dealer-status" ? "ⓘ" : "i";
 
     if (item.state === "expired") {
       return (
         '<div class="renewal-status">' +
         '<span class="' +
         cls +
-        ' rejected">Expired <small data-tooltip="This lead is expired.">' +
-        info +
+        ' rejected">Expired <small data-tooltip="This lead is expired."><span class="material-symbols-outlined">info</span></small></span>' +
         "</small></span>" +
         '<span class="renewal-status-sub">' +
         item.days +
@@ -3611,7 +3628,9 @@ $(document).on("click", function (event) {
     return (
       '<button type="button" class="renewal-action-link ' +
       item.action +
-      '">' +
+      '"><span class="material-symbols-outlined">' +
+      renewalActionIcons[item.action] +
+      "</span>" +
       renewalActions[item.action] +
       "</button>"
     );
@@ -3647,16 +3666,16 @@ $(document).on("click", function (event) {
         <td class="renewal-cell renewal-cell--actions">
           <div class="renewal-action">
             ${getRenewalActionMarkup(item)}
-            <button type="button" class="renewal-expand-btn" aria-label="Toggle details">⌄</button>
+            <button type="button" class="renewal-expand-btn" aria-label="Toggle details"><span class="material-symbols-outlined">keyboard_arrow_down</span></button>
           </div>
         </td>
         <td class="renewal-cell renewal-cell--extra renewal-cell--vintage renewal-mobile-only" data-label="Business vintage">${escapeHtml(item.vintage)}</td>
-        <td class="renewal-cell renewal-cell--extra renewal-cell--uploaded renewal-mobile-only" data-label="Uploaded by">${escapeHtml(item.uploadedBy)}${getUploadIconMarkup(item.firm, item.uploadedBy)}</td>
+        <td class="renewal-cell renewal-cell--extra renewal-cell--uploaded renewal-mobile-only" data-label="Uploaded by">${getUploadedByMarkup(item.firm, item.uploadedBy)}</td>
         <td class="renewal-cell renewal-cell--extra renewal-cell--recommend renewal-mobile-only" data-label="Recommendation limit">${formatAmountMarkup(item.recommendation)}</td>
       </tr>
       <tr class="renewal-details-row">
         <td><div class="renewal-detail-item"><span>Business vintage</span><strong>${escapeHtml(item.vintage)}</strong></div></td>
-        <td><div class="renewal-detail-item"><span>Uploaded by</span><strong>${escapeHtml(item.uploadedBy)}${getUploadIconMarkup(item.firm, item.uploadedBy)}</strong></div></td>
+        <td><div class="renewal-detail-item"><span>Uploaded by</span><strong>${getUploadedByMarkup(item.firm, item.uploadedBy)}</strong></div></td>
         <td><div class="renewal-detail-item renewal-detail-item--end"><span>Recommendation limit</span><strong>${formatAmountMarkup(item.recommendation)}</strong></div></td>
         <td></td><td></td><td></td><td></td>
       </tr>
@@ -4010,13 +4029,38 @@ $(document).on("click", function (event) {
 
   function amountToWords(amount) {
     const ones = [
-      "", "one", "two", "three", "four", "five", "six", "seven", "eight",
-      "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen",
-      "sixteen", "seventeen", "eighteen", "nineteen",
+      "",
+      "one",
+      "two",
+      "three",
+      "four",
+      "five",
+      "six",
+      "seven",
+      "eight",
+      "nine",
+      "ten",
+      "eleven",
+      "twelve",
+      "thirteen",
+      "fourteen",
+      "fifteen",
+      "sixteen",
+      "seventeen",
+      "eighteen",
+      "nineteen",
     ];
     const tens = [
-      "", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy",
-      "eighty", "ninety",
+      "",
+      "",
+      "twenty",
+      "thirty",
+      "forty",
+      "fifty",
+      "sixty",
+      "seventy",
+      "eighty",
+      "ninety",
     ];
     const units = [
       { value: 10000000, name: "crore" },
@@ -4079,6 +4123,37 @@ $(document).on("click", function (event) {
       $view.html(formatAmountMarkup(formatted));
       $wrap.addClass("has-view");
       $helper.text(amountToWords(amount)).show();
+    });
+  }
+
+  function initStepModalScrollReset() {
+    const modal = document.getElementById("stepModal");
+    if (!modal) return;
+
+    function resetScroll() {
+      const scroller = modal.querySelector(".stepScroll");
+      if (!scroller) return;
+
+      // focused field (e.g. last input) scroll ko neeche kheench leta hai
+      const active = document.activeElement;
+      if (active && modal.contains(active)) active.blur();
+
+      const toTop = function () {
+        scroller.scrollTop = 0;
+      };
+      toTop();
+      requestAnimationFrame(toTop);
+      setTimeout(toTop, 120);
+    }
+
+    let wasOpen = false;
+    new MutationObserver(function () {
+      const isOpen = getComputedStyle(modal).display !== "none";
+      if (isOpen && !wasOpen) resetScroll();
+      wasOpen = isOpen;
+    }).observe(modal, {
+      attributes: true,
+      attributeFilter: ["class", "style"],
     });
   }
 
@@ -4240,14 +4315,30 @@ $(document).on("click", function (event) {
 
   function getUploadIconMarkup(firm, uploadedBy) {
     return (
-      '<i class="dealer-upload-user-icon" role="button" tabindex="0"' +
+      '<i class="dealer-upload-user-icon material-symbols-outlined" role="button" tabindex="0"' +
       ' aria-label="View uploaded details"' +
       ' data-upload-firm="' +
       escapeHtml(firm) +
       '"' +
       ' data-upload-role="' +
       getUploadRole(uploadedBy) +
-      '"></i>'
+      '">person</i>'
+    );
+  }
+
+  function getUploadedByMarkup(firm, uploadedBy) {
+    const role = getUploadRole(uploadedBy);
+    const words = String(uploadedBy).trim().split(/\s+/);
+    const lastWord = role === "icici" ? words.splice(0).join(" ") : words.pop();
+    const head = words.length ? escapeHtml(words.join(" ")) + " " : "";
+
+    return (
+      '<span class="dealer-upload-value">' +
+      head +
+      '<span class="dealer-upload-end">' +
+      escapeHtml(lastWord) +
+      getUploadIconMarkup(firm, uploadedBy) +
+      "</span></span>"
     );
   }
 
@@ -4262,20 +4353,20 @@ $(document).on("click", function (event) {
 
   function contactRowMarkup(icon, value) {
     return (
-      '<div class="ud-contact"><span class="material-icons ud-contact-icon">' +
+      '<div class="ud-contact"><span class="material-symbols-outlined ud-contact-icon">' +
       icon +
       '</span><span class="ud-contact-text">' +
       escapeHtml(value) +
       '</span><button type="button" class="ud-copy" aria-label="Copy" data-copy="' +
       escapeHtml(value) +
-      '"><span class="material-icons">content_copy</span></button></div>'
+      '"><span class="material-symbols-outlined">content_copy</span></button></div>'
     );
   }
 
   function personCardMarkup(opts) {
     const edit = opts.editable
       ? '<button type="button" class="ud-edit-link" data-ud-action="edit">' +
-        '<span class="material-icons">edit</span>Edit</button>'
+        '<span class="material-symbols-outlined">edit</span>Edit</button>'
       : "";
 
     return (
@@ -4294,7 +4385,7 @@ $(document).on("click", function (event) {
       "</strong></div></div>" +
       '<div class="ud-person-contacts">' +
       contactRowMarkup("call", opts.phone) +
-      contactRowMarkup("mail_outline", opts.email) +
+      contactRowMarkup("mail", opts.email) +
       "</div></div></div>"
     );
   }
@@ -4312,7 +4403,7 @@ $(document).on("click", function (event) {
       REP_TITLE +
       "</p>" +
       '<button type="button" class="ud-edit-link" data-ud-action="edit">' +
-      '<span class="material-icons">edit</span>Edit</button></div>' +
+      '<span class="material-symbols-outlined">edit</span>Edit</button></div>' +
       '<div class="ud-grid">' +
       field("Name") +
       field("Mobile number") +
@@ -4480,7 +4571,7 @@ $(document).on("click", function (event) {
 
     $overlay.on("click", ".ud-copy", function () {
       const $btn = $(this);
-      const $icon = $btn.find(".material-icons");
+      const $icon = $btn.find(".material-symbols-outlined");
 
       copyText($btn.attr("data-copy") || "").then(function () {
         $icon.text("check");
@@ -4511,7 +4602,6 @@ $(document).on("click", function (event) {
     });
 
     bindClick("uploadedDetailsClose", close);
-    bindClick("uploadedDetailsCloseBtn", close);
 
     $(document).on("keydown", function (event) {
       if (event.key === "Escape" && $overlay.hasClass("show")) close();
@@ -4681,6 +4771,7 @@ $(document).on("click", function (event) {
   initTransactionDashboard();
   initRenewalDashboard();
   initRenewalFlow();
+  initStepModalScrollReset();
   wrapCodeValues();
   initInfoTooltips();
   initUploadedDetails();
